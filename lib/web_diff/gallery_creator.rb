@@ -24,7 +24,7 @@ module WebDiff
             directories = parse_directories(@path)
 
             # HTML
-            template = File.read('lib/gallery/template.erb')
+            template = File.read(WebDiff.root + '/lib/web_diff/gallery/template.erb')
             return ERB.new(template).result(binding)
         end
 

@@ -8,7 +8,7 @@ domains:
 
 pages:
     1280:
-        home: /?wraith-no-animate=true
+        # home: /?wraith-no-animate=true
         # products: /products
         # auto_refill: /auto-refill
         # our_story: /our-story
