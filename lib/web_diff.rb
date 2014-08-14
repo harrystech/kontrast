@@ -1,3 +1,4 @@
+# Load classes
 require "web_diff/configuration"
 require "web_diff/selenium_handler"
 require "web_diff/image_handler"
@@ -18,3 +19,6 @@ module WebDiff
         end
     end
 end
+
+# Load tasks
+Dir.glob(WebDiff.root + '/lib/tasks/*.rake').each { |r| import r }
