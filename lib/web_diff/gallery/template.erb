@@ -20,7 +20,7 @@
                         <div class="panel-heading">Screenshots:</div>
                         <ul class="list-group list-group-flush">
                             <% directories.keys.sort.each do |size| %>
-                                <li class="list-group-item"><%=size%></li>
+                                <li class="list-group-item"><strong><%=size%></strong></li>
                                 <% directories[size].keys.each do |name| %>
                                     <li class="list-group-item"><a href="#<%= "#{size}_#{name}" %>"><%=name%></a></li>
                                 <% end %>
@@ -37,7 +37,9 @@
 
                         <% directories[size].each do |comparison| %>
                             <div id="<%= "#{size}_#{comparison.first}" %>" class="row">
-                                <h3 class="col-lg-1 text-muted"><%= comparison.first %></h3>
+                                <div class="row">
+                                    <h2><%= comparison.first %></h2>
+                                </div>
                                 <% comparison.last[:variants].each do |file| %>
                                     <div class="col-lg-3">
                                         <a href="<%=file[:image]%>">
