@@ -58,7 +58,7 @@ module WebDiff
 
             # Create gallery
             puts "Creating gallery..."
-            @gallery_creator.create_gallery
+            @gallery_creator.create_gallery(@image_handler.diffs)
 
             # Call "after" hook
             WebDiff.configuration.after_run

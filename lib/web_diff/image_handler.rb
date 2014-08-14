@@ -9,7 +9,7 @@ module WebDiff
             @path = path
 
             # This is where failed diffs will be stored
-            @diffs = []
+            @diffs = {}
         end
 
         def crop_images(width, name)
@@ -38,7 +38,7 @@ module WebDiff
 
             # Is the file actually different?
             if diff.last > 0
-                @diffs << {
+                @diffs["#{width}_#{name}"] = {
                     width: width,
                     name: name,
                     diff: diff.last

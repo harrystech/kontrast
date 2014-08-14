@@ -46,8 +46,8 @@
                                             <img class="short-screenshot img-thumbnail" src="<%=file[:thumb]%>">
                                         </a>
                                         <p class="text-center"><%=file[:domain]%></p>
-                                        <% if file[:size] %>
-                                            <p class="text-center text-muted"><%=file[:size]%></p>
+                                        <% if file[:diff_amt] %>
+                                            <p class="text-center text-muted"><%=file[:diff_amt]%></p>
                                         <% end %>
                                     </div>
                                 <% end %>

@@ -6,8 +6,9 @@ module WebDiff
             @path = path
         end
 
-        def create_gallery
+        def create_gallery(diffs)
             @directory = FileUtils.mkdir("#{@path}/gallery").join('')
+            @diffs = diffs
 
             # Generate HTML
             html = generate_html
@@ -75,7 +76,7 @@ module WebDiff
                             image: "#{@path}/#{directory}/" + type + ".png",
                             thumb: "#{@path}/#{directory}/" + type + "_thumb.png",
                             domain: type,
-                            size: 0.1
+                            diff_amt: (@diffs["#{size}_#{test_name}"]) ? @diffs["#{size}_#{test_name}"][:diff] : 0
                         }
                     else
                         dirs[size][test_name][:variants] << {
