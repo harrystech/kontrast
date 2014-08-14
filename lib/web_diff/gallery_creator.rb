@@ -20,7 +20,7 @@ module WebDiff
 
         def generate_html
             # Template variables
-            domain = @path.split('/')[1]
+            domain = @path.split('/').last
             directories = parse_directories(@path)
 
             # HTML
@@ -31,8 +31,8 @@ module WebDiff
         def parse_directories(dirname)
             dirs = {}
 
-            categories = Dir.foreach(dirname).select do |category|
-                if ['.', '..', 'gallery'].include? category
+            directories = Dir.foreach(dirname).select do |directory|
+                if ['.', '..', 'gallery'].include? directory
                     # Ignore special dirs
                     false
                 else
@@ -40,40 +40,76 @@ module WebDiff
                 end
             end
 
-            categories.each do |category|
-                dirs[category] = {}
-                Dir.foreach("#{dirname}/#{category}") do |filename|
-                    next if ['.', '..'].include? filename
+            # At this point, we have an array of all folders that ran for this test
+            # Example: ["1280_sign_in", "320_sign_in"]
+            # For each folder, get production, test, and diff images + thumbs
 
-                    # Size
-                    size = filename.split('_').first
-                    dirs[category][size] = {}
+            # Get all sizes
+            sizes = directories.map { |d| d.split('_').first }
+            sizes.each { |size|
+                dirs[size] = {}
+
+                # Get all directories for this size
+                tests_for_size = directories.select { |d| d.index(size + "_") == 0 }
+                tests_for_size.each do |dir|
+                    array = dir.split('_')
+                    array.delete_at(0)
+                    test_name = array.join('_')
+                    dirs[size][test_name] = {
+                        variants: []
+                    }
+                end
+            }
+
+            # Fill in the files as variants
+            directories.each do |directory|
+                array = directory.split('_')
+                size = array.first
+                array.delete_at(0)
+                test_name = array.join('_')
+
+                # Add variations
+                ['test', 'production', 'diff'].each do |type|
+                    if type == 'diff'
+                        dirs[size][test_name][:variants] << {
+                            image: type + ".png",
+                            thumb: type + "_thumb.png",
+                            domain: type,
+                            size: 0.1
+                        }
+                    else
+                        dirs[size][test_name][:variants] << {
+                            image: type + ".png",
+                            thumb: type + "_thumb.png",
+                            domain: type
+                        }
+                    end
                 end
             end
 
             return dirs
 
-            # Actual format...
-            return {
-                "directory_name" => {
-                    "1080" => {
-                        variants: [{
-                            filename: "test_link",
-                            thumb: "src",
-                            name: "production"
-                        }, {
-                            filename: "test_link_2",
-                            thumb: "src_2",
-                            name: "test"
-                        }],
-                        diff: {
-                            filename: "link_to_diff",
-                            thumb: "src_of_diff"
-                        },
-                        data: 111
-                    }
-                }
-            }
+            # For reference
+            # gallery_format = {
+            #     "1080" => {
+            #         "name" => {
+            #             variants: [{
+            #                 image: "full_img_src",
+            #                 thumb: "thumb_src",
+            #                 domain: "production"
+            #             }, {
+            #                 image: "foo_src",
+            #                 thumb: "thumb_src",
+            #                 domain: "test"
+            #             }, {
+            #                 image: "diff_src",
+            #                 thumb: "diff_thumb_src",
+            #                 domain: "diff",
+            #                 size: 0.1
+            #             }]
+            #         }
+            #     }
+            # }
         end
     end
 end

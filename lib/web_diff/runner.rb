@@ -44,6 +44,8 @@ module WebDiff
                         print "Creating thumbnails... "
                         @image_handler.create_thumbnails(width, name)
 
+                        # Upload to S3
+
                         puts "\n", ("=" * 85)
                     end
                 end
@@ -57,8 +59,6 @@ module WebDiff
             # Create gallery
             puts "Creating gallery..."
             @gallery_creator.create_gallery
-
-            # Upload to S3 (if not local)
 
             # Call "after" hook
             WebDiff.configuration.after_run
