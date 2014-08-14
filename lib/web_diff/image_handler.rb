@@ -8,7 +8,7 @@ module WebDiff
         def initialize(path)
             @path = path
 
-            # This is where failed diffs will be logged
+            # This is where failed diffs will be stored
             @diffs = []
         end
 
