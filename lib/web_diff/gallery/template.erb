@@ -22,7 +22,7 @@
                             <% directories.keys.sort.each do |size| %>
                                 <li class="list-group-item"><%=size%></li>
                                 <% directories[size].keys.each do |name| %>
-                                    <li class="list-group-item"><a href="#<%=name%>"><%=name%></a></li>
+                                    <li class="list-group-item"><a href="#<%= "#{size}_#{name}" %>"><%=name%></a></li>
                                 <% end %>
                             <% end %>
                         </ul>
@@ -36,7 +36,7 @@
                         </div>
 
                         <% directories[size].each do |comparison| %>
-                            <div class="row">
+                            <div id="<%= "#{size}_#{comparison.first}" %>" class="row">
                                 <h3 class="col-lg-1 text-muted"><%= comparison.first %></h3>
                                 <% comparison.last[:variants].each do |file| %>
                                     <div class="col-lg-3">
