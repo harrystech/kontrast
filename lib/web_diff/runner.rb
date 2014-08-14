@@ -4,17 +4,17 @@ module WebDiff
     class Runner
         def initialize
             # Load config
-            @config = YAML::load(File.open("config/config.yml"))
+            @config = YAML::load(File.open(WebDiff.root + "/config/config.yml"))
 
             # Set path for output
-            @output_path = FileUtils.mkdir("shots/#{Time.now.to_i}").join('')
+            @output_path = FileUtils.mkdir(WebDiff.root + "/shots/#{Time.now.to_i}").join('')
         end
 
         def run
             beginning_time = Time.now
 
             # Call "before" hook
-            HarrysWebDiff.configuration.before_run
+            WebDiff.configuration.before_run
 
             # Load required classes
             @selenium_handler = SeleniumHandler.new(@output_path, @config)
@@ -61,7 +61,7 @@ module WebDiff
             # Upload to S3 (if not local)
 
             # Call "after" hook
-            HarrysWebDiff.configuration.after_run
+            WebDiff.configuration.after_run
 
             end_time = Time.now
             puts "Time elapsed: #{(end_time - beginning_time)} seconds"
