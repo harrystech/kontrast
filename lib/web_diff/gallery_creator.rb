@@ -72,15 +72,15 @@ module WebDiff
                 ['test', 'production', 'diff'].each do |type|
                     if type == 'diff'
                         dirs[size][test_name][:variants] << {
-                            image: type + ".png",
-                            thumb: type + "_thumb.png",
+                            image: "#{@path}/#{directory}/" + type + ".png",
+                            thumb: "#{@path}/#{directory}/" + type + "_thumb.png",
                             domain: type,
                             size: 0.1
                         }
                     else
                         dirs[size][test_name][:variants] << {
-                            image: type + ".png",
-                            thumb: type + "_thumb.png",
+                            image: "#{@path}/#{directory}/" + type + ".png",
+                            thumb: "#{@path}/#{directory}/" + type + "_thumb.png",
                             domain: type
                         }
                     end
