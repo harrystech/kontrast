@@ -1,0 +1,59 @@
+browser:
+    driver: "firefox"
+    user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:27.0) Gecko/20100101 Firefox/27.0 HarrysWebDiff"
+
+domains:
+    test: "http://localhost:3000"
+    production: "https://www.harrys.com"
+
+pages:
+    1280:
+        home: /?wraith-no-animate=true
+        # products: /products
+        # auto_refill: /auto-refill
+        # our_story: /our-story
+        # give_a_shave: /give-a-shave
+        # cornershop: /cornershop
+        # sign_in: /users/sign_in
+        # our_factory: /our-factory?wraith-no-animate=true
+        # redeem: /redeem
+        # page_404: /products/foo
+        # page_500: /wow/such/errors
+        # starter_set: /lp/starter-set?20140805_landing_page=product_page
+
+        # the_winston_set: /products/the-winston-set?20140808_product_page=yes_faq
+        # the_truman_set: /products/the-truman-set?20140808_product_page=yes_faq
+        # the_winston: /products/the-winston?20140808_product_page=yes_faq
+        # the_winston_engraved: /products/the-winston/engraved?20140808_product_page=yes_faq
+        # the_winston_set_engraved: /products/the-winston-set/engraved?20140808_product_page=yes_faq
+        # the_truman: /products/the-truman?20140808_product_page=yes_faq
+        # the_one_two_set: /products/the-one-two-set
+        # harrys_blades: /products/harrys-blades?20140808_product_page=yes_faq
+        # shave_cream: /products/shave-cream?20140808_product_page=yes_faq
+        # year_of_blades: /products/year-of-blades
+        # refill_pack: /products/refill-pack?20140808_product_page=yes_faq
+
+    320:
+        home: /?mobile=1
+        # products: /products?mobile=1
+        # auto_refill: /auto-refill?mobile=1
+        # our_story: /our-story?mobile=1
+        # give_a_shave: /give-a-shave?mobile=1
+        # cornershop: /cornershop?mobile=1
+        # sign_in: /users/sign_in?mobile=1
+        # our_factory: /our-factory?mobile=1
+        # redeem: /redeem?mobile=1
+        # page_404: /products/foo?mobile=1
+        # page_500: /wow/such/errors?mobile=1
+
+        # the_winston_set: /products/the-winston-set?mobile=1
+        # the_truman_set: /products/the-truman-set?mobile=1
+        # the_winston: /products/the-winston?mobile=1
+        # the_winston_engraved: /products/the-winston/engraved?mobile=1
+        # the_winston_set_engraved: /products/the-winston-set/engraved?mobile=1
+        # the_truman: /products/the-truman?mobile=1
+        # the_one_two_set: /products/the-one-two-set?mobile=1
+        # harrys_blades: /products/harrys-blades?mobile=1
+        # shave_cream: /products/shave-cream?mobile=1
+        # year_of_blades: /products/year-of-blades?mobile=1
+        # refill_pack: /products/refill-pack?mobile=1
