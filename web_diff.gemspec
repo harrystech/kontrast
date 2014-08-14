@@ -4,20 +4,23 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'web_diff/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "web_diff"
-  spec.version       = WebDiff::VERSION
-  spec.authors       = ["Ilya Rubnich"]
-  spec.email         = ["irubnich@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
-  spec.license       = "MIT"
+    spec.name          = "web_diff"
+    spec.version       = WebDiff::VERSION
+    spec.authors       = ["Ilya Rubnich"]
+    spec.email         = ["ilya@harrys.com"]
+    spec.summary       = %q{A screenshot comparison tool for Rails apps.}
+    #spec.description   = %q{TODO: Write a longer description. Optional.}
+    spec.homepage      = ""
+    spec.license       = "MIT"
 
-  spec.files         = `git ls-files -z`.split("\x0")
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.require_paths = ["lib"]
+    spec.files = Dir["{lib}/**/*"] + ["LICENSE.txt", "Rakefile", "README.md"]
+    spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+    spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+    spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.6"
-  spec.add_development_dependency "rake"
+    spec.add_development_dependency "bundler", "~> 1.6"
+    spec.add_development_dependency "rake"
+    spec.add_development_dependency "pry"
+    spec.add_dependency "selenium-webdriver"
+    spec.add_dependency "rmagick", "2.13.2"
 end
