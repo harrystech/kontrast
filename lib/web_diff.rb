@@ -21,4 +21,4 @@ module WebDiff
 end
 
 # Load tasks
-Dir.glob(WebDiff.root + '/lib/tasks/*.rake').each { |r| import r }
+Dir[WebDiff.root + '/lib/tasks/*.rake'].each { |ext| load ext } if defined?(Rake)
