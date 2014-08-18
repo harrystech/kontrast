@@ -21,16 +21,22 @@ module WebDiff
         end
 
         def run
-            beginning_time = Time.now
-
-            # Call "before" hook
-            WebDiff.configuration.before_run
-
             # Load required classes
             @selenium_handler = SeleniumHandler.new(@output_path, @config)
             @image_handler = ImageHandler.new(@output_path)
             @gallery_creator = GalleryCreator.new(@output_path)
 
+            parallel_run
+
+            # Log diffs
+            puts @image_handler.diffs
+
+            # Create gallery
+            puts "Creating gallery..."
+            @gallery_creator.create_gallery(@image_handler.diffs)
+        end
+
+        def parallel_run
             begin
                 # Run per-page tasks
                 to_run = @config['pages']
@@ -62,19 +68,6 @@ module WebDiff
             ensure
                 @selenium_handler.cleanup
             end
-
-            # Log diffs
-            puts @image_handler.diffs
-
-            # Create gallery
-            puts "Creating gallery..."
-            @gallery_creator.create_gallery(@image_handler.diffs)
-
-            # Call "after" hook
-            WebDiff.configuration.after_run
-
-            end_time = Time.now
-            puts "Time elapsed: #{(end_time - beginning_time)} seconds"
         end
     end
 end

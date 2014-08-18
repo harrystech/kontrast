@@ -14,8 +14,21 @@ module WebDiff
         end
 
         def run
-            runner = Runner.new
-            runner.run
+            beginning_time = Time.now
+
+            # Call "before" hook
+            WebDiff.configuration.before_run
+
+            begin
+                runner = Runner.new
+                runner.run
+            ensure
+                # Call "after" hook
+                WebDiff.configuration.after_run
+            end
+
+            end_time = Time.now
+            puts "Time elapsed: #{(end_time - beginning_time)} seconds"
         end
     end
 end
