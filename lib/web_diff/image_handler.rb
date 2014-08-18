@@ -31,7 +31,7 @@ module WebDiff
             production_image = Image.read("#{@path}/#{width}_#{name}/production.png").first
 
             # Compare and save diff
-            diff = test_image.compare_channel(production_image, MeanAbsoluteErrorMetric) do |options|
+            diff = test_image.compare_channel(production_image, Magick.const_get(WebDiff.configuration.compare_metric)) do |options|
                 options.highlight_color = 'blue'
             end
             diff.first.write("#{@path}/#{width}_#{name}/diff.png")

@@ -9,8 +9,7 @@ module WebDiff
     end
 
     class Configuration
-        attr_accessor :_before_run
-        attr_accessor :_after_run
+        attr_accessor :_before_run, :_after_run, :compare_metric
 
         def initialize
         end
