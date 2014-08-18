@@ -4,10 +4,20 @@ module WebDiff
     class Runner
         def initialize
             # Load config
-            @config = YAML::load(File.open(WebDiff.root + "/config/config.yml"))
+            begin
+                @config = YAML::load(File.open(Rails.root + "config/web_diff.yml"))
+            rescue Errno::ENOENT => e
+                puts "Could not load the config file."
+                raise e
+            end
 
-            # Set path for output
-            @output_path = FileUtils.mkdir(WebDiff.root + "/shots/#{Time.now.to_i}").join('')
+            # Ensure output path for this set of tests
+            if Dir.exists?(Rails.root + "tmp/shots")
+                @output_path = FileUtils.mkdir(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
+            else
+                FileUtils.mkdir(Rails.root + "tmp/shots")
+                @output_path = FileUtils.mkdir(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
+            end
         end
 
         def run
