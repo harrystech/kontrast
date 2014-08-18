@@ -61,6 +61,8 @@ module WebDiff
                         @image_handler.create_thumbnails(width, name)
 
                         # Upload to S3
+                        print "Uploading... "
+                        @image_handler.upload_images
 
                         puts "\n", ("=" * 85)
                     end

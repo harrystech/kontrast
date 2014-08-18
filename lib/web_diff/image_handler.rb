@@ -1,4 +1,5 @@
 require "RMagick"
+require "fog"
 
 module WebDiff
     class ImageHandler
@@ -10,6 +11,12 @@ module WebDiff
 
             # This is where failed diffs will be stored
             @diffs = {}
+
+            @fog = Fog::Storage.new({
+                :provider                 => 'AWS',
+                :aws_access_key_id        => WebDiff.configuration.aws_key,
+                :aws_secret_access_key    => WebDiff.configuration.aws_secret
+            })
         end
 
         def crop_images(width, name)
@@ -57,6 +64,21 @@ module WebDiff
             test_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/test_thumb.png")
             production_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/production_thumb.png")
             diff_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/diff_thumb.png")
+        end
+
+        def upload_images
+            build_number = "test.6568"
+            Dir.foreach(@path) do |subdir|
+                next if ['.', '..'].include?(subdir)
+                Dir.foreach("#{@path}/#{subdir}") do |img|
+                    next if ['.', '..'].include?(img)
+                    @fog.directories.get("circle-artifacts").files.create(
+                        key: "artifacts.#{build_number}/#{subdir}/#{img}",
+                        body: File.open("#{@path}/#{subdir}/#{img}"),
+                        public: true
+                    )
+                end
+            end
         end
     end
 end

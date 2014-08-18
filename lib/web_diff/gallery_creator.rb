@@ -1,9 +1,15 @@
 require "erb"
+require "fog"
 
 module WebDiff
     class GalleryCreator
         def initialize(path)
             @path = path
+            @fog = Fog::Storage.new({
+                :provider                 => 'AWS',
+                :aws_access_key_id        => WebDiff.configuration.aws_key,
+                :aws_secret_access_key    => WebDiff.configuration.aws_secret
+            })
         end
 
         def create_gallery(diffs)
@@ -17,6 +23,13 @@ module WebDiff
             File.open("#{@directory}/gallery.html", 'w') do |outf|
                 outf.write(html)
             end
+
+            # Upload file
+            build_number = "test.6568"
+            @fog.directories.get("circle-artifacts").files.create(
+                key: "artifacts.#{build_number}/gallery/gallery.html",
+                body: File.open("#{@directory}/gallery.html")
+            )
         end
 
         def generate_html
@@ -73,15 +86,15 @@ module WebDiff
                 ['test', 'production', 'diff'].each do |type|
                     if type == 'diff'
                         dirs[size][test_name][:variants] << {
-                            image: "#{@path}/#{directory}/" + type + ".png",
-                            thumb: "#{@path}/#{directory}/" + type + "_thumb.png",
+                            image: "../#{size}_#{test_name}/" + type + ".png",
+                            thumb: "../#{size}_#{test_name}/" + type + "_thumb.png",
                             domain: type,
                             diff_amt: (@diffs["#{size}_#{test_name}"]) ? @diffs["#{size}_#{test_name}"][:diff] : 0
                         }
                     else
                         dirs[size][test_name][:variants] << {
-                            image: "#{@path}/#{directory}/" + type + ".png",
-                            thumb: "#{@path}/#{directory}/" + type + "_thumb.png",
+                            image: "../#{size}_#{test_name}/" + type + ".png",
+                            thumb: "../#{size}_#{test_name}/" + type + "_thumb.png",
                             domain: type
                         }
                     end

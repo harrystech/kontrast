@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency "pry"
     spec.add_dependency "selenium-webdriver"
     spec.add_dependency "rmagick", "2.13.2"
+    spec.add_dependency "fog"
 end
