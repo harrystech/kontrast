@@ -9,7 +9,8 @@ module WebDiff
     end
 
     class Configuration
-        attr_accessor :_before_run, :_after_run, :compare_metric
+        attr_accessor :_before_run, :_after_run
+        attr_accessor :distortion_metric, :highlight_color, :lowlight_color
 
         def initialize
         end
