@@ -45,13 +45,13 @@ module WebDiff
             # Create manifest
             puts "Creating manifest..."
             @image_handler.create_manifest(current_node)
-            if true
+            if true # remote option
                 @image_handler.upload_manifest(current_node, ENV["CIRCLE_BUILD_NUM"])
             end
 
             # Create gallery
-            # puts "Creating gallery..."
-            # @gallery_creator.create_gallery(@image_handler.diffs, ENV["CIRCLE_BUILD_NUM"])
+            puts "Creating gallery..."
+            @gallery_creator.create_gallery(ENV["CIRCLE_BUILD_NUM"])
         end
 
         def split_run(total_nodes, current_node)

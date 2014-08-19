@@ -66,6 +66,20 @@ module WebDiff
             diff_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/diff_thumb.png")
         end
 
+        def upload_images(dir_name)
+            Dir.foreach(@path) do |subdir|
+                next if ['.', '..'].include?(subdir)
+                Dir.foreach("#{@path}/#{subdir}") do |img|
+                    next if ['.', '..'].include?(img)
+                    @fog.directories.get("circle-artifacts").files.create(
+                        key: "artifacts.#{dir_name}/#{subdir}/#{img}",
+                        body: File.open("#{@path}/#{subdir}/#{img}"),
+                        public: true
+                    )
+                end
+            end
+        end
+
         def create_manifest(current_node)
             # Set up structure
             manifest = {
@@ -95,20 +109,6 @@ module WebDiff
                 key: "artifacts.#{dir_name}/manifest_#{current_node}.json",
                 body: File.open("#{@path}/manifest_#{current_node}.json")
             )
-        end
-
-        def upload_images(dir_name)
-            Dir.foreach(@path) do |subdir|
-                next if ['.', '..'].include?(subdir)
-                Dir.foreach("#{@path}/#{subdir}") do |img|
-                    next if ['.', '..'].include?(img)
-                    @fog.directories.get("circle-artifacts").files.create(
-                        key: "artifacts.#{dir_name}/#{subdir}/#{img}",
-                        body: File.open("#{@path}/#{subdir}/#{img}"),
-                        public: true
-                    )
-                end
-            end
         end
     end
 end

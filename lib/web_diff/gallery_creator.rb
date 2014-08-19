@@ -12,9 +12,8 @@ module WebDiff
             })
         end
 
-        def create_gallery(diffs, dir_name)
+        def create_gallery(dir_name)
             @directory = FileUtils.mkdir("#{@path}/gallery").join('')
-            @diffs = diffs
 
             # Generate HTML
             html = generate_html
@@ -32,26 +31,28 @@ module WebDiff
         end
 
         def generate_html
+            # Parse manifests
+            files = []
+            diffs = {}
+            manifest_files = Dir["#{@path}/manifest_*.json"]
+            manifest_files.each do |manifest|
+                manifest = JSON.parse(File.read(manifest))
+                files.concat(manifest['files'])
+                diffs.reverse_merge!(manifest["diffs"])
+            end
+
             # Template variables
             domain = @path.split('/').last
-            directories = parse_directories(@path)
+            directories = parse_directories(files, diffs)
 
             # HTML
             template = File.read(WebDiff.root + '/lib/web_diff/gallery/template.erb')
             return ERB.new(template).result(binding)
         end
 
-        def parse_directories(dirname)
+        def parse_directories(files, diffs)
             dirs = {}
-
-            directories = Dir.foreach(dirname).select do |directory|
-                if ['.', '..', 'gallery'].include? directory
-                    # Ignore special dirs
-                    false
-                else
-                    true
-                end
-            end
+            directories = files.map { |f| f.split('/').first }.uniq
 
             # Get all sizes
             sizes = directories.map { |d| d.split('_').first }
@@ -84,7 +85,7 @@ module WebDiff
                             image: "../#{size}_#{test_name}/" + type + ".png",
                             thumb: "../#{size}_#{test_name}/" + type + "_thumb.png",
                             domain: type,
-                            diff_amt: (@diffs["#{size}_#{test_name}"]) ? @diffs["#{size}_#{test_name}"][:diff] : 0
+                            diff_amt: (diffs["#{size}_#{test_name}"]) ? diffs["#{size}_#{test_name}"]["diff"] : 0
                         }
                     else
                         dirs[size][test_name][:variants] << {
