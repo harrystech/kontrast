@@ -29,8 +29,8 @@ module WebDiff
             @gallery_creator = GalleryCreator.new(@output_path)
 
             # Parallelism setup
-            total_nodes = ENV["CIRCLE_NODE_TOTAL"] || 1
-            current_node = ENV["CIRCLE_NODE_INDEX"] || 0
+            total_nodes = ENV["CIRCLE_NODE_TOTAL"] ? ENV["CIRCLE_NODE_TOTAL"].to_i : 1
+            current_node = ENV["CIRCLE_NODE_INDEX"] ? ENV["CIRCLE_NODE_INDEX"].to_i : 0
 
             # Assign tests and run them
             to_run = split_run(total_nodes, current_node)
