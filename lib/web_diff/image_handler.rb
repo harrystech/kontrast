@@ -66,14 +66,13 @@ module WebDiff
             diff_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/diff_thumb.png")
         end
 
-        def upload_images
-            build_number = "test.6568"
+        def upload_images(dir_name)
             Dir.foreach(@path) do |subdir|
                 next if ['.', '..'].include?(subdir)
                 Dir.foreach("#{@path}/#{subdir}") do |img|
                     next if ['.', '..'].include?(img)
                     @fog.directories.get("circle-artifacts").files.create(
-                        key: "artifacts.#{build_number}/#{subdir}/#{img}",
+                        key: "artifacts.#{dir_name}/#{subdir}/#{img}",
                         body: File.open("#{@path}/#{subdir}/#{img}"),
                         public: true
                     )

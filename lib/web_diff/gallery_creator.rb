@@ -12,7 +12,7 @@ module WebDiff
             })
         end
 
-        def create_gallery(diffs)
+        def create_gallery(diffs, dir_name)
             @directory = FileUtils.mkdir("#{@path}/gallery").join('')
             @diffs = diffs
 
@@ -25,9 +25,8 @@ module WebDiff
             end
 
             # Upload file
-            build_number = "test.6568"
             @fog.directories.get("circle-artifacts").files.create(
-                key: "artifacts.#{build_number}/gallery/gallery.html",
+                key: "artifacts.#{dir_name}/gallery/gallery.html",
                 body: File.open("#{@directory}/gallery.html")
             )
         end

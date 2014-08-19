@@ -38,7 +38,7 @@ module WebDiff
 
             # Create gallery
             puts "Creating gallery..."
-            @gallery_creator.create_gallery(@image_handler.diffs)
+            @gallery_creator.create_gallery(@image_handler.diffs, ENV["CIRCLE_BUILD_NUM"])
         end
 
         def split_run(total_nodes, current_node)
@@ -84,8 +84,10 @@ module WebDiff
                         @image_handler.create_thumbnails(width, name)
 
                         # Upload to S3
-                        #print "Uploading... "
-                        #@image_handler.upload_images
+                        if true # remote option?
+                            print "Uploading... "
+                            @image_handler.upload_images(ENV["CIRCLE_BUILD_NUM"])
+                        end
 
                         puts "\n", ("=" * 85)
                     end
