@@ -36,9 +36,18 @@ module WebDiff
             to_run = split_run(total_nodes, current_node)
             parallel_run(to_run)
 
+            # Create and upload manifest
+            dir_name = ENV["CIRCLE_BUILD_NUM"]
+            @fog.directories.get("circle-artifacts").files.create(
+                key: "artifacts.#{dir_name}/manifest_#{current_node}.json",
+                body: {
+                    diffs: @image_handler.diffs
+                }.to_json
+            )
+
             # Create gallery
-            puts "Creating gallery..."
-            @gallery_creator.create_gallery(@image_handler.diffs, ENV["CIRCLE_BUILD_NUM"])
+            # puts "Creating gallery..."
+            # @gallery_creator.create_gallery(@image_handler.diffs, ENV["CIRCLE_BUILD_NUM"])
         end
 
         def split_run(total_nodes, current_node)

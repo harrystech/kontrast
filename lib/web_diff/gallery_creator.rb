@@ -53,10 +53,6 @@ module WebDiff
                 end
             end
 
-            # At this point, we have an array of all folders that ran for this test
-            # Example: ["1280_sign_in", "320_sign_in"]
-            # For each folder, get production, test, and diff images + thumbs
-
             # Get all sizes
             sizes = directories.map { |d| d.split('_').first }
             sizes.each { |size|
