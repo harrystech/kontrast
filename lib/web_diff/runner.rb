@@ -28,21 +28,42 @@ module WebDiff
             @image_handler = ImageHandler.new(@output_path)
             @gallery_creator = GalleryCreator.new(@output_path)
 
-            parallel_run
+            # Parallelism setup
+            total_nodes = ENV["CIRCLE_NODE_TOTAL"] || 1
+            current_node = ENV["CIRCLE_NODE_INDEX"] || 0
 
-            # Log diffs
-            puts @image_handler.diffs
+            # Assign tests and run them
+            to_run = split_run(total_nodes, current_node)
+            parallel_run(to_run)
 
             # Create gallery
             puts "Creating gallery..."
             @gallery_creator.create_gallery(@image_handler.diffs)
         end
 
-        def parallel_run
+        def split_run(total_nodes, current_node)
+            all_tests = @config['pages']
+            tests_to_run = Hash.new
+
+            index = 0
+            all_tests.each do |width, pages|
+                next if pages.nil?
+                tests_to_run[width] = {}
+                pages.each do |name, path|
+                    if index % total_nodes == current_node
+                        tests_to_run[width][name] = path
+                    end
+                    index += 1
+                end
+            end
+
+            return tests_to_run
+        end
+
+        def parallel_run(tests)
             begin
                 # Run per-page tasks
-                to_run = @config['pages']
-                to_run.each do |width, pages|
+                tests.each do |width, pages|
                     next if pages.nil?
                     pages.each do |name, path|
                         print "Processing #{name} @ #{width}... "
@@ -63,12 +84,15 @@ module WebDiff
                         @image_handler.create_thumbnails(width, name)
 
                         # Upload to S3
-                        print "Uploading... "
-                        @image_handler.upload_images
+                        #print "Uploading... "
+                        #@image_handler.upload_images
 
                         puts "\n", ("=" * 85)
                     end
                 end
+
+                # Log diffs
+                puts @image_handler.diffs
             ensure
                 @selenium_handler.cleanup
             end
