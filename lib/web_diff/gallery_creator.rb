@@ -27,7 +27,7 @@ module WebDiff
             if WebDiff.configuration.remote
                 # Upload file
                 @fog.directories.get("circle-artifacts").files.create(
-                    key: "artifacts.#{@build}/gallery/gallery.html",
+                    key: "#{@build}/gallery/gallery.html",
                     body: File.open("#{@gallery_dir}/gallery.html")
                 )
             end
@@ -51,7 +51,7 @@ module WebDiff
         def get_manifests
             if WebDiff.configuration.remote
                 # Download manifests
-                files = @fog.directories.get('circle-artifacts', prefix: "artifacts.#{@build}/manifest").files
+                files = @fog.directories.get('circle-artifacts', prefix: "#{@build}/manifest").files
                 files.each do |file|
                     filename = "#{@path}/" + file.key.split('/').last
                     File.open(filename, 'w') do |local_file|

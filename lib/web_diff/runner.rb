@@ -20,12 +20,6 @@ module WebDiff
                 FileUtils.mkdir(Rails.root + "tmp/shots")
                 @output_path = FileUtils.mkdir(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
             end
-
-            @fog = Fog::Storage.new({
-                :provider                 => 'AWS',
-                :aws_access_key_id        => WebDiff.configuration.aws_key,
-                :aws_secret_access_key    => WebDiff.configuration.aws_secret
-            })
         end
 
         def run
