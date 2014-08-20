@@ -51,7 +51,8 @@ module WebDiff
                 # Download manifests
                 files = @fog.directories.get('circle-artifacts', prefix: "artifacts.#{@build}/manifest").files
                 files.each do |file|
-                    File.open(file.key.split('/').last, 'w') do |local_file|
+                    filename = "#{@path}/" + file.key.split('/').last
+                    File.open(filename, 'w') do |local_file|
                         local_file.write(file.body)
                     end
                 end
