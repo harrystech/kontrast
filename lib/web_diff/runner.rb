@@ -13,7 +13,7 @@ module WebDiff
 
             # Ensure output path for this set of tests
             if WebDiff.configuration.remote
-                @output_path = FileUtils.mkdir(WebDiff.configuration.remote_path + "shots").join('')
+                @output_path = FileUtils.mkdir(WebDiff.configuration.remote_path + "/shots").join('')
             elsif Dir.exists?(Rails.root + "tmp/shots")
                 @output_path = FileUtils.mkdir(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
             else
