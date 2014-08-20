@@ -45,7 +45,7 @@ module WebDiff
             # Create manifest
             puts "Creating manifest..."
             @image_handler.create_manifest(current_node)
-            if true # remote option
+            if WebDiff.configuration.remote
                 @image_handler.upload_manifest(current_node, ENV["CIRCLE_BUILD_NUM"])
             end
 
@@ -97,7 +97,7 @@ module WebDiff
                         @image_handler.create_thumbnails(width, name)
 
                         # Upload to S3
-                        if true # remote option?
+                        if WebDiff.configuration.remote
                             print "Uploading... "
                             @image_handler.upload_images(ENV["CIRCLE_BUILD_NUM"])
                         end
