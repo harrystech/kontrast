@@ -110,20 +110,14 @@ module WebDiff
                 test_name = array.join('_')
 
                 # Add variations
-                ['test', 'production', 'diff'].each do |type|
+                ['test', 'production', 'diff'].each_with_index do |type, i|
+                    dirs[size][test_name][:variants] << {
+                        image: "../#{size}_#{test_name}/" + type + ".png",
+                        thumb: "../#{size}_#{test_name}/" + type + "_thumb.png",
+                        domain: type
+                    }
                     if type == 'diff'
-                        dirs[size][test_name][:variants] << {
-                            image: "../#{size}_#{test_name}/" + type + ".png",
-                            thumb: "../#{size}_#{test_name}/" + type + "_thumb.png",
-                            domain: type,
-                            diff_amt: (diffs["#{size}_#{test_name}"]) ? diffs["#{size}_#{test_name}"]["diff"] : 0
-                        }
-                    else
-                        dirs[size][test_name][:variants] << {
-                            image: "../#{size}_#{test_name}/" + type + ".png",
-                            thumb: "../#{size}_#{test_name}/" + type + "_thumb.png",
-                            domain: type
-                        }
+                        dirs[size][test_name][:variants][i][:diff_amt] = (diffs["#{size}_#{test_name}"]) ? diffs["#{size}_#{test_name}"]["diff"] : 0
                     end
                 end
             end
