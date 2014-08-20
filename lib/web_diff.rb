@@ -32,13 +32,21 @@ module WebDiff
         end
 
         def make_gallery(path = nil)
+            # Call "before" hook
+            WebDiff.configuration.before_gallery
+
             puts "Creating gallery..."
-            if WebDiff.configuration.remote
-                gallery_creator = GalleryCreator.new(WebDiff.configuration.remote_path)
-                gallery_creator.create_gallery(WebDiff.configuration.remote_path)
-            else
-                gallery_creator = GalleryCreator.new(path)
-                gallery_creator.create_gallery(path)
+            begin
+                if WebDiff.configuration.remote
+                    gallery_creator = GalleryCreator.new(WebDiff.configuration.remote_path)
+                    gallery_creator.create_gallery(WebDiff.configuration.remote_path)
+                else
+                    gallery_creator = GalleryCreator.new(path)
+                    gallery_creator.create_gallery(path)
+                end
+            ensure
+                # Call "after" hook
+                WebDiff.configuration.after_gallery
             end
         end
     end
