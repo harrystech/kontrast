@@ -28,8 +28,8 @@ module WebDiff
             max_height = [test_image.rows, production_image.rows].max
 
             # Crop
-            test_image.extent(width, max_height).write(test_image.filename)
-            production_image.extent(width, max_height).write(production_image.filename)
+            test_image.extent(width, max_height).write(test_image.filename) { self.quality = 50 }
+            production_image.extent(width, max_height).write(production_image.filename) { self.quality = 50 }
         end
 
         def diff_images(width, name)
@@ -42,7 +42,7 @@ module WebDiff
                 options.highlight_color = WebDiff.configuration.highlight_color
                 options.lowlight_color = WebDiff.configuration.lowlight_color
             end
-            diff.first.write("#{@path}/#{width}_#{name}/diff.png")
+            diff.first.write("#{@path}/#{width}_#{name}/diff.png") { self.quality = 50 }
 
             # Is the file actually different?
             if diff.last > 0
