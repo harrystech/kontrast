@@ -32,7 +32,7 @@ module WebDiff
 
         def generate_html
             # Parse manifests
-            parsed_manifests = parse_manifests
+            parsed_manifests = parse_manifests(get_manifests)
             files = parsed_manifests[:files]
             diffs = parsed_manifests[:diffs]
 
@@ -45,10 +45,20 @@ module WebDiff
             return ERB.new(template).result(binding)
         end
 
-        def parse_manifests
+        def get_manifests
+            if WebDiff.configuration.remote
+                # Download manifests
+                manifest_files = []
+            else
+                # Get them locally
+                manifest_files = Dir["#{@path}/manifest_*.json"]
+            end
+            return manifest_files
+        end
+
+        def parse_manifests(manifest_files)
             files = []
             diffs = {}
-            manifest_files = Dir["#{@path}/manifest_*.json"]
             manifest_files.each do |manifest|
                 manifest = JSON.parse(File.read(manifest))
                 files.concat(manifest['files'])
