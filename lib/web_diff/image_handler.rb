@@ -80,7 +80,7 @@ module WebDiff
             end
         end
 
-        def create_manifest(current_node)
+        def create_manifest(current_node, build = nil)
             # Set up structure
             manifest = {
                 diffs: @diffs,
@@ -96,19 +96,20 @@ module WebDiff
                 end
             end
 
-            # Write manifest
-            File.open("#{@path}/manifest_#{current_node}.json", 'w') do |outf|
-                outf.write(manifest.to_json)
+            if WebDiff.configuration.remote
+                # Upload manifest
+                @fog.directories.get("circle-artifacts").files.create(
+                    key: "artifacts.#{build}/manifest_#{current_node}.json",
+                    body: manifest.to_json
+                )
+            else
+                # Write manifest
+                File.open("#{@path}/manifest_#{current_node}.json", 'w') do |outf|
+                    outf.write(manifest.to_json)
+                end
             end
 
             return manifest
-        end
-
-        def upload_manifest(current_node, dir_name)
-            @fog.directories.get("circle-artifacts").files.create(
-                key: "artifacts.#{dir_name}/manifest_#{current_node}.json",
-                body: File.open("#{@path}/manifest_#{current_node}.json")
-            )
         end
     end
 end

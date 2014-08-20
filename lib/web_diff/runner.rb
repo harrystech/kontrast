@@ -44,9 +44,10 @@ module WebDiff
 
             # Create manifest
             puts "Creating manifest..."
-            @image_handler.create_manifest(current_node)
             if WebDiff.configuration.remote
-                @image_handler.upload_manifest(current_node, ENV["CIRCLE_BUILD_NUM"])
+                @image_handler.create_manifest(current_node, ENV["CIRCLE_BUILD_NUM"])
+            else
+                @image_handler.create_manifest(current_node)
             end
 
             # Create gallery

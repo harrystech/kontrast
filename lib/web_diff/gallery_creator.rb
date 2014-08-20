@@ -14,6 +14,7 @@ module WebDiff
 
         def create_gallery(dir_name)
             @directory = FileUtils.mkdir("#{@path}/gallery").join('')
+            @build = dir_name
 
             # Generate HTML
             html = generate_html
@@ -25,7 +26,7 @@ module WebDiff
 
             # Upload file
             @fog.directories.get("circle-artifacts").files.create(
-                key: "artifacts.#{dir_name}/gallery/gallery.html",
+                key: "artifacts.#{@build}/gallery/gallery.html",
                 body: File.open("#{@directory}/gallery.html")
             )
         end
@@ -48,7 +49,13 @@ module WebDiff
         def get_manifests
             if WebDiff.configuration.remote
                 # Download manifests
-                manifest_files = []
+                files = @fog.directories.get('circle-artifacts', prefix: "artifacts.#{@build}/manifest").files
+                files.each do |file|
+                    File.open(file.key.split('/').last, 'w') do |local_file|
+                        local_file.write(file.body)
+                    end
+                end
+                manifest_files = Dir["#{@path}/manifest_*.json"]
             else
                 # Get them locally
                 manifest_files = Dir["#{@path}/manifest_*.json"]
