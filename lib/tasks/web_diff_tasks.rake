@@ -4,7 +4,7 @@ namespace :web_diff do
         WebDiff.run
     end
 
-    task :make_gallery => :environment do
-        WebDiff.make_gallery
+    task :make_gallery, [:path] => :environment do |t, args|
+        WebDiff.make_gallery(args[:path])
     end
 end

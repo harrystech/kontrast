@@ -12,8 +12,8 @@ module WebDiff
             end
 
             # Ensure output path for this set of tests
-            if ENV['CIRCLE_ARTIFACTS']
-                @output_path = FileUtils.mkdir(ENV['CIRCLE_ARTIFACTS'] + "shots").join('')
+            if WebDiff.configuration.remote
+                @output_path = FileUtils.mkdir(WebDiff.configuration.remote_path + "shots").join('')
             elsif Dir.exists?(Rails.root + "tmp/shots")
                 @output_path = FileUtils.mkdir(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
             else

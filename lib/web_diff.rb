@@ -31,19 +31,15 @@ module WebDiff
             puts "Time elapsed: #{(end_time - beginning_time)} seconds"
         end
 
-        def make_gallery
+        def make_gallery(path = nil)
             puts "Creating gallery..."
-
-            # Get path
             if WebDiff.configuration.remote
-                path = ENV['CIRCLE_ARTIFACTS'] + "shots"
+                gallery_creator = GalleryCreator.new(WebDiff.configuration.remote_path)
+                gallery_creator.create_gallery(WebDiff.configuration.remote_path)
             else
-                path = Rails.root + "tmp/shots/#{Time.now.to_i}"
+                gallery_creator = GalleryCreator.new(path)
+                gallery_creator.create_gallery(path)
             end
-
-            # Create gallery
-            gallery_creator = GalleryCreator.new(path)
-            gallery_creator.create_gallery(ENV["CIRCLE_BUILD_NUM"])
         end
     end
 end
