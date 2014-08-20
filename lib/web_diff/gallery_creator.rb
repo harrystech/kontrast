@@ -111,16 +111,16 @@ module WebDiff
 
                 # Set correct paths for image gallery
                 if WebDiff.configuration.remote
-                    path = "https://circle-artifacts.s3.amazonaws.com"
+                    base_path = "https://circle-artifacts.s3.amazonaws.com/circle-artifacts"
                 else
-                    path = ".."
+                    base_path = ".."
                 end
 
                 # Add variations
                 ['test', 'production', 'diff'].each_with_index do |type, i|
                     dirs[size][test_name][:variants] << {
-                        image: "#{path}/#{size}_#{test_name}/" + type + ".png",
-                        thumb: "#{path}/#{size}_#{test_name}/" + type + "_thumb.png",
+                        image: "#{base_path}/#{size}_#{test_name}/" + type + ".png",
+                        thumb: "#{base_path}/#{size}_#{test_name}/" + type + "_thumb.png",
                         domain: type
                     }
                     if type == 'diff'
