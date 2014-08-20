@@ -38,7 +38,7 @@ module WebDiff
                 WebDiff.configuration.before_gallery
 
                 if WebDiff.configuration.remote
-                    gallery_creator = GalleryCreator.new(WebDiff.configuration.remote_path)
+                    gallery_creator = GalleryCreator.new(WebDiff.configuration.gallery_path)
                     gallery_creator.create_gallery(WebDiff.configuration.remote_path)
                 else
                     gallery_creator = GalleryCreator.new(path)
