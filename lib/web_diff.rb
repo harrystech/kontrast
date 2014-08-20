@@ -30,6 +30,9 @@ module WebDiff
             end_time = Time.now
             puts "Time elapsed: #{(end_time - beginning_time)} seconds"
         end
+
+        def make_gallery
+        end
     end
 end
 

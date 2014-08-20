@@ -32,6 +32,20 @@ module WebDiff
 
         def generate_html
             # Parse manifests
+            parsed_manifests = parse_manifests
+            files = parsed_manifests[:files]
+            diffs = parsed_manifests[:diffs]
+
+            # Template variables
+            domain = @path.split('/').last
+            directories = parse_directories(files, diffs)
+
+            # HTML
+            template = File.read(WebDiff.root + '/lib/web_diff/gallery/template.erb')
+            return ERB.new(template).result(binding)
+        end
+
+        def parse_manifests
             files = []
             diffs = {}
             manifest_files = Dir["#{@path}/manifest_*.json"]
@@ -41,13 +55,10 @@ module WebDiff
                 diffs.reverse_merge!(manifest["diffs"])
             end
 
-            # Template variables
-            domain = @path.split('/').last
-            directories = parse_directories(files, diffs)
-
-            # HTML
-            template = File.read(WebDiff.root + '/lib/web_diff/gallery/template.erb')
-            return ERB.new(template).result(binding)
+            return {
+                files: files,
+                diffs: diffs
+            }
         end
 
         def parse_directories(files, diffs)
