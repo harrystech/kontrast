@@ -38,7 +38,7 @@ module WebDiff
             # Create manifest
             puts "Creating manifest..."
             if WebDiff.configuration.remote
-                @image_handler.create_manifest(current_node, ENV["CIRCLE_BUILD_NUM"])
+                @image_handler.create_manifest(current_node, WebDiff.configuration.remote_path)
             else
                 @image_handler.create_manifest(current_node)
             end
