@@ -32,6 +32,18 @@ module WebDiff
         end
 
         def make_gallery
+            puts "Creating gallery..."
+
+            # Get path
+            if WebDiff.configuration.remote
+                path = ENV['CIRCLE_ARTIFACTS'] + "shots"
+            else
+                path = Rails.root + "tmp/shots/#{Time.now.to_i}"
+            end
+
+            # Create gallery
+            gallery_creator = GalleryCreator.new(path)
+            gallery_creator.create_gallery(ENV["CIRCLE_BUILD_NUM"])
         end
     end
 end

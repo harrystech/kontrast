@@ -32,7 +32,6 @@ module WebDiff
             # Load required classes
             @selenium_handler = SeleniumHandler.new(@output_path, @config)
             @image_handler = ImageHandler.new(@output_path)
-            @gallery_creator = GalleryCreator.new(@output_path)
 
             # Parallelism setup
             total_nodes = ENV["CIRCLE_NODE_TOTAL"] ? ENV["CIRCLE_NODE_TOTAL"].to_i : 1
@@ -49,10 +48,6 @@ module WebDiff
             else
                 @image_handler.create_manifest(current_node)
             end
-
-            # Create gallery
-            puts "Creating gallery..."
-            @gallery_creator.create_gallery(ENV["CIRCLE_BUILD_NUM"])
         end
 
         def split_run(total_nodes, current_node)

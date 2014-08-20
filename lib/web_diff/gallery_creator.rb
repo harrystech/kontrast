@@ -13,22 +13,24 @@ module WebDiff
         end
 
         def create_gallery(dir_name)
-            @directory = FileUtils.mkdir("#{@path}/gallery").join('')
+            @gallery_dir = FileUtils.mkdir("#{@path}/gallery").join('')
             @build = dir_name
 
             # Generate HTML
             html = generate_html
 
             # Write file
-            File.open("#{@directory}/gallery.html", 'w') do |outf|
+            File.open("#{@gallery_dir}/gallery.html", 'w') do |outf|
                 outf.write(html)
             end
 
-            # Upload file
-            @fog.directories.get("circle-artifacts").files.create(
-                key: "artifacts.#{@build}/gallery/gallery.html",
-                body: File.open("#{@directory}/gallery.html")
-            )
+            if WebDiff.configuration.remote
+                # Upload file
+                @fog.directories.get("circle-artifacts").files.create(
+                    key: "artifacts.#{@build}/gallery/gallery.html",
+                    body: File.open("#{@gallery_dir}/gallery.html")
+                )
+            end
         end
 
         def generate_html
