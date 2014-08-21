@@ -98,7 +98,7 @@ module WebDiff
                         # Upload to S3
                         if WebDiff.configuration.remote
                             print "Uploading... "
-                            @image_handler.upload_images(WebDiff.configuration.remote_path)
+                            @image_handler.upload_images(width, name)
                         end
 
                         puts "\n", ("=" * 85)
