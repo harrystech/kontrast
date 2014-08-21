@@ -64,7 +64,7 @@ module WebDiff
                 next if ['.', '..'].include?(file)
                 WebDiff.fog.directories.get("circle-artifacts").files.create(
                     key: "#{WebDiff.configuration.remote_path}/#{width}_#{name}/#{file}",
-                    body: File.open("#{@path}/#{width}_#{name}/#{img}"),
+                    body: File.open("#{@path}/#{width}_#{name}/#{file}"),
                     public: true
                 )
             end
