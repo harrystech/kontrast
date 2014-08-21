@@ -64,11 +64,15 @@ module WebDiff
                 next if ['.', '..'].include?(subdir)
                 Dir.foreach("#{@path}/#{subdir}") do |img|
                     next if ['.', '..'].include?(img)
+
+                    begin_time = Time.now
                     WebDiff.fog.directories.get("circle-artifacts").files.create(
                         key: "#{dir_name}/#{subdir}/#{img}",
                         body: File.open("#{@path}/#{subdir}/#{img}"),
                         public: true
                     )
+                    end_time = Time.now
+                    puts "Time elapsed: #{(end_time - begin_time)} seconds"
                 end
             end
         end
