@@ -1,4 +1,5 @@
 require "yaml"
+require "net/http"
 
 module WebDiff
     class Runner
@@ -23,6 +24,20 @@ module WebDiff
         end
 
         def run
+            # Wait for local server to load
+            tries = 20
+            uri = URI(WebDiff.configuration.local_uri)
+            begin
+                Net::HTTP.get(uri)
+            rescue Errno::ECONNREFUSED => e
+                tries -= 1
+                if tries > 0
+                    puts "Waiting for server..."
+                    sleep 1
+                    retry
+                end
+            end
+
             # Load required classes
             @selenium_handler = SeleniumHandler.new(@output_path, @config)
             @image_handler = ImageHandler.new(@output_path)
