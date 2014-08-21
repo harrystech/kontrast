@@ -29,6 +29,9 @@ module WebDiff
 
             end_time = Time.now
             puts "Time elapsed: #{(end_time - beginning_time)} seconds"
+
+            # Return the output path for coordination with gallery creation locally
+            return runner.output_path
         end
 
         def make_gallery(path = nil)

@@ -4,7 +4,14 @@ namespace :web_diff do
         WebDiff.run
     end
 
+    desc "Make the gallery"
     task :make_gallery, [:path] => :environment do |t, args|
         WebDiff.make_gallery(args[:path])
+    end
+
+    desc "Run comparison tests and gallery creation locally"
+    task :run_locally => :environment do
+        path = WebDiff.run
+        WebDiff.make_gallery(path)
     end
 end

@@ -3,6 +3,8 @@ require "net/http"
 
 module WebDiff
     class Runner
+        attr_reader :output_path
+
         def initialize
             # Load config
             begin
@@ -48,15 +50,7 @@ module WebDiff
 
             # Assign tests and run them
             to_run = split_run(total_nodes, current_node)
-            parallel_run(to_run)
-
-            # Create manifest
-            puts "Creating manifest..."
-            if WebDiff.configuration.remote
-                @image_handler.create_manifest(current_node, WebDiff.configuration.remote_path)
-            else
-                @image_handler.create_manifest(current_node)
-            end
+            parallel_run(to_run, current_node)
         end
 
         def split_run(total_nodes, current_node)
@@ -78,7 +72,7 @@ module WebDiff
             return tests_to_run
         end
 
-        def parallel_run(tests)
+        def parallel_run(tests, current_node)
             begin
                 # Run per-page tasks
                 tests.each do |width, pages|
@@ -113,6 +107,14 @@ module WebDiff
 
                 # Log diffs
                 puts @image_handler.diffs
+
+                # Create manifest
+                puts "Creating manifest..."
+                if WebDiff.configuration.remote
+                    @image_handler.create_manifest(current_node, WebDiff.configuration.remote_path)
+                else
+                    @image_handler.create_manifest(current_node)
+                end
             ensure
                 @selenium_handler.cleanup
             end
