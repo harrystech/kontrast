@@ -16,8 +16,13 @@ module WebDiff
             @gallery_dir = FileUtils.mkdir("#{@path}/gallery").join('')
             @build = dir_name
 
+            # Get and parse manifests
+            parsed_manifests = parse_manifests(get_manifests)
+            files = parsed_manifests[:files]
+            diffs = parsed_manifests[:diffs]
+
             # Generate HTML
-            html = generate_html
+            html = generate_html(files, diffs)
 
             # Write file
             File.open("#{@gallery_dir}/gallery.html", 'w') do |outf|
@@ -33,12 +38,7 @@ module WebDiff
             end
         end
 
-        def generate_html
-            # Parse manifests
-            parsed_manifests = parse_manifests(get_manifests)
-            files = parsed_manifests[:files]
-            diffs = parsed_manifests[:diffs]
-
+        def generate_html(files, diffs)
             # Template variables
             domain = @path.split('/').last
             directories = parse_directories(files, diffs)
