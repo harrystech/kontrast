@@ -1,3 +1,6 @@
+# Dependencies
+require "fog"
+
 # Load classes
 require "web_diff/configuration"
 require "web_diff/selenium_handler"
