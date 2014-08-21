@@ -111,7 +111,7 @@ module WebDiff
 
                 # Set correct paths for image gallery
                 if WebDiff.configuration.remote
-                    base_path = "https://circle-artifacts.s3.amazonaws.com/#{@build}"
+                    base_path = WebDiff.configuration.upload_base_uri
                 else
                     base_path = ".."
                 end

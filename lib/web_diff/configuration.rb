@@ -1,18 +1,18 @@
 module WebDiff
     class << self
         attr_accessor :configuration
-    end
 
-    def self.configure
-        self.configuration ||= Configuration.new
-        yield(configuration)
+        def configure
+            self.configuration ||= Configuration.new
+            yield(configuration)
+        end
     end
 
     class Configuration
         attr_accessor :run_parallel, :total_nodes, :current_node
         attr_accessor :_before_run, :_after_run, :_before_gallery, :_after_gallery
         attr_accessor :distortion_metric, :highlight_color, :lowlight_color
-        attr_accessor :remote, :remote_path, :gallery_path, :aws_key, :aws_secret
+        attr_accessor :remote, :remote_path, :gallery_path, :aws_key, :aws_secret, :upload_base_uri
         attr_accessor :local_uri
 
         def initialize
