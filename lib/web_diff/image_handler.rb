@@ -1,5 +1,4 @@
 require "RMagick"
-require "fog"
 
 module WebDiff
     class ImageHandler
@@ -11,12 +10,6 @@ module WebDiff
 
             # This is where failed diffs will be stored
             @diffs = {}
-
-            @fog = Fog::Storage.new({
-                :provider                 => 'AWS',
-                :aws_access_key_id        => WebDiff.configuration.aws_key,
-                :aws_secret_access_key    => WebDiff.configuration.aws_secret
-            })
         end
 
         def crop_images(width, name)
@@ -71,7 +64,7 @@ module WebDiff
                 next if ['.', '..'].include?(subdir)
                 Dir.foreach("#{@path}/#{subdir}") do |img|
                     next if ['.', '..'].include?(img)
-                    @fog.directories.get("circle-artifacts").files.create(
+                    WebDiff.fog.directories.get("circle-artifacts").files.create(
                         key: "#{dir_name}/#{subdir}/#{img}",
                         body: File.open("#{@path}/#{subdir}/#{img}"),
                         public: true
@@ -98,7 +91,7 @@ module WebDiff
 
             if WebDiff.configuration.remote
                 # Upload manifest
-                @fog.directories.get("circle-artifacts").files.create(
+                WebDiff.fog.directories.get("circle-artifacts").files.create(
                     key: "#{build}/manifest_#{current_node}.json",
                     body: manifest.to_json
                 )

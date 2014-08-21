@@ -1,15 +1,9 @@
 require "erb"
-require "fog"
 
 module WebDiff
     class GalleryCreator
         def initialize(path)
             @path = path
-            @fog = Fog::Storage.new({
-                :provider                 => 'AWS',
-                :aws_access_key_id        => WebDiff.configuration.aws_key,
-                :aws_secret_access_key    => WebDiff.configuration.aws_secret
-            })
         end
 
         def create_gallery(dir_name)
@@ -31,7 +25,7 @@ module WebDiff
 
             if WebDiff.configuration.remote
                 # Upload file
-                @fog.directories.get("circle-artifacts").files.create(
+                WebDiff.fog.directories.get("circle-artifacts").files.create(
                     key: "#{@build}/gallery/gallery.html",
                     body: File.open("#{@gallery_dir}/gallery.html")
                 )
@@ -51,7 +45,7 @@ module WebDiff
         def get_manifests
             if WebDiff.configuration.remote
                 # Download manifests
-                files = @fog.directories.get('circle-artifacts', prefix: "#{@build}/manifest").files
+                files = WebDiff.fog.directories.get('circle-artifacts', prefix: "#{@build}/manifest").files
                 files.each do |file|
                     filename = "#{@path}/" + file.key.split('/').last
                     File.open(filename, 'w') do |local_file|
