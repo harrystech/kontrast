@@ -33,7 +33,7 @@ module WebDiff
             end
 
             # Load required classes
-            @selenium_handler = SeleniumHandler.new(@output_path, @config)
+            @selenium_handler = SeleniumHandler.new(@output_path)
             @image_handler = ImageHandler.new(@output_path)
 
             # Parallelism setup
