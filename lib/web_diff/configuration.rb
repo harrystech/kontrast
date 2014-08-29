@@ -17,7 +17,8 @@ module WebDiff
         attr_accessor :_before_run, :_after_run, :_before_gallery, :_after_gallery
         attr_accessor :distortion_metric, :highlight_color, :lowlight_color
         attr_accessor :remote, :remote_path, :gallery_path, :aws_key, :aws_secret, :upload_base_uri
-        attr_accessor :local_uri
+        attr_accessor :local_uri, :test_domain, :production_domain
+        attr_accessor :browser_driver, :browser_profile
 
         def initialize
         end

@@ -2,13 +2,13 @@ require "selenium-webdriver"
 
 module WebDiff
     class SeleniumHandler
-        def initialize(path, config)
-            @path, @config = path, config
+        def initialize(path)
+            @path = path
 
             # Configure profile
-            driver_name = @config['browser']['driver']
+            driver_name = WebDiff.configuration.browser_driver
             profile = Selenium::WebDriver.const_get(driver_name.capitalize)::Profile.new
-            @config['browser']['profile'].each do |option, value|
+            WebDiff.configuration.browser_profile.each do |option, value|
                 profile[option] = value
             end
 
@@ -25,8 +25,8 @@ module WebDiff
 
         def run_comparison(width, path, name)
             # Get domains
-            test_host = @config['domains']['test']
-            production_host = @config['domains']['production']
+            test_host = WebDiff.configuration.test_domain
+            production_host = WebDiff.configuration.production_domain
 
             # Open test host tab
             @driver.navigate.to("#{test_host}#{path}")

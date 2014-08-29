@@ -6,14 +6,6 @@ module WebDiff
         attr_reader :output_path
 
         def initialize
-            # Load config
-            begin
-                @config = YAML::load(File.open(Rails.root + "config/web_diff.yml"))
-            rescue Errno::ENOENT => e
-                puts "Could not load the config file."
-                raise e
-            end
-
             # Ensure output path for this set of tests
             if WebDiff.configuration.remote
                 @output_path = FileUtils.mkdir(WebDiff.configuration.remote_path).join('')
