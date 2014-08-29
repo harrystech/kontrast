@@ -6,6 +6,8 @@ module WebDiff
             @path = path
         end
 
+        # This gets run only once per suite. It collects the manifests from all nodes
+        # and uses them to generate a nice gallery of images.
         def create_gallery(dir_name)
             @gallery_dir = FileUtils.mkdir("#{@path}/gallery").join('')
             @build = dir_name
@@ -24,7 +26,7 @@ module WebDiff
             end
 
             if WebDiff.configuration.remote
-                # Upload file
+                # Upload gallery file
                 WebDiff.fog.directories.get("circle-artifacts").files.create(
                     key: "#{@build}/gallery/gallery.html",
                     body: File.open("#{@gallery_dir}/gallery.html")
@@ -52,11 +54,8 @@ module WebDiff
                         local_file.write(file.body)
                     end
                 end
-                manifest_files = Dir["#{@path}/manifest_*.json"]
-            else
-                # Get them locally
-                manifest_files = Dir["#{@path}/manifest_*.json"]
             end
+            manifest_files = Dir["#{@path}/manifest_*.json"]
             return manifest_files
         end
 
@@ -75,6 +74,8 @@ module WebDiff
             }
         end
 
+        # This function just turns the list of files and diffs into a hash that the gallery
+        # creator can insert into a template. See an example of the created hash below.
         def parse_directories(files, diffs)
             dirs = {}
             directories = files.map { |f| f.split('/').first }.uniq

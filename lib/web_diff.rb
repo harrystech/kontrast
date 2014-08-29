@@ -27,10 +27,10 @@ module WebDiff
         def run
             beginning_time = Time.now
 
-            # Call "before" hook
-            WebDiff.configuration.before_run
-
             begin
+                # Call "before" hook
+                WebDiff.configuration.before_run
+
                 runner = Runner.new
                 runner.run
             ensure
@@ -41,7 +41,7 @@ module WebDiff
             end_time = Time.now
             puts "Time elapsed: #{(end_time - beginning_time)} seconds"
 
-            # Return the output path for coordination with gallery creation locally
+            # Return the output path for so we can pass something to gallery creation locally
             return runner.output_path
         end
 

@@ -26,7 +26,7 @@ module WebDiff
         end
 
         def run
-            # Wait for local server to load
+            # Wait for local server to load for 20 seconds
             tries = 20
             uri = URI(WebDiff.configuration.local_uri)
             begin
@@ -45,6 +45,7 @@ module WebDiff
             @image_handler = ImageHandler.new(@output_path)
 
             # Parallelism setup
+            # We always assume some kind of "parallelism" even if we only have 1 node
             total_nodes = WebDiff.configuration.run_parallel ? WebDiff.configuration.total_nodes : 1
             current_node = WebDiff.configuration.run_parallel ? WebDiff.configuration.current_node : 0
 
@@ -53,6 +54,8 @@ module WebDiff
             parallel_run(to_run, current_node)
         end
 
+        # Given the total number of nodes and the index of the current node,
+        # we determine which tests the current node will run
         def split_run(total_nodes, current_node)
             all_tests = @config['pages']
             tests_to_run = Hash.new
@@ -72,6 +75,7 @@ module WebDiff
             return tests_to_run
         end
 
+        # Runs tests, handles all image operations, creates manifest for current node
         def parallel_run(tests, current_node)
             begin
                 # Run per-page tasks

@@ -12,19 +12,25 @@ module WebDiff
             @diffs = {}
         end
 
+        # In order for images to be diff'ed, they need to have the same dimensions
         def crop_images(width, name)
             # Load images
             test_image = Image.read("#{@path}/#{width}_#{name}/test.png").first
             production_image = Image.read("#{@path}/#{width}_#{name}/production.png").first
 
+            # Let's not do anything if the images are already the same size
+            return if test_image.rows == production_image.rows
+
             # Get max height of both images
             max_height = [test_image.rows, production_image.rows].max
 
             # Crop
-            test_image.extent(width, max_height).write(test_image.filename) { self.quality = 10 }
-            production_image.extent(width, max_height).write(production_image.filename) { self.quality = 10 }
+            test_image.extent(width, max_height).write(test_image.filename)
+            production_image.extent(width, max_height).write(production_image.filename)
         end
 
+        # Uses the compare_channel function to highlight the differences between two images
+        # Docs: http://www.imagemagick.org/RMagick/doc/image1.html#compare_channel
         def diff_images(width, name)
             # Load images
             test_image = Image.read("#{@path}/#{width}_#{name}/test.png").first
@@ -35,9 +41,9 @@ module WebDiff
                 options.highlight_color = WebDiff.configuration.highlight_color
                 options.lowlight_color = WebDiff.configuration.lowlight_color
             end
-            diff.first.write("#{@path}/#{width}_#{name}/diff.png") { self.quality = 10 }
+            diff.first.write("#{@path}/#{width}_#{name}/diff.png")
 
-            # Is the file actually different?
+            # If the images are different, let the class know about it so that it gets added to the manifest
             if diff.last > 0
                 @diffs["#{width}_#{name}"] = {
                     width: width,
@@ -47,6 +53,7 @@ module WebDiff
             end
         end
 
+        # For the gallery. Not sure if this is really necessary.
         def create_thumbnails(width, name)
             # Load images
             test_image = Image.read("#{@path}/#{width}_#{name}/test.png").first
@@ -59,6 +66,7 @@ module WebDiff
             diff_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/diff_thumb.png")
         end
 
+        # We upload the images per test
         def upload_images(width, name)
             Dir.foreach("#{@path}/#{width}_#{name}") do |file|
                 next if ['.', '..'].include?(file)
@@ -70,6 +78,8 @@ module WebDiff
             end
         end
 
+        # The manifest is a per-node .json file that is used to create the gallery
+        # without having to download all assets from S3 to the test environment
         def create_manifest(current_node, build = nil)
             # Set up structure
             manifest = {
