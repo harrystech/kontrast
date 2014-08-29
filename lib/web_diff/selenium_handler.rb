@@ -2,8 +2,8 @@ require "selenium-webdriver"
 
 module WebDiff
     class SeleniumHandler
-        def initialize(path)
-            @path = path
+        def initialize
+            @path = WebDiff.path
 
             # Configure profile
             driver_name = WebDiff.configuration.browser_driver

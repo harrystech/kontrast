@@ -2,8 +2,8 @@ require "erb"
 
 module WebDiff
     class GalleryCreator
-        def initialize(path)
-            @path = path
+        def initialize
+            @path = WebDiff.path
         end
 
         # This gets run only once per suite. It collects the manifests from all nodes

@@ -12,8 +12,25 @@ require "web_diff/version"
 
 module WebDiff
     class << self
+        @@path = nil
+
         def root
             File.expand_path('../..', __FILE__)
+        end
+
+        def path
+            return @@path if @@path
+
+            if WebDiff.configuration.remote
+                @@path = WebDiff.configuration.remote_path
+            elsif Dir.exists?("/tmp/shots")
+                @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
+            else
+                FileUtils.mkdir("/tmp/shots")
+                @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
+            end
+
+            return @@path
         end
 
         def fog
@@ -40,9 +57,6 @@ module WebDiff
 
             end_time = Time.now
             puts "Time elapsed: #{(end_time - beginning_time)} seconds"
-
-            # Return the output path for so we can pass something to gallery creation locally
-            return runner.output_path
         end
 
         def make_gallery(path = nil)
@@ -52,10 +66,10 @@ module WebDiff
                 WebDiff.configuration.before_gallery
 
                 if WebDiff.configuration.remote
-                    gallery_creator = GalleryCreator.new(WebDiff.configuration.gallery_path)
+                    gallery_creator = GalleryCreator.new
                     gallery_creator.create_gallery(WebDiff.configuration.remote_path)
                 else
-                    gallery_creator = GalleryCreator.new(path)
+                    gallery_creator = GalleryCreator.new
                     gallery_creator.create_gallery(path)
                 end
             ensure

@@ -3,18 +3,7 @@ require "net/http"
 
 module WebDiff
     class Runner
-        attr_reader :output_path
-
         def initialize
-            # Ensure output path for this set of tests
-            if WebDiff.configuration.remote
-                @output_path = WebDiff.configuration.remote_path
-            elsif Dir.exists?("/tmp/shots")
-                @output_path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
-            else
-                FileUtils.mkdir("/tmp/shots")
-                @output_path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
-            end
         end
 
         def run
@@ -66,8 +55,8 @@ module WebDiff
         # Runs tests, handles all image operations, creates manifest for current node
         def parallel_run(tests, current_node)
             # Load test handlers
-            @selenium_handler = SeleniumHandler.new(@output_path)
-            @image_handler = ImageHandler.new(@output_path)
+            @selenium_handler = SeleniumHandler.new
+            @image_handler = ImageHandler.new
 
             begin
                 # Run per-page tasks

@@ -11,7 +11,7 @@ namespace :web_diff do
 
     desc "Run comparison tests and gallery creation locally"
     task :run_locally => :environment do
-        path = WebDiff.run
-        WebDiff.make_gallery(path)
+        WebDiff.run
+        WebDiff.make_gallery(WebDiff.path)
     end
 end

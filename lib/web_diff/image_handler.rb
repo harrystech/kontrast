@@ -5,8 +5,8 @@ module WebDiff
         include Magick
         attr_reader :diffs
 
-        def initialize(path)
-            @path = path
+        def initialize
+            @path = WebDiff.path
 
             # This is where failed diffs will be stored
             @diffs = {}
