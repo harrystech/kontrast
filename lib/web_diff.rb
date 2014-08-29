@@ -22,7 +22,11 @@ module WebDiff
             return @@path if @@path
 
             if WebDiff.configuration.remote
-                @@path = WebDiff.configuration.remote_path
+                if Dir.exists?(WebDiff.configuration.remote_path)
+                    @@path = WebDiff.configuration.remote_path
+                else
+                    @@path = FileUtils.mkdir(WebDiff.configuration.remote_path).join('')
+                end
             elsif Dir.exists?("/tmp/shots")
                 @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
             else
