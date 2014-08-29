@@ -40,7 +40,7 @@ module WebDiff
             current_output = FileUtils.mkdir("#{@path}/#{width}_#{name}").join('')
 
             # Take screenshot
-            sleep 1
+            WebDiff.configuration.before_screenshot
             @driver.save_screenshot("#{current_output}/test.png")
             @driver2.save_screenshot("#{current_output}/production.png")
         end

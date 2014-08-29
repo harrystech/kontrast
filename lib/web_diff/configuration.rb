@@ -14,7 +14,7 @@ module WebDiff
 
     class Configuration
         attr_accessor :run_parallel, :total_nodes, :current_node
-        attr_accessor :_before_run, :_after_run, :_before_gallery, :_after_gallery
+        attr_accessor :_before_run, :_after_run, :_before_gallery, :_after_gallery, :_before_screenshot
         attr_accessor :distortion_metric, :highlight_color, :lowlight_color
         attr_accessor :remote, :remote_path, :gallery_path, :aws_bucket, :aws_key, :aws_secret, :upload_base_uri
         attr_accessor :test_domain, :production_domain
@@ -70,6 +70,14 @@ module WebDiff
                 @_after_gallery = block
             else
                 @_after_gallery.call if @_after_gallery
+            end
+        end
+
+        def before_screenshot(&block)
+            if block_given?
+                @_before_screenshot = block
+            else
+                @_before_screenshot.call if @_before_screenshot
             end
         end
     end
