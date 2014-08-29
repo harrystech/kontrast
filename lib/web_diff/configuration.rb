@@ -21,6 +21,16 @@ module WebDiff
         attr_accessor :browser_driver, :browser_profile
 
         def initialize
+            # Set defaults
+            @browser_driver = "firefox"
+            @browser_profile = {}
+
+            @run_parallel = false
+            @remote = false
+
+            @distortion_metric = "MeanAbsoluteErrorMetric"
+            @highlight_color = "blue"
+            @lowlight_color = "rgba(255, 255, 255, 0.3)"
         end
 
         def pages(width)
