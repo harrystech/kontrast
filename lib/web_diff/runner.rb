@@ -8,12 +8,16 @@ module WebDiff
         def initialize
             # Ensure output path for this set of tests
             if WebDiff.configuration.remote
-                @output_path = FileUtils.mkdir(WebDiff.configuration.remote_path).join('')
-            elsif Dir.exists?(Rails.root + "tmp/shots")
-                @output_path = FileUtils.mkdir(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
+                if Dir.exists?(WebDiff.configuration.remote_path)
+                    @output_path = WebDiff.configuration.remote_path
+                else
+                    @output_path = FileUtils.mkdir(WebDiff.configuration.remote_path).join('')
+                end
+            elsif Dir.exists?("/tmp/shots")
+                @output_path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
             else
-                FileUtils.mkdir(Rails.root + "tmp/shots")
-                @output_path = FileUtils.mkdir(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
+                FileUtils.mkdir("/tmp/shots")
+                @output_path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
             end
         end
 
