@@ -20,7 +20,7 @@ module WebDiff
         def run
             # Wait for local server to load for 20 seconds
             tries = 20
-            uri = URI(WebDiff.configuration.local_uri)
+            uri = URI(WebDiff.configuration.test_domain)
             begin
                 Net::HTTP.get(uri)
             rescue Errno::ECONNREFUSED => e
@@ -31,10 +31,6 @@ module WebDiff
                     retry
                 end
             end
-
-            # Load required classes
-            @selenium_handler = SeleniumHandler.new(@output_path)
-            @image_handler = ImageHandler.new(@output_path)
 
             # Parallelism setup
             # We always assume some kind of "parallelism" even if we only have 1 node
@@ -69,6 +65,10 @@ module WebDiff
 
         # Runs tests, handles all image operations, creates manifest for current node
         def parallel_run(tests, current_node)
+            # Load test handlers
+            @selenium_handler = SeleniumHandler.new(@output_path)
+            @image_handler = ImageHandler.new(@output_path)
+
             begin
                 # Run per-page tasks
                 tests.each do |width, pages|
