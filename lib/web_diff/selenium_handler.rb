@@ -8,8 +8,8 @@ module WebDiff
             # Configure profile
             driver_name = @config['browser']['driver']
             profile = Selenium::WebDriver.const_get(driver_name.capitalize)::Profile.new
-            if @config['browser']['user_agent']
-                profile['general.useragent.override'] = @config['browser']['user_agent']
+            @config['browser']['profile'].each do |option, value|
+                profile[option] = value
             end
 
             # Get drivers with profile

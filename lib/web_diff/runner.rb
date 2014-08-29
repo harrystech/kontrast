@@ -57,7 +57,7 @@ module WebDiff
         # Given the total number of nodes and the index of the current node,
         # we determine which tests the current node will run
         def split_run(total_nodes, current_node)
-            all_tests = @config['pages']
+            all_tests = WebDiff.test_suite.tests
             tests_to_run = Hash.new
 
             index = 0

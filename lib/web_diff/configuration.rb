@@ -1,10 +1,14 @@
 module WebDiff
     class << self
-        attr_accessor :configuration
+        attr_accessor :configuration, :test_suite
 
         def configure
             self.configuration ||= Configuration.new
             yield(configuration)
+        end
+
+        def tests
+            self.test_suite ||= TestBuilder.new
         end
     end
 
@@ -16,6 +20,14 @@ module WebDiff
         attr_accessor :local_uri
 
         def initialize
+        end
+
+        def pages(width)
+            if !block_given?
+                raise Exception.new("You must pass a block to this method.")
+            end
+            WebDiff.tests.add_width(width)
+            yield(WebDiff.tests)
         end
 
         def before_run(&block)
@@ -48,6 +60,24 @@ module WebDiff
             else
                 @_after_gallery.call if @_after_gallery
             end
+        end
+    end
+
+    class TestBuilder
+        attr_reader :tests
+
+        def initialize
+            @tests = Hash.new
+        end
+
+        def add_width(width)
+            @tests[width] = Hash.new
+            @current_width = width
+        end
+
+        # Adds a given test from config to the suite
+        def method_missing(name, *args)
+            @tests[@current_width][name.to_s] = args.first
         end
     end
 end
