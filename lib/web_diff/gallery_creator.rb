@@ -10,7 +10,6 @@ module WebDiff
         # and uses them to generate a nice gallery of images.
         def create_gallery(output_dir)
             @gallery_dir = FileUtils.mkdir("#{output_dir}/gallery").join('')
-            @build = output_dir
 
             # Get and parse manifests
             parsed_manifests = parse_manifests(get_manifests)
@@ -39,7 +38,7 @@ module WebDiff
         def get_manifests
             if WebDiff.configuration.remote
                 # Download manifests
-                files = WebDiff.fog.directories.get(WebDiff.configuration.aws_bucket, prefix: "#{@build}/manifest").files
+                files = WebDiff.fog.directories.get(WebDiff.configuration.aws_bucket, prefix: "#{@path}/manifest").files
                 files.each do |file|
                     filename = "#{@path}/" + file.key.split('/').last
                     File.open(filename, 'w') do |local_file|
