@@ -8,9 +8,8 @@ module WebDiff
 
         # This gets run only once per suite. It collects the manifests from all nodes
         # and uses them to generate a nice gallery of images.
-        def create_gallery(dir_name)
-            @gallery_dir = FileUtils.mkdir("#{@path}/gallery").join('')
-            @build = dir_name
+        def create_gallery(output_dir)
+            @build = output_dir
 
             # Get and parse manifests
             parsed_manifests = parse_manifests(get_manifests)
@@ -21,16 +20,8 @@ module WebDiff
             html = generate_html(files, diffs)
 
             # Write file
-            File.open("#{@gallery_dir}/gallery.html", 'w') do |outf|
+            File.open("#{output_dir}/gallery.html", 'w') do |outf|
                 outf.write(html)
-            end
-
-            if WebDiff.configuration.remote
-                # Upload gallery file
-                WebDiff.fog.directories.get(WebDiff.configuration.aws_bucket).files.create(
-                    key: "#{@build}/gallery/gallery.html",
-                    body: File.open("#{@gallery_dir}/gallery.html")
-                )
             end
         end
 
