@@ -9,6 +9,7 @@ module WebDiff
         # This gets run only once per suite. It collects the manifests from all nodes
         # and uses them to generate a nice gallery of images.
         def create_gallery(output_dir)
+            @gallery_dir = FileUtils.mkdir("#{output_dir}/gallery").join('')
             @build = output_dir
 
             # Get and parse manifests
@@ -20,7 +21,7 @@ module WebDiff
             html = generate_html(files, diffs)
 
             # Write file
-            File.open("#{output_dir}/gallery.html", 'w') do |outf|
+            File.open("#{@gallery_dir}/gallery.html", 'w') do |outf|
                 outf.write(html)
             end
         end
