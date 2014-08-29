@@ -8,11 +8,7 @@ module WebDiff
         def initialize
             # Ensure output path for this set of tests
             if WebDiff.configuration.remote
-                if Dir.exists?(WebDiff.configuration.remote_path)
-                    @output_path = WebDiff.configuration.remote_path
-                else
-                    @output_path = FileUtils.mkdir(WebDiff.configuration.remote_path).join('')
-                end
+                @output_path = WebDiff.configuration.remote_path
             elsif Dir.exists?("/tmp/shots")
                 @output_path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
             else

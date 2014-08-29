@@ -70,7 +70,7 @@ module WebDiff
         def upload_images(width, name)
             Dir.foreach("#{@path}/#{width}_#{name}") do |file|
                 next if ['.', '..'].include?(file)
-                WebDiff.fog.directories.get("circle-artifacts").files.create(
+                WebDiff.fog.directories.get(WebDiff.configuration.aws_bucket).files.create(
                     key: "#{WebDiff.configuration.remote_path}/#{width}_#{name}/#{file}",
                     body: File.open("#{@path}/#{width}_#{name}/#{file}"),
                     public: true
@@ -98,7 +98,7 @@ module WebDiff
 
             if WebDiff.configuration.remote
                 # Upload manifest
-                WebDiff.fog.directories.get("circle-artifacts").files.create(
+                WebDiff.fog.directories.get(WebDiff.configuration.aws_bucket).files.create(
                     key: "#{build}/manifest_#{current_node}.json",
                     body: manifest.to_json
                 )
