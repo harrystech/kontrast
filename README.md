@@ -4,9 +4,11 @@ A website comparison tool.
 
 ## Prerequisites
 
-Make sure you have ImageMagick installed. You can do this on OS X via brew with:
+1. Install ImageMagick. You can do this on OS X via brew with:
 
-	brew install imagemagick
+		brew install imagemagick
+
+2. Make sure you have Firefox or a different Selenium-compatible browser installed. By default, Firefox is used.
 
 ## Installation
 
