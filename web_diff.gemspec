@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
     spec.version       = WebDiff::VERSION
     spec.authors       = ["Ilya Rubnich"]
     spec.email         = ["ilya@harrys.com"]
-    spec.summary       = %q{A screenshot comparison tool for Ruby.}
+    spec.summary       = %q{A website comparison tool.}
     #spec.description   = %q{TODO: Write a longer description. Optional.}
     spec.homepage      = ""
     spec.license       = "MIT"

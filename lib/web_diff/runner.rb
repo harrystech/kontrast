@@ -18,6 +18,8 @@ module WebDiff
                     puts "Waiting for server..."
                     sleep 1
                     retry
+                else
+                    raise Exception.new("Could not reach the local server.")
                 end
             end
 
