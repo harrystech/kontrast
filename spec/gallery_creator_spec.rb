@@ -1,12 +1,12 @@
-describe WebDiff::GalleryCreator do
+describe Chalcogen::GalleryCreator do
     before :all do
-        WebDiff.configure do |config|
+        Chalcogen.configure do |config|
         end
     end
 
     before :each do
-        @image_handler = WebDiff::ImageHandler.new
-        @gallery_creator = WebDiff::GalleryCreator.new
+        @image_handler = Chalcogen::ImageHandler.new
+        @gallery_creator = Chalcogen::GalleryCreator.new(@image_handler.path)
     end
 
     it "can parse manifests" do

@@ -1,6 +1,6 @@
-describe WebDiff::TestBuilder do
+describe Chalcogen::TestBuilder do
     it "can build a test suite" do
-        WebDiff.configure do |config|
+        Chalcogen.configure do |config|
             config.pages(1280) do |page|
                 page.home "/"
                 page.products "/products"
@@ -10,7 +10,7 @@ describe WebDiff::TestBuilder do
                 page.other_stuff = "/other-stuff"
             end
         end
-        expect(WebDiff.test_suite.tests).to eql({
+        expect(Chalcogen.test_suite.tests).to eql({
             1280 => {
                 "home" => "/",
                 "products" => "/products"

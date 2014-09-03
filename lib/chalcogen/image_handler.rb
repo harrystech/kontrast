@@ -90,6 +90,7 @@ module Chalcogen
             # Dump directories
             Dir.foreach(@path) do |subdir|
                 next if ['.', '..'].include?(subdir)
+                next if subdir.index('manifest_')
                 Dir.foreach("#{@path}/#{subdir}") do |img|
                     next if ['.', '..'].include?(img)
                     manifest[:files] << "#{subdir}/#{img}"

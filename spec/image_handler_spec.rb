@@ -1,6 +1,6 @@
-describe WebDiff::ImageHandler do
+describe Chalcogen::ImageHandler do
     before :all do
-        WebDiff.configure do |config|
+        Chalcogen.configure do |config|
             # Set up some tests
             config.pages(1280) do |page|
                 page.home "/"
@@ -14,12 +14,12 @@ describe WebDiff::ImageHandler do
     end
 
     before :each do
-        @image_handler = WebDiff::ImageHandler.new
+        @image_handler = Chalcogen::ImageHandler.new
     end
 
     it "can create a manifest for the current node" do
         # Create some files
-        WebDiff.test_suite.tests.each do |size, tests|
+        Chalcogen.test_suite.tests.each do |size, tests|
             tests.each do |name, path|
                 test_name = "#{size}_#{name}"
                 path = FileUtils.mkdir_p(@image_handler.path + "/#{test_name}").join('')
