@@ -40,9 +40,16 @@ describe Chalcogen::GalleryCreator do
 
         # Parse
         parsed_manifests = @gallery_creator.parse_manifests(manifests)
-        expect(parsed_manifests).to eql({
-            :files =>
-                ["1280_home/diff.png",
+
+        expect(parsed_manifests[:diffs]).to eql({
+            "1280_home" => {
+                "width" => 1280,
+                "name" => "home",
+                "diff" => 0.1337
+            }
+        })
+
+        expect(parsed_manifests[:files]).to include("1280_home/diff.png",
                    "1280_home/diff_thumb.png",
                    "1280_home/production.png",
                    "1280_home/production_thumb.png",
@@ -53,15 +60,7 @@ describe Chalcogen::GalleryCreator do
                    "320_home/test.png",
                    "320_home/test_thumb.png",
                    "320_home/diff.png",
-                   "320_home/diff_thumb.png"],
-            :diffs => {
-                "1280_home" => {
-                    "width" => 1280,
-                    "name" => "home",
-                    "diff" => 0.1337
-                }
-            }
-        })
+                   "320_home/diff_thumb.png")
     end
 
     it "can create the gallery hash" do
