@@ -38,7 +38,7 @@ module Chalcogen
             directories = parse_directories(files, diffs)
 
             # HTML
-            template = File.read(Chalcogen.root + '/lib/web_diff/gallery/template.erb')
+            template = File.read(Chalcogen.root + '/lib/chalcogen/gallery/template.erb')
             return ERB.new(template).result(binding)
         end
 

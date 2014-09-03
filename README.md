@@ -1,4 +1,4 @@
-# WebDiff
+# Chalcogen
 
 A website comparison tool.
 
@@ -14,7 +14,7 @@ A website comparison tool.
 
 Add this line to your application's Gemfile:
 
-    gem 'web_diff'
+    gem 'chalcogen'
 
 And then execute:
 
@@ -22,11 +22,11 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install web_diff
+    $ gem install chalcogen
 
 Then you'll need to generate a config file:
 
-	$ web_diff generate:config idk
+	$ chalcogen generate:config idk
 
 ## Usage
 
@@ -34,7 +34,7 @@ TODO: Write usage instructions here
 
 ## Contributing
 
-1. Fork it ( https://github.com/harrystech/web_diff/fork )
+1. Fork it ( https://github.com/harrystech/chalcogen/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

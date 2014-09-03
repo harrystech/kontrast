@@ -64,6 +64,7 @@ module Chalcogen
 
         def make_gallery(path = nil)
             puts "Creating gallery..."
+            gallery_info = {}
             begin
                 # Call "before" hook
                 Chalcogen.configuration.before_gallery
