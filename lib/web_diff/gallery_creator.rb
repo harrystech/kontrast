@@ -34,7 +34,7 @@ module WebDiff
 
             # Get an actual link we can use
             if WebDiff.configuration.remote
-                gallery_path = WebDiff.configuration.upload_base_uri + "/#{@gallery_dir}/gallery.html"
+                gallery_path = WebDiff.configuration.upload_base_uri + "/gallery/gallery.html"
             else
                 gallery_path = "#{@gallery_dir}/gallery.html"
             end
