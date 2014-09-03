@@ -1,10 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'web_diff/version'
+require 'chalcogen/version'
 
 Gem::Specification.new do |spec|
-    spec.name          = "web_diff"
+    spec.name          = "chalcogen"
     spec.version       = WebDiff::VERSION
     spec.authors       = ["Ilya Rubnich"]
     spec.email         = ["ilya@harrys.com"]

@@ -9,8 +9,6 @@ require "web_diff/image_handler"
 require "web_diff/gallery_creator"
 require "web_diff/runner"
 
-require "web_diff/version"
-
 module WebDiff
     class << self
         @@path = nil
