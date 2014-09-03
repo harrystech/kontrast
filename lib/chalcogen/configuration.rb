@@ -1,4 +1,4 @@
-module WebDiff
+module Chalcogen
     class << self
         attr_accessor :configuration, :test_suite
 
@@ -37,8 +37,8 @@ module WebDiff
             if !block_given?
                 raise Exception.new("You must pass a block to this method.")
             end
-            WebDiff.tests.add_width(width)
-            yield(WebDiff.tests)
+            Chalcogen.tests.add_width(width)
+            yield(Chalcogen.tests)
         end
 
         def before_run(&block)

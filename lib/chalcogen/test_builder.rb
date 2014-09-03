@@ -1,4 +1,4 @@
-module WebDiff
+module Chalcogen
     class TestBuilder
         attr_reader :tests
 

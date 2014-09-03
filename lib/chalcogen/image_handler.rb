@@ -1,12 +1,12 @@
 require "RMagick"
 
-module WebDiff
+module Chalcogen
     class ImageHandler
         include Magick
         attr_reader :diffs, :path
 
         def initialize
-            @path = WebDiff.path
+            @path = Chalcogen.path
 
             # This is where failed diffs will be stored
             @diffs = {}
@@ -37,9 +37,9 @@ module WebDiff
             production_image = Image.read("#{@path}/#{width}_#{name}/production.png").first
 
             # Compare and save diff
-            diff = test_image.compare_channel(production_image, Magick.const_get(WebDiff.configuration.distortion_metric)) do |options|
-                options.highlight_color = WebDiff.configuration.highlight_color
-                options.lowlight_color = WebDiff.configuration.lowlight_color
+            diff = test_image.compare_channel(production_image, Magick.const_get(Chalcogen.configuration.distortion_metric)) do |options|
+                options.highlight_color = Chalcogen.configuration.highlight_color
+                options.lowlight_color = Chalcogen.configuration.lowlight_color
             end
             diff.first.write("#{@path}/#{width}_#{name}/diff.png")
 
@@ -70,8 +70,8 @@ module WebDiff
         def upload_images(width, name)
             Dir.foreach("#{@path}/#{width}_#{name}") do |file|
                 next if ['.', '..'].include?(file)
-                WebDiff.fog.directories.get(WebDiff.configuration.aws_bucket).files.create(
-                    key: "#{WebDiff.configuration.remote_path}/#{width}_#{name}/#{file}",
+                Chalcogen.fog.directories.get(Chalcogen.configuration.aws_bucket).files.create(
+                    key: "#{Chalcogen.configuration.remote_path}/#{width}_#{name}/#{file}",
                     body: File.open("#{@path}/#{width}_#{name}/#{file}"),
                     public: true
                 )
@@ -96,9 +96,9 @@ module WebDiff
                 end
             end
 
-            if WebDiff.configuration.remote
+            if Chalcogen.configuration.remote
                 # Upload manifest
-                WebDiff.fog.directories.get(WebDiff.configuration.aws_bucket).files.create(
+                Chalcogen.fog.directories.get(Chalcogen.configuration.aws_bucket).files.create(
                     key: "#{build}/manifest_#{current_node}.json",
                     body: manifest.to_json
                 )

@@ -1,14 +1,14 @@
 require "selenium-webdriver"
 
-module WebDiff
+module Chalcogen
     class SeleniumHandler
         def initialize
-            @path = WebDiff.path
+            @path = Chalcogen.path
 
             # Configure profile
-            driver_name = WebDiff.configuration.browser_driver
+            driver_name = Chalcogen.configuration.browser_driver
             profile = Selenium::WebDriver.const_get(driver_name.capitalize)::Profile.new
-            WebDiff.configuration.browser_profile.each do |option, value|
+            Chalcogen.configuration.browser_profile.each do |option, value|
                 profile[option] = value
             end
 
@@ -25,8 +25,8 @@ module WebDiff
 
         def run_comparison(width, path, name)
             # Get domains
-            test_host = WebDiff.configuration.test_domain
-            production_host = WebDiff.configuration.production_domain
+            test_host = Chalcogen.configuration.test_domain
+            production_host = Chalcogen.configuration.production_domain
 
             # Open test host tab
             @driver.navigate.to("#{test_host}#{path}")
@@ -40,7 +40,7 @@ module WebDiff
             current_output = FileUtils.mkdir("#{@path}/#{width}_#{name}").join('')
 
             # Take screenshot
-            WebDiff.configuration.before_screenshot(@driver, @driver2)
+            Chalcogen.configuration.before_screenshot(@driver, @driver2)
             @driver.save_screenshot("#{current_output}/test.png")
             @driver2.save_screenshot("#{current_output}/production.png")
         end

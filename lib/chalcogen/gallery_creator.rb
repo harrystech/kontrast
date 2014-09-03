@@ -1,10 +1,10 @@
 require "erb"
 require "active_support/core_ext/hash"
 
-module WebDiff
+module Chalcogen
     class GalleryCreator
         def initialize
-            @path = WebDiff.path
+            @path = Chalcogen.path
         end
 
         # This gets run only once per suite. It collects the manifests from all nodes
@@ -38,14 +38,14 @@ module WebDiff
             directories = parse_directories(files, diffs)
 
             # HTML
-            template = File.read(WebDiff.root + '/lib/web_diff/gallery/template.erb')
+            template = File.read(Chalcogen.root + '/lib/web_diff/gallery/template.erb')
             return ERB.new(template).result(binding)
         end
 
         def get_manifests
-            if WebDiff.configuration.remote
+            if Chalcogen.configuration.remote
                 # Download manifests
-                files = WebDiff.fog.directories.get(WebDiff.configuration.aws_bucket, prefix: "#{@path}/manifest").files
+                files = Chalcogen.fog.directories.get(Chalcogen.configuration.aws_bucket, prefix: "#{@path}/manifest").files
                 files.each do |file|
                     filename = "#{@path}/" + file.key.split('/').last
                     File.open(filename, 'w') do |local_file|
@@ -96,8 +96,8 @@ module WebDiff
             }
 
             # This determines where to display images from in the gallery
-            if WebDiff.configuration.remote
-                base_path = WebDiff.configuration.upload_base_uri
+            if Chalcogen.configuration.remote
+                base_path = Chalcogen.configuration.upload_base_uri
             else
                 base_path = ".."
             end

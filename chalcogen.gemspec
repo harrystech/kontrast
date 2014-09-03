@@ -5,7 +5,7 @@ require 'chalcogen/version'
 
 Gem::Specification.new do |spec|
     spec.name          = "chalcogen"
-    spec.version       = WebDiff::VERSION
+    spec.version       = Chalcogen::VERSION
     spec.authors       = ["Ilya Rubnich"]
     spec.email         = ["ilya@harrys.com"]
     spec.summary       = %q{A website comparison tool.}

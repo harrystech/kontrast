@@ -1,17 +1,17 @@
-namespace :web_diff do
+namespace :chalcogen do
     desc "Run the comparisons"
     task :run => :environment do
-        WebDiff.run
+        Chalcogen.run
     end
 
     desc "Make the gallery"
     task :make_gallery, [:path] => :environment do |t, args|
-        WebDiff.make_gallery(args[:path])
+        Chalcogen.make_gallery(args[:path])
     end
 
     desc "Run comparison tests and gallery creation locally"
     task :run_locally => :environment do
-        WebDiff.run
-        WebDiff.make_gallery(WebDiff.path)
+        Chalcogen.run
+        Chalcogen.make_gallery(Chalcogen.path)
     end
 end

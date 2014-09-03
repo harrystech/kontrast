@@ -1,7 +1,7 @@
 require "yaml"
 require "net/http"
 
-module WebDiff
+module Chalcogen
     class Runner
         def initialize
         end
@@ -9,7 +9,7 @@ module WebDiff
         def run
             # Wait for local server to load for 20 seconds
             tries = 20
-            uri = URI(WebDiff.configuration.test_domain)
+            uri = URI(Chalcogen.configuration.test_domain)
             begin
                 Net::HTTP.get(uri)
             rescue Errno::ECONNREFUSED => e
@@ -25,8 +25,8 @@ module WebDiff
 
             # Parallelism setup
             # We always assume some kind of "parallelism" even if we only have 1 node
-            total_nodes = WebDiff.configuration.run_parallel ? WebDiff.configuration.total_nodes : 1
-            current_node = WebDiff.configuration.run_parallel ? WebDiff.configuration.current_node : 0
+            total_nodes = Chalcogen.configuration.run_parallel ? Chalcogen.configuration.total_nodes : 1
+            current_node = Chalcogen.configuration.run_parallel ? Chalcogen.configuration.current_node : 0
 
             # Assign tests and run them
             to_run = split_run(total_nodes, current_node)
@@ -36,7 +36,7 @@ module WebDiff
         # Given the total number of nodes and the index of the current node,
         # we determine which tests the current node will run
         def split_run(total_nodes, current_node)
-            all_tests = WebDiff.test_suite.tests
+            all_tests = Chalcogen.test_suite.tests
             tests_to_run = Hash.new
 
             index = 0
@@ -83,7 +83,7 @@ module WebDiff
                         @image_handler.create_thumbnails(width, name)
 
                         # Upload to S3
-                        if WebDiff.configuration.remote
+                        if Chalcogen.configuration.remote
                             print "Uploading... "
                             @image_handler.upload_images(width, name)
                         end
@@ -97,8 +97,8 @@ module WebDiff
 
                 # Create manifest
                 puts "Creating manifest..."
-                if WebDiff.configuration.remote
-                    @image_handler.create_manifest(current_node, WebDiff.configuration.remote_path)
+                if Chalcogen.configuration.remote
+                    @image_handler.create_manifest(current_node, Chalcogen.configuration.remote_path)
                 else
                     @image_handler.create_manifest(current_node)
                 end
