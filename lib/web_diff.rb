@@ -3,6 +3,7 @@ require "fog"
 
 # Load classes
 require "web_diff/configuration"
+require "web_diff/test_builder"
 require "web_diff/selenium_handler"
 require "web_diff/image_handler"
 require "web_diff/gallery_creator"
