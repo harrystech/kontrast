@@ -69,16 +69,15 @@ module WebDiff
                 # Call "before" hook
                 WebDiff.configuration.before_gallery
 
+                gallery_creator = GalleryCreator.new
                 if WebDiff.configuration.remote
-                    gallery_creator = GalleryCreator.new
-                    gallery_creator.create_gallery(WebDiff.configuration.gallery_path)
+                    gallery_info = gallery_creator.create_gallery(WebDiff.configuration.gallery_path)
                 else
-                    gallery_creator = GalleryCreator.new
-                    gallery_creator.create_gallery(path)
+                    gallery_info = gallery_creator.create_gallery(path)
                 end
             ensure
                 # Call "after" hook
-                WebDiff.configuration.after_gallery
+                WebDiff.configuration.after_gallery(gallery_info[:diffs], gallery_info[:path])
             end
         end
     end

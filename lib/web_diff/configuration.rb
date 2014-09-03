@@ -65,11 +65,11 @@ module WebDiff
             end
         end
 
-        def after_gallery(&block)
+        def after_gallery(diffs = nil, gallery = nil, &block)
             if block_given?
                 @_after_gallery = block
             else
-                @_after_gallery.call if @_after_gallery
+                @_after_gallery.call(diffs, gallery) if @_after_gallery
             end
         end
 

@@ -23,6 +23,12 @@ module WebDiff
             File.open("#{@gallery_dir}/gallery.html", 'w') do |outf|
                 outf.write(html)
             end
+
+            # Return diffs and gallery path
+            return {
+                diffs: diffs,
+                path: "#{@gallery_dir}/gallery.html"
+            }
         end
 
         def generate_html(files, diffs)
