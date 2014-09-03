@@ -17,8 +17,14 @@ module Chalcogen
         end
 
         desc "make_gallery CONFIG_FILE PATH", "Create gallery given a path of test results"
-        def make_gallery(config, path)
+        def make_gallery(config, path = nil)
             load_config(config)
+
+            # We're only allowed to give no path in the remote case
+            if path.nil? && !Chalcogen.configuration.remote
+                raise Exception.new("You can't omit a path when running in remote mode.")
+            end
+
             Chalcogen.make_gallery(path)
         end
 
