@@ -1,4 +1,5 @@
 require "erb"
+require "active_support/core_ext/hash"
 
 module WebDiff
     class GalleryCreator

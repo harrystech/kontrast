@@ -3,7 +3,7 @@ require "RMagick"
 module WebDiff
     class ImageHandler
         include Magick
-        attr_reader :diffs
+        attr_reader :diffs, :path
 
         def initialize
             @path = WebDiff.path
