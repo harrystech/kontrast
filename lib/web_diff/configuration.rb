@@ -73,11 +73,11 @@ module WebDiff
             end
         end
 
-        def before_screenshot(&block)
+        def before_screenshot(driver1 = nil, driver2 = nil, &block)
             if block_given?
                 @_before_screenshot = block
             else
-                @_before_screenshot.call if @_before_screenshot
+                @_before_screenshot.call(driver1, driver2) if @_before_screenshot
             end
         end
     end
