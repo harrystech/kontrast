@@ -8,10 +8,4 @@ namespace :chalcogen do
     task :make_gallery, [:path] => :environment do |t, args|
         Chalcogen.make_gallery(args[:path])
     end
-
-    desc "Run comparison tests and gallery creation locally"
-    task :run_locally => :environment do
-        Chalcogen.run
-        Chalcogen.make_gallery(Chalcogen.path)
-    end
 end

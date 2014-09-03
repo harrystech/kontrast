@@ -1,11 +1,30 @@
 #!/usr/bin/env ruby
-
 begin
-    $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-    require "chalcogen"
-rescue LoadError
     require "rubygems"
     require "chalcogen"
+rescue LoadError => e
+    puts "Could not load Chalcogen."
+    raise e
+end
+require "thor"
+
+module Chalcogen
+    class CLI < Thor
+        desc "local_run CONFIG", "Run Chalcogen locally"
+        def local_run(config)
+            # Load config
+            begin
+                require config
+            rescue LoadError => e
+                puts "Could not load the Chalcogen configuration!"
+                raise e
+            end
+
+            # Run Chalcogen
+            Chalcogen.run
+            Chalcogen.make_gallery(Chalcogen.path)
+        end
+    end
 end
 
-puts "hi"
+Chalcogen::CLI.start(ARGV)
