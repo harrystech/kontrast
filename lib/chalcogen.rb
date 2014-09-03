@@ -82,6 +82,3 @@ module Chalcogen
         end
     end
 end
-
-# Load tasks
-Dir[Chalcogen.root + '/lib/tasks/*.rake'].each { |ext| load ext } if defined?(Rake)

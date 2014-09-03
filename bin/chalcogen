@@ -10,20 +10,36 @@ require "thor"
 
 module Chalcogen
     class CLI < Thor
-        desc "local_run CONFIG", "Run Chalcogen locally"
+        desc "run_tests CONFIG_FILE", "Run Chalcogen test suite"
+        def run_tests(config)
+            load_config(config)
+            Chalcogen.run
+        end
+
+        desc "make_gallery CONFIG_FILE PATH", "Create gallery given a path of test results"
+        def make_gallery(config, path)
+            load_config(config)
+            Chalcogen.make_gallery(path)
+        end
+
+        desc "local_run CONFIG_FILE", "Run Chalcogen locally"
         def local_run(config)
-            # Load config
-            begin
-                require config
-            rescue LoadError => e
-                puts "Could not load the Chalcogen configuration!"
-                raise e
-            end
+            load_config(config)
 
             # Run Chalcogen
             Chalcogen.run
             Chalcogen.make_gallery(Chalcogen.path)
         end
+
+        private
+            def load_config(config)
+                begin
+                    require config
+                rescue LoadError => e
+                    puts "Could not load the Chalcogen configuration!"
+                    raise e
+                end
+            end
     end
 end
 
