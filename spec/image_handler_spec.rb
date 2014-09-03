@@ -39,15 +39,14 @@ describe Chalcogen::ImageHandler do
         contents = @image_handler.create_manifest(0)
 
         # Expectations
-        expect(contents).to eql({
-            :diffs => {
-                "1280_home" => {
-                    :width => 1280,
-                    :name=> "home" ,
-                    :diff => 0.1337
-                }
-            },
-            :files => ["1280_home/diff_thumb.png", "1280_products/diff_thumb.png", "320_home/diff_thumb.png", "320_products/diff_thumb.png"]
+        expect(contents[:diffs]).to eql({
+            "1280_home" => {
+                :width => 1280,
+                :name=> "home" ,
+                :diff => 0.1337
+            }
         })
+
+        expect(contents[:files]).to include("1280_home/diff_thumb.png", "1280_products/diff_thumb.png", "320_home/diff_thumb.png", "320_products/diff_thumb.png")
     end
 end

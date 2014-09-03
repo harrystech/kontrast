@@ -36,7 +36,7 @@ describe Chalcogen::GalleryCreator do
 
         # Test get_manifests while we're at it
         manifests = @gallery_creator.get_manifests
-        expect(manifests).to eql [@image_handler.path + "/manifest_0.json", @image_handler.path + "/manifest_1.json"]
+        expect(manifests).to include(@image_handler.path + "/manifest_0.json", @image_handler.path + "/manifest_1.json")
 
         # Parse
         parsed_manifests = @gallery_creator.parse_manifests(manifests)
