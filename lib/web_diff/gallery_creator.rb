@@ -4,6 +4,14 @@ module WebDiff
     class GalleryCreator
         def initialize
             @path = WebDiff.path
+
+            # If remote, this is the actual URL this will be uploaded to
+            # Otherwise, it's just a relative path
+            if WebDiff.configuration.remote
+                @base_path = WebDiff.configuration.upload_base_uri
+            else
+                @base_path = ".."
+            end
         end
 
         # This gets run only once per suite. It collects the manifests from all nodes
@@ -24,10 +32,17 @@ module WebDiff
                 outf.write(html)
             end
 
+            # Get an actual link we can use
+            if WebDiff.configuration.remote
+                gallery_path = WebDiff.configuration.upload_base_uri + "/#{@gallery_dir}/gallery.html"
+            else
+                gallery_path = "#{@gallery_dir}/gallery.html"
+            end
+
             # Return diffs and gallery path
             return {
                 diffs: diffs,
-                path: "#{@gallery_dir}/gallery.html"
+                path: gallery_path
             }
         end
 
@@ -101,18 +116,11 @@ module WebDiff
                 array.delete_at(0)
                 test_name = array.join('_')
 
-                # Set correct paths for image gallery
-                if WebDiff.configuration.remote
-                    base_path = WebDiff.configuration.upload_base_uri
-                else
-                    base_path = ".."
-                end
-
                 # Add variations
                 ['test', 'production', 'diff'].each_with_index do |type, i|
                     dirs[size][test_name][:variants] << {
-                        image: "#{base_path}/#{size}_#{test_name}/" + type + ".png",
-                        thumb: "#{base_path}/#{size}_#{test_name}/" + type + "_thumb.png",
+                        image: "#{@base_path}/#{size}_#{test_name}/" + type + ".png",
+                        thumb: "#{@base_path}/#{size}_#{test_name}/" + type + "_thumb.png",
                         domain: type
                     }
                     if type == 'diff'
