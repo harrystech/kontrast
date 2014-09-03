@@ -1,10 +1,11 @@
 require "erb"
+require "json"
 require "active_support/core_ext/hash"
 
 module Chalcogen
     class GalleryCreator
-        def initialize
-            @path = Chalcogen.path
+        def initialize(path)
+            @path = path || Chalcogen.path
         end
 
         # This gets run only once per suite. It collects the manifests from all nodes

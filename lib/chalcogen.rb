@@ -69,7 +69,7 @@ module Chalcogen
                 # Call "before" hook
                 Chalcogen.configuration.before_gallery
 
-                gallery_creator = GalleryCreator.new
+                gallery_creator = GalleryCreator.new(path)
                 if Chalcogen.configuration.remote
                     gallery_info = gallery_creator.create_gallery(Chalcogen.configuration.gallery_path)
                 else
