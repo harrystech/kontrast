@@ -1,4 +1,4 @@
-module Chalcogen
+module Kontrast
     class TestBuilder
         attr_reader :tests
 

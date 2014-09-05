@@ -1,12 +1,12 @@
 require "RMagick"
 
-module Chalcogen
+module Kontrast
     class ImageHandler
         include Magick
         attr_reader :diffs, :path
 
         def initialize
-            @path = Chalcogen.path
+            @path = Kontrast.path
 
             # This is where failed diffs will be stored
             @diffs = {}
@@ -37,9 +37,9 @@ module Chalcogen
             production_image = Image.read("#{@path}/#{width}_#{name}/production.png").first
 
             # Compare and save diff
-            diff = test_image.compare_channel(production_image, Magick.const_get(Chalcogen.configuration.distortion_metric)) do |options|
-                options.highlight_color = Chalcogen.configuration.highlight_color
-                options.lowlight_color = Chalcogen.configuration.lowlight_color
+            diff = test_image.compare_channel(production_image, Magick.const_get(Kontrast.configuration.distortion_metric)) do |options|
+                options.highlight_color = Kontrast.configuration.highlight_color
+                options.lowlight_color = Kontrast.configuration.lowlight_color
             end
             diff.first.write("#{@path}/#{width}_#{name}/diff.png")
 
@@ -70,8 +70,8 @@ module Chalcogen
         def upload_images(width, name)
             Dir.foreach("#{@path}/#{width}_#{name}") do |file|
                 next if ['.', '..'].include?(file)
-                Chalcogen.fog.directories.get(Chalcogen.configuration.aws_bucket).files.create(
-                    key: "#{Chalcogen.configuration.remote_path}/#{width}_#{name}/#{file}",
+                Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket).files.create(
+                    key: "#{Kontrast.configuration.remote_path}/#{width}_#{name}/#{file}",
                     body: File.open("#{@path}/#{width}_#{name}/#{file}"),
                     public: true
                 )
@@ -97,9 +97,9 @@ module Chalcogen
                 end
             end
 
-            if Chalcogen.configuration.remote
+            if Kontrast.configuration.remote
                 # Upload manifest
-                Chalcogen.fog.directories.get(Chalcogen.configuration.aws_bucket).files.create(
+                Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket).files.create(
                     key: "#{build}/manifest_#{current_node}.json",
                     body: manifest.to_json
                 )

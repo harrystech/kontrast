@@ -2,14 +2,14 @@
 require "fog"
 
 # Load classes
-require "chalcogen/configuration"
-require "chalcogen/test_builder"
-require "chalcogen/selenium_handler"
-require "chalcogen/image_handler"
-require "chalcogen/gallery_creator"
-require "chalcogen/runner"
+require "kontrast/configuration"
+require "kontrast/test_builder"
+require "kontrast/selenium_handler"
+require "kontrast/image_handler"
+require "kontrast/gallery_creator"
+require "kontrast/runner"
 
-module Chalcogen
+module Kontrast
     class << self
         @@path = nil
 
@@ -20,11 +20,11 @@ module Chalcogen
         def path
             return @@path if @@path
 
-            if Chalcogen.configuration.remote
-                if Dir.exists?(Chalcogen.configuration.remote_path)
-                    @@path = Chalcogen.configuration.remote_path
+            if Kontrast.configuration.remote
+                if Dir.exists?(Kontrast.configuration.remote_path)
+                    @@path = Kontrast.configuration.remote_path
                 else
-                    @@path = FileUtils.mkdir(Chalcogen.configuration.remote_path).join('')
+                    @@path = FileUtils.mkdir(Kontrast.configuration.remote_path).join('')
                 end
             elsif Dir.exists?("/tmp/shots")
                 @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
@@ -39,8 +39,8 @@ module Chalcogen
         def fog
             return Fog::Storage.new({
                 :provider                 => 'AWS',
-                :aws_access_key_id        => Chalcogen.configuration.aws_key,
-                :aws_secret_access_key    => Chalcogen.configuration.aws_secret
+                :aws_access_key_id        => Kontrast.configuration.aws_key,
+                :aws_secret_access_key    => Kontrast.configuration.aws_secret
             })
         end
 
@@ -49,13 +49,13 @@ module Chalcogen
 
             begin
                 # Call "before" hook
-                Chalcogen.configuration.before_run
+                Kontrast.configuration.before_run
 
                 runner = Runner.new
                 runner.run
             ensure
                 # Call "after" hook
-                Chalcogen.configuration.after_run
+                Kontrast.configuration.after_run
             end
 
             end_time = Time.now
@@ -67,17 +67,17 @@ module Chalcogen
             gallery_info = {}
             begin
                 # Call "before" hook
-                Chalcogen.configuration.before_gallery
+                Kontrast.configuration.before_gallery
 
                 gallery_creator = GalleryCreator.new(path)
-                if Chalcogen.configuration.remote
-                    gallery_info = gallery_creator.create_gallery(Chalcogen.configuration.gallery_path)
+                if Kontrast.configuration.remote
+                    gallery_info = gallery_creator.create_gallery(Kontrast.configuration.gallery_path)
                 else
                     gallery_info = gallery_creator.create_gallery(path)
                 end
             ensure
                 # Call "after" hook
-                Chalcogen.configuration.after_gallery(gallery_info[:diffs], gallery_info[:path])
+                Kontrast.configuration.after_gallery(gallery_info[:diffs], gallery_info[:path])
             end
         end
     end

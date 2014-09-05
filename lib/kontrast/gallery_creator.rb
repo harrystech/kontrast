@@ -2,10 +2,10 @@ require "erb"
 require "json"
 require "active_support/core_ext/hash"
 
-module Chalcogen
+module Kontrast
     class GalleryCreator
         def initialize(path)
-            @path = path || Chalcogen.path
+            @path = path || Kontrast.path
         end
 
         # This gets run only once per suite. It collects the manifests from all nodes
@@ -39,14 +39,14 @@ module Chalcogen
             directories = parse_directories(files, diffs)
 
             # HTML
-            template = File.read(Chalcogen.root + '/lib/chalcogen/gallery/template.erb')
+            template = File.read(Kontrast.root + '/lib/kontrast/gallery/template.erb')
             return ERB.new(template).result(binding)
         end
 
         def get_manifests
-            if Chalcogen.configuration.remote
+            if Kontrast.configuration.remote
                 # Download manifests
-                files = Chalcogen.fog.directories.get(Chalcogen.configuration.aws_bucket, prefix: "#{@path}/manifest").files
+                files = Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket, prefix: "#{@path}/manifest").files
                 files.each do |file|
                     filename = "#{@path}/" + file.key.split('/').last
                     File.open(filename, 'w') do |local_file|
@@ -97,8 +97,8 @@ module Chalcogen
             }
 
             # This determines where to display images from in the gallery
-            if Chalcogen.configuration.remote
-                base_path = Chalcogen.configuration.upload_base_uri
+            if Kontrast.configuration.remote
+                base_path = Kontrast.configuration.upload_base_uri
             else
                 base_path = ".."
             end

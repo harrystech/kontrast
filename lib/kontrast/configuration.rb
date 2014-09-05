@@ -1,4 +1,4 @@
-module Chalcogen
+module Kontrast
     class << self
         attr_accessor :configuration, :test_suite
 
@@ -37,8 +37,8 @@ module Chalcogen
             if !block_given?
                 raise Exception.new("You must pass a block to this method.")
             end
-            Chalcogen.tests.add_width(width)
-            yield(Chalcogen.tests)
+            Kontrast.tests.add_width(width)
+            yield(Kontrast.tests)
         end
 
         def before_run(&block)

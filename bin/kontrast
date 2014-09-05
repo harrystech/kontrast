@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 begin
     require "rubygems"
-    require "chalcogen"
+    require "kontrast"
 rescue LoadError => e
-    puts "Could not load Chalcogen."
+    puts "Could not load Kontrast."
     raise e
 end
 require "thor"
 
-module Chalcogen
+module Kontrast
     class CLI < Thor
-        desc "run_tests CONFIG_FILE", "Run Chalcogen test suite"
+        desc "run_tests CONFIG_FILE", "Run Kontrast test suite"
         def run_tests(config)
             load_config(config)
-            Chalcogen.run
+            Kontrast.run
         end
 
         desc "make_gallery CONFIG_FILE PATH", "Create gallery given a path of test results"
@@ -21,20 +21,20 @@ module Chalcogen
             load_config(config)
 
             # We're only allowed to give no path in the remote case
-            if path.nil? && !Chalcogen.configuration.remote
+            if path.nil? && !Kontrast.configuration.remote
                 raise Exception.new("You can't omit a path when running in remote mode.")
             end
 
-            Chalcogen.make_gallery(path)
+            Kontrast.make_gallery(path)
         end
 
-        desc "local_run CONFIG_FILE", "Run Chalcogen locally"
+        desc "local_run CONFIG_FILE", "Run Kontrast locally"
         def local_run(config)
             load_config(config)
 
-            # Run Chalcogen
-            Chalcogen.run
-            Chalcogen.make_gallery(Chalcogen.path)
+            # Run Kontrast
+            Kontrast.run
+            Kontrast.make_gallery(Kontrast.path)
         end
 
         private
@@ -42,11 +42,11 @@ module Chalcogen
                 begin
                     require config
                 rescue LoadError => e
-                    puts "Could not load the Chalcogen configuration!"
+                    puts "Could not load the Kontrast configuration!"
                     raise e
                 end
             end
     end
 end
 
-Chalcogen::CLI.start(ARGV)
+Kontrast::CLI.start(ARGV)
