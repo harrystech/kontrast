@@ -1,12 +1,12 @@
-describe Chalcogen::GalleryCreator do
+describe Kontrast::GalleryCreator do
     before :all do
-        Chalcogen.configure do |config|
+        Kontrast.configure do |config|
         end
     end
 
     before :each do
-        @image_handler = Chalcogen::ImageHandler.new
-        @gallery_creator = Chalcogen::GalleryCreator.new(@image_handler.path)
+        @image_handler = Kontrast::ImageHandler.new
+        @gallery_creator = Kontrast::GalleryCreator.new(@image_handler.path)
     end
 
     it "can parse manifests" do

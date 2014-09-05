@@ -1,4 +1,4 @@
-require "chalcogen"
+require "kontrast"
 require "pry"
 
 RSpec.configure do |config|

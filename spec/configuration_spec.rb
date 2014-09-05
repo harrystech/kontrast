@@ -1,14 +1,14 @@
-describe Chalcogen::Configuration do
+describe Kontrast::Configuration do
     it "can set basic options" do
-        Chalcogen.configure do |config|
+        Kontrast.configure do |config|
             config.test_domain = "http://google.com"
         end
-        expect(Chalcogen.configuration.test_domain).to eql "http://google.com"
+        expect(Kontrast.configuration.test_domain).to eql "http://google.com"
     end
 
     it "cannot set options that don't exist" do
         expect {
-            Chalcogen.configure do |config|
+            Kontrast.configure do |config|
                 config.foo = "bar"
             end
         }.to raise_error(NoMethodError)
@@ -16,28 +16,28 @@ describe Chalcogen::Configuration do
 
     it "sets defaults" do
         # Set up a config block with no options
-        Chalcogen.configure do |config|
+        Kontrast.configure do |config|
         end
 
         # Check that we have some defaults
-        expect(Chalcogen.configuration.browser_driver).to eql "firefox"
-        expect(Chalcogen.configuration.run_parallel).to eql false
-        expect(Chalcogen.configuration.distortion_metric).to eql "MeanAbsoluteErrorMetric"
+        expect(Kontrast.configuration.browser_driver).to eql "firefox"
+        expect(Kontrast.configuration.run_parallel).to eql false
+        expect(Kontrast.configuration.distortion_metric).to eql "MeanAbsoluteErrorMetric"
     end
 
     it "sets up and runs blocks" do
-        Chalcogen.configure do |config|
+        Kontrast.configure do |config|
             config.before_run do
                 x = 1
                 x += 1
                 # Implicit return of x
             end
         end
-        expect(Chalcogen.configuration.before_run).to eql 2
+        expect(Kontrast.configuration.before_run).to eql 2
     end
 
     it "passes data to some blocks" do
-        Chalcogen.configure do |config|
+        Kontrast.configure do |config|
             config.after_gallery do |diffs, gallery|
                 {
                     diffs: diffs,
@@ -45,7 +45,7 @@ describe Chalcogen::Configuration do
                 }
             end
         end
-        expect(Chalcogen.configuration.after_gallery("arg1", "arg2")).to eql({
+        expect(Kontrast.configuration.after_gallery("arg1", "arg2")).to eql({
             diffs: "arg1",
             gallery: "arg2"
         })

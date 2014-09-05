@@ -1,6 +1,6 @@
-describe Chalcogen::ImageHandler do
+describe Kontrast::ImageHandler do
     before :all do
-        Chalcogen.configure do |config|
+        Kontrast.configure do |config|
             # Set up some tests
             config.pages(1280) do |page|
                 page.home "/"
@@ -14,12 +14,12 @@ describe Chalcogen::ImageHandler do
     end
 
     before :each do
-        @image_handler = Chalcogen::ImageHandler.new
+        @image_handler = Kontrast::ImageHandler.new
     end
 
     it "can create a manifest for the current node" do
         # Create some files
-        Chalcogen.test_suite.tests.each do |size, tests|
+        Kontrast.test_suite.tests.each do |size, tests|
             tests.each do |name, path|
                 test_name = "#{size}_#{name}"
                 path = FileUtils.mkdir_p(@image_handler.path + "/#{test_name}").join('')
