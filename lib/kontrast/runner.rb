@@ -7,8 +7,8 @@ module Kontrast
         end
 
         def run
-            # Wait for local server to load for 20 seconds
-            tries = 20
+            # Wait for local server to load for a minute
+            tries = 30
             uri = URI(Kontrast.configuration.test_domain)
             begin
                 Net::HTTP.get(uri)
@@ -16,7 +16,7 @@ module Kontrast
                 tries -= 1
                 if tries > 0
                     puts "Waiting for server..."
-                    sleep 1
+                    sleep 2
                     retry
                 else
                     raise Exception.new("Could not reach the local server.")
