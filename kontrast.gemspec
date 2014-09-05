@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'chalcogen/version'
+require 'kontrast/version'
 
 Gem::Specification.new do |spec|
-    spec.name          = "chalcogen"
-    spec.version       = Chalcogen::VERSION
+    spec.name          = "kontrast"
+    spec.version       = Kontrast::VERSION
     spec.authors       = ["Ilya Rubnich"]
     spec.email         = ["ilya@harrys.com"]
     spec.summary       = %q{A website comparison tool.}
