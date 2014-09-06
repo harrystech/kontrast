@@ -22,7 +22,7 @@ module Kontrast
 
             # We're only allowed to give no path in the remote case
             if path.nil? && !Kontrast.configuration.remote
-                raise Exception.new("You can't omit a path when running in remote mode.")
+                raise GalleryException.new("You can't omit a path when running in remote mode.")
             end
 
             Kontrast.make_gallery(path)
@@ -42,9 +42,15 @@ module Kontrast
                 begin
                     require config
                 rescue LoadError => e
-                    puts "Could not load the Kontrast configuration!"
-                    raise e
+                    raise ConfigurationException.new("Could not load the given config file.")
                 end
+
+                # Check that we actually got a configuration block
+                if !Kontrast.configuration
+                    raise ConfigurationException.new("No configuration was found in the given file.")
+                end
+
+                return true
             end
     end
 end

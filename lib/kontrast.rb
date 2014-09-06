@@ -2,6 +2,7 @@
 require "fog"
 
 # Load classes
+require "kontrast/exceptions"
 require "kontrast/configuration"
 require "kontrast/test_builder"
 require "kontrast/selenium_handler"

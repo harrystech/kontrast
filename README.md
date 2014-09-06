@@ -1,6 +1,6 @@
-# Chalcogen
+# Kontrast
 
-A website comparison tool.
+An automated testing tool for comparing two versions of a website.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ A website comparison tool.
 
 Add this line to your application's Gemfile:
 
-    gem 'chalcogen'
+    gem 'kontrast'
 
 And then execute:
 
@@ -22,11 +22,11 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install chalcogen
+    $ gem install kontrast
 
 Then you'll need to generate a config file:
 
-	$ chalcogen generate:config idk
+	$ bundle exec kontrast generate:config idk
 
 ## Usage
 
@@ -34,7 +34,7 @@ TODO: Write usage instructions here
 
 ## Contributing
 
-1. Fork it ( https://github.com/harrystech/chalcogen/fork )
+1. Fork it ( https://github.com/harrystech/kontrast/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
