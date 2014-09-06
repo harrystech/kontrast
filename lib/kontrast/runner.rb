@@ -19,8 +19,10 @@ module Kontrast
                     sleep 2
                     retry
                 else
-                    raise RunnerException.new("Could not reach the local server.")
+                    raise RunnerException.new("Could not reach #{uri}.")
                 end
+            rescue Exception => e
+                raise RunnerException.new("An unexpected error occured while trying to reach #{uri}: #{e.inspect}")
             end
 
             # Parallelism setup
