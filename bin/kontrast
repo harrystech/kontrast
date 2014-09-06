@@ -31,6 +31,7 @@ module Kontrast
             Kontrast.make_gallery(options[:result_path])
         end
 
+        # todo: option to specify an output path
         desc "local_run --config CONFIG_FILE", "Run Kontrast locally"
         def local_run
             load_config(options[:config])
@@ -45,6 +46,7 @@ module Kontrast
         end
 
         private
+            # todo: if inside Rails, assume the config has been loaded from an initializer
             def load_config(config)
                 begin
                     require config
