@@ -35,6 +35,10 @@ module Kontrast
             # Run Kontrast
             Kontrast.run
             Kontrast.make_gallery(Kontrast.path)
+
+            # Print the gallery path
+            puts "Kontrast is all done!"
+            puts "You can find the gallery at: #{Kontrast.path}/gallery/gallery.html"
         end
 
         private
