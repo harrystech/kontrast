@@ -19,7 +19,7 @@ module Kontrast
                     sleep 2
                     retry
                 else
-                    raise Exception.new("Could not reach the local server.")
+                    raise RunnerException.new("Could not reach the local server.")
                 end
             end
 

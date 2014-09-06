@@ -33,9 +33,17 @@ module Kontrast
             @lowlight_color = "rgba(255, 255, 255, 0.3)"
         end
 
+        def validate
+            # Check that Kontrast has everything it needs to proceed
+            check_nil_vars(["test_domain", "production_domain"])
+            if Kontrast.test_suite.nil?
+                raise ConfigurationException.new("Kontrast has no tests to run.")
+            end
+        end
+
         def pages(width)
             if !block_given?
-                raise Exception.new("You must pass a block to this method.")
+                raise ConfigurationException.new("You must pass a block to the pages config option.")
             end
             Kontrast.tests.add_width(width)
             yield(Kontrast.tests)
@@ -80,5 +88,14 @@ module Kontrast
                 @_before_screenshot.call(driver1, driver2) if @_before_screenshot
             end
         end
+
+        private
+            def check_nil_vars(vars)
+                vars.each do |var|
+                    if instance_variable_get("@#{var}").nil?
+                        raise ConfigurationException.new("Kontrast config is missing the #{var} option.")
+                    end
+                end
+            end
     end
 end

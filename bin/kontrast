@@ -50,6 +50,9 @@ module Kontrast
                     raise ConfigurationException.new("No configuration was found in the given file.")
                 end
 
+                # Make sure we have the bare minimum configuration to continue
+                Kontrast.configuration.validate
+
                 return true
             end
     end
