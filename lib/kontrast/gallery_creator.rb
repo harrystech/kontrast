@@ -11,7 +11,15 @@ module Kontrast
         # This gets run only once per suite. It collects the manifests from all nodes
         # and uses them to generate a nice gallery of images.
         def create_gallery(output_dir)
-            @gallery_dir = FileUtils.mkdir("#{output_dir}/gallery").join('')
+            begin
+                @gallery_dir = FileUtils.mkdir("#{output_dir}/gallery").join('')
+            rescue Errno::ENOENT => e
+                raise GalleryException.new("Directory #{output_dir} does not exist.")
+            rescue Errno::EEXIST => e
+                raise GalleryException.new("The gallery output directory already exists.")
+            rescue Exception => e
+                raise GalleryException.new("An unexpected error occurred while trying to create the gallery's output directory: #{e.inspect}")
+            end
 
             # Get and parse manifests
             parsed_manifests = parse_manifests(get_manifests)

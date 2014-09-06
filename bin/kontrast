@@ -10,27 +10,30 @@ require "thor"
 
 module Kontrast
     class CLI < Thor
-        desc "run_tests CONFIG_FILE", "Run Kontrast test suite"
-        def run_tests(config)
-            load_config(config)
+        class_option :config
+
+        desc "run_tests --config CONFIG_FILE", "Run Kontrast test suite"
+        def run_tests
+            load_config(options[:config])
             Kontrast.run
         end
 
-        desc "make_gallery CONFIG_FILE PATH", "Create gallery given a path of test results"
-        def make_gallery(config, path = nil)
-            load_config(config)
+        desc "make_gallery --config CONFIG_FILE --result-path PATH", "Create gallery given a path of test results"
+        option :result_path
+        def make_gallery
+            load_config(options[:config])
 
             # We're only allowed to give no path in the remote case
-            if path.nil? && !Kontrast.configuration.remote
+            if options[:result_path].nil? && Kontrast.configuration.remote
                 raise GalleryException.new("You can't omit a path when running in remote mode.")
             end
 
-            Kontrast.make_gallery(path)
+            Kontrast.make_gallery(options[:result_path])
         end
 
-        desc "local_run CONFIG_FILE", "Run Kontrast locally"
-        def local_run(config)
-            load_config(config)
+        desc "local_run --config CONFIG_FILE", "Run Kontrast locally"
+        def local_run
+            load_config(options[:config])
 
             # Run Kontrast
             Kontrast.run
@@ -47,6 +50,10 @@ module Kontrast
                     require config
                 rescue LoadError => e
                     raise ConfigurationException.new("Could not load the given config file.")
+                rescue TypeError => e
+                    raise ConfigurationException.new("Config file argument must be a string.")
+                rescue Exception => e
+                    raise ConfigurationException.new("An unexpected error occurred while trying to load the given config file: #{e.inspect}")
                 end
 
                 # Check that we actually got a configuration block
