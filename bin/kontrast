@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+
+#######################################
+# This is the entry point to Kontrast #
+#######################################
+
 begin
     require "rubygems"
     require "kontrast"
@@ -46,21 +51,27 @@ module Kontrast
         end
 
         private
-            # todo: if inside Rails, assume the config has been loaded from an initializer
             def load_config(config)
-                begin
-                    require config
-                rescue LoadError => e
-                    raise ConfigurationException.new("Could not load the given config file.")
-                rescue TypeError => e
-                    raise ConfigurationException.new("Config file argument must be a string.")
-                rescue Exception => e
-                    raise ConfigurationException.new("An unexpected error occurred while trying to load the given config file: #{e.inspect}")
+                # Let's check if we're within Rails.
+                # If so, we assume the configuration has been loaded from an initalizer.
+                if !Kontrast.in_rails?
+                    begin
+                        require config
+                    rescue LoadError => e
+                        raise ConfigurationException.new("Could not load the given config file.")
+                    rescue TypeError => e
+                        raise ConfigurationException.new("Config file argument must be a string.")
+                    rescue Exception => e
+                        raise ConfigurationException.new("An unexpected error occurred while trying to load the given config file: #{e.inspect}")
+                    end
+                else
+                    # Load Rails
+                    require './config/environment'
                 end
 
                 # Check that we actually got a configuration block
                 if !Kontrast.configuration
-                    raise ConfigurationException.new("No configuration was found in the given file.")
+                    raise ConfigurationException.new("No configuration has been loaded.")
                 end
 
                 # Make sure we have the bare minimum configuration to continue

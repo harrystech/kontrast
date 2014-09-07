@@ -1,6 +1,6 @@
 # Kontrast
 
-An automated testing tool for comparing two versions of a website.
+An automated testing tool for comparing visual differences between two versions of a website.
 
 ## Prerequisites
 

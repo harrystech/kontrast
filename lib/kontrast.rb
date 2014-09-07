@@ -18,6 +18,15 @@ module Kontrast
             File.expand_path('../..', __FILE__)
         end
 
+        def in_rails?
+            begin
+                Gem::Specification.find_by_name('rails')
+                return true
+            rescue Gem::LoadError
+                return false
+            end
+        end
+
         def path
             return @@path if @@path
 
