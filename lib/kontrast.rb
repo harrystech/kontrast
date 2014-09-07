@@ -38,11 +38,8 @@ module Kontrast
                 end
             elsif Kontrast.in_rails?
                 @@path = ensure_output_path(Rails.root + "tmp/shots/#{Time.now.to_i}")
-            elsif Dir.exists?("/tmp/shots")
-                @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
             else
-                FileUtils.mkdir("/tmp/shots")
-                @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
+                @@path = ensure_output_path("/tmp/shots/#{Time.now.to_i}")
             end
 
             return @@path
