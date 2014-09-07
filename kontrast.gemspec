@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
     spec.version       = Kontrast::VERSION
     spec.authors       = ["Ilya Rubnich"]
     spec.email         = ["ilya@harrys.com"]
-    spec.summary       = %q{An automated testing tool for comparing two versions of a website.}
+    spec.summary       = %q{An automated testing tool for comparing visual differences between two versions of a website.}
     #spec.description   = %q{TODO: Write a longer description. Optional.}
     spec.homepage      = ""
     spec.license       = "MIT"
