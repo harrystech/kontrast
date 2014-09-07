@@ -36,6 +36,8 @@ module Kontrast
                 else
                     @@path = FileUtils.mkdir(Kontrast.configuration.remote_path).join('')
                 end
+            elsif Kontrast.in_rails?
+                @@path = ensure_output_path(Rails.root + "tmp/shots/#{Time.now.to_i}")
             elsif Dir.exists?("/tmp/shots")
                 @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
             else
@@ -90,5 +92,17 @@ module Kontrast
                 Kontrast.configuration.after_gallery(gallery_info[:diffs], gallery_info[:path])
             end
         end
+
+        private
+            def ensure_output_path(path)
+                # Make sure path is created
+                begin
+                    FileUtils.mkdir_p(path)
+                rescue Exception => e
+                    raise e
+                end
+
+                return path.to_s
+            end
     end
 end
