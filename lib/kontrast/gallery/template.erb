@@ -29,6 +29,21 @@
                     </div>
                 </div>
                 <div class="col-lg-10">
+                    <% if diffs.any? %>
+                        <div class="row">
+                            <div class="alert alert-warning" role="alert">
+                                Tests with diffs:
+                                <ul>
+                                    <% diffs.each do |test, diff| %>
+                                        <li>
+                                            <a href="#<%= test %>"><%= test %></a>
+                                        </li>
+                                    <% end %>
+                                </ul>
+                            </div>
+                        </div>
+                    <% end %>
+
                     <% directories.keys.sort.each do |size| %>
                         <div class="row">
                             <a name="<%= size %>"></a>

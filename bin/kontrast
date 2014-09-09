@@ -17,13 +17,13 @@ module Kontrast
     class CLI < Thor
         class_option :config
 
-        desc "run_tests --config CONFIG_FILE", "Run Kontrast test suite"
+        desc "run_tests", "Run Kontrast test suite"
         def run_tests
             load_config(options[:config])
             Kontrast.run
         end
 
-        desc "make_gallery --config CONFIG_FILE --result-path PATH", "Create gallery given a path of test results"
+        desc "make_gallery --result-path PATH", "Create gallery given a path of test results"
         option :result_path
         def make_gallery
             load_config(options[:config])
@@ -37,7 +37,7 @@ module Kontrast
         end
 
         # todo: option to specify an output path
-        desc "local_run --config CONFIG_FILE", "Run Kontrast locally"
+        desc "local_run", "Run Kontrast locally"
         def local_run
             load_config(options[:config])
 
@@ -53,7 +53,6 @@ module Kontrast
         private
             def load_config(config)
                 # Let's check if we're within Rails.
-                # If so, we assume the configuration has been loaded from an initalizer.
                 if !Kontrast.in_rails?
                     begin
                         require config
@@ -65,7 +64,8 @@ module Kontrast
                         raise ConfigurationException.new("An unexpected error occurred while trying to load the given config file: #{e.inspect}")
                     end
                 else
-                    # Load Rails
+                    # Load Rails environment
+                    # We will assume the config was loaded from an initializer
                     require './config/environment'
                 end
 

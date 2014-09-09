@@ -84,6 +84,8 @@ module Kontrast
         # This function just turns the list of files and diffs into a hash that the gallery
         # creator can insert into a template. See an example of the created hash below.
         def parse_directories(files, diffs)
+            files.sort!
+
             dirs = {}
             directories = files.map { |f| f.split('/').first }.uniq
 
