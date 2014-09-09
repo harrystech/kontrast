@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
     spec.add_dependency "thor"
     spec.add_dependency "activesupport"
     spec.add_dependency "selenium-webdriver"
+    spec.add_dependency "workers"
     spec.add_dependency "rmagick", "2.13.2"
     spec.add_dependency "fog"
 end

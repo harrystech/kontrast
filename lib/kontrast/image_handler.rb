@@ -1,4 +1,5 @@
 require "RMagick"
+require "workers"
 
 module Kontrast
     class ImageHandler
@@ -25,8 +26,11 @@ module Kontrast
             max_height = [test_image.rows, production_image.rows].max
 
             # Crop
-            test_image.extent(width, max_height).write(test_image.filename)
-            production_image.extent(width, max_height).write(production_image.filename)
+            pool = Workers::Pool.new(size: 2)
+            pool.perform do
+                test_image.extent(width, max_height).write(test_image.filename)
+                production_image.extent(width, max_height).write(production_image.filename)
+            end
         end
 
         # Uses the compare_channel function to highlight the differences between two images
@@ -61,9 +65,12 @@ module Kontrast
             diff_image = Image.read("#{@path}/#{width}_#{name}/diff.png").first
 
             # Crop images
-            test_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/test_thumb.png")
-            production_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/production_thumb.png")
-            diff_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/diff_thumb.png")
+            pool = Workers::Pool.new(size: 3)
+            pool.perform do
+                test_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/test_thumb.png")
+                production_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/production_thumb.png")
+                diff_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/diff_thumb.png")
+            end
         end
 
         # We upload the images per test
