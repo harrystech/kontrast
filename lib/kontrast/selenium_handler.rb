@@ -16,6 +16,10 @@ module Kontrast
             # Get drivers with profile
             @driver = Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
             @driver2 = Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
+
+            # Assign names for threading
+            @driver.name = "test"
+            @driver2.name = "production"
         end
 
         def cleanup
@@ -44,14 +48,18 @@ module Kontrast
         end
 
         private
-            # todo: would love to do this concurrently
             def navigate(path)
                 # Get domains
                 test_host = Kontrast.configuration.test_domain
                 production_host = Kontrast.configuration.production_domain
 
-                @driver.navigate.to("#{test_host}#{path}")
-                @driver2.navigate.to("#{production_host}#{path}")
+                Workers.map([@driver, @driver2]) do |driver|
+                    if driver.name == "test"
+                        driver.navigate.to("#{test_host}#{path}")
+                    elsif driver.name == "production"
+                        driver.navigate.to("#{production_host}#{path}")
+                    end
+                end
             end
 
             def resize(width)
@@ -60,10 +68,14 @@ module Kontrast
                 end
             end
 
-            # todo: would love to do this concurrently
             def screenshot(output_path)
-                @driver.save_screenshot("#{output_path}/test.png")
-                @driver2.save_screenshot("#{output_path}/production.png")
+                Workers.map([@driver, @driver2]) do |driver|
+                    if driver.name == "test"
+                        driver.save_screenshot("#{output_path}/test.png")
+                    elsif driver.name == "production"
+                        driver.save_screenshot("#{output_path}/production.png")
+                    end
+                end
             end
     end
 end

@@ -103,3 +103,12 @@ module Kontrast
             end
     end
 end
+
+# Let's patch Selenium so we can use it with threading
+module Selenium
+    module WebDriver
+        class Driver
+            attr_accessor :name
+        end
+    end
+end
