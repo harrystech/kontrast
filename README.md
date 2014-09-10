@@ -105,7 +105,7 @@ Runs after the gallery creation step. The block provides a `diffs` hash and a `g
 		puts diffs, gallery_path
 	end
 
-### before_screenshot
+#### before_screenshot
 Runs on every test before Selenium takes a screenshot.
 The block provides the test and production Selenium drivers for you to control.
 
@@ -114,7 +114,7 @@ The block provides the test and production Selenium drivers for you to control.
 		production_driver.find_element(:css, '.active')
 	end
 
-### after_screenshot
+#### after_screenshot
 Runs on every test after Selenium takes a screenshot. The block provides the test and production Selenium drivers for you to control.
 
 	config.after_screenshot do |test_driver, production_driver|
