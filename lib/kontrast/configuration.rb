@@ -14,7 +14,7 @@ module Kontrast
 
     class Configuration
         attr_accessor :run_parallel, :total_nodes, :current_node
-        attr_accessor :_before_run, :_after_run, :_before_gallery, :_after_gallery, :_before_screenshot
+        attr_accessor :_before_run, :_after_run, :_before_gallery, :_after_gallery, :_before_screenshot, :_after_screenshot
         attr_accessor :distortion_metric, :highlight_color, :lowlight_color
         attr_accessor :remote, :remote_path, :gallery_path, :aws_bucket, :aws_key, :aws_secret, :upload_base_uri
         attr_accessor :test_domain, :production_domain
@@ -86,6 +86,14 @@ module Kontrast
                 @_before_screenshot = block
             else
                 @_before_screenshot.call(driver1, driver2) if @_before_screenshot
+            end
+        end
+
+        def after_screenshot(driver1 = nil, driver2 = nil, &block)
+            if block_given?
+                @_after_screenshot = block
+            else
+                @_after_screenshot.call(driver1, driver2) if @_after_screenshot
             end
         end
 

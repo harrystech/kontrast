@@ -35,11 +35,16 @@ module Kontrast
             resize(width)
 
             # Take screenshot
-            Kontrast.configuration.before_screenshot(@driver, @driver2)
-            screenshot(current_output)
+            begin
+                Kontrast.configuration.before_screenshot(@driver, @driver2)
+                screenshot(current_output)
+            ensure
+                Kontrast.configuration.after_screenshot(@driver, @driver2)
+            end
         end
 
         private
+            # todo: would love to do this concurrently
             def navigate(path)
                 # Get domains
                 test_host = Kontrast.configuration.test_domain
@@ -55,6 +60,7 @@ module Kontrast
                 end
             end
 
+            # todo: would love to do this concurrently
             def screenshot(output_path)
                 @driver.save_screenshot("#{output_path}/test.png")
                 @driver2.save_screenshot("#{output_path}/production.png")
