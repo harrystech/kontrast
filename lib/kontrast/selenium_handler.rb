@@ -14,18 +14,20 @@ module Kontrast
             end
 
             # Get drivers with profile
-            @driver = Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
-            @driver2 = Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
-
-            # Assign names for threading
-            @driver.name = "test"
-            @driver2.name = "production"
+            @driver = {
+                name: "test",
+                driver: Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
+            }
+            @driver2 = {
+                name: "production",
+                driver: Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
+            }
         end
 
         def cleanup
             # Make sure windows are closed
             Workers.map([@driver, @driver2]) do |driver|
-                driver.quit
+                driver[:driver].quit
             end
         end
 
@@ -55,26 +57,26 @@ module Kontrast
                 production_host = Kontrast.configuration.production_domain
 
                 Workers.map([@driver, @driver2]) do |driver|
-                    if driver.name == "test"
-                        driver.navigate.to("#{test_host}#{path}")
-                    elsif driver.name == "production"
-                        driver.navigate.to("#{production_host}#{path}")
+                    if driver[:name] == "test"
+                        driver[:driver].navigate.to("#{test_host}#{path}")
+                    elsif driver[:name] == "production"
+                        driver[:driver].navigate.to("#{production_host}#{path}")
                     end
                 end
             end
 
             def resize(width)
                 Workers.map([@driver, @driver2]) do |driver|
-                    driver.manage.window.resize_to(width, driver.manage.window.size.height)
+                    driver[:driver].manage.window.resize_to(width, driver[:driver].manage.window.size.height)
                 end
             end
 
             def screenshot(output_path)
                 Workers.map([@driver, @driver2]) do |driver|
-                    if driver.name == "test"
-                        driver.save_screenshot("#{output_path}/test.png")
-                    elsif driver.name == "production"
-                        driver.save_screenshot("#{output_path}/production.png")
+                    if driver[:name] == "test"
+                        driver[:driver].save_screenshot("#{output_path}/test.png")
+                    elsif driver[:name] == "production"
+                        driver[:driver].save_screenshot("#{output_path}/production.png")
                     end
                 end
             end
