@@ -70,7 +70,7 @@ module Kontrast
                         @image_handler.create_thumbnails(width, name)
 
                         # Upload to S3
-                        if Kontrast.configuration.remote
+                        if Kontrast.configuration.run_parallel
                             print "Uploading... "
                             @image_handler.upload_images(width, name)
                         end
@@ -84,7 +84,7 @@ module Kontrast
 
                 # Create manifest
                 puts "Creating manifest..."
-                if Kontrast.configuration.remote
+                if Kontrast.configuration.run_parallel
                     @image_handler.create_manifest(current_node, Kontrast.configuration.remote_path)
                 else
                     @image_handler.create_manifest(current_node)

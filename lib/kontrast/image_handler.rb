@@ -100,7 +100,7 @@ module Kontrast
                 end
             end
 
-            if Kontrast.configuration.remote
+            if Kontrast.configuration.run_parallel
                 # Upload manifest
                 Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket).files.create(
                     key: "#{build}/manifest_#{current_node}.json",

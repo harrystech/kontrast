@@ -30,7 +30,7 @@ module Kontrast
         def path
             return @@path if @@path
 
-            if Kontrast.configuration.remote
+            if Kontrast.configuration.run_parallel
                 if Dir.exists?(Kontrast.configuration.remote_path)
                     @@path = Kontrast.configuration.remote_path
                 else
@@ -79,7 +79,7 @@ module Kontrast
                 Kontrast.configuration.before_gallery
 
                 gallery_creator = GalleryCreator.new(path)
-                if Kontrast.configuration.remote
+                if Kontrast.configuration.run_parallel
                     gallery_info = gallery_creator.create_gallery(Kontrast.configuration.gallery_path)
                 else
                     gallery_info = gallery_creator.create_gallery(path)

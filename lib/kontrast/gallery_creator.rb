@@ -52,7 +52,7 @@ module Kontrast
         end
 
         def get_manifests
-            if Kontrast.configuration.remote
+            if Kontrast.configuration.run_parallel
                 # Download manifests
                 files = Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket, prefix: "#{@path}/manifest").files
                 files.each do |file|
@@ -107,7 +107,7 @@ module Kontrast
             }
 
             # This determines where to display images from in the gallery
-            if Kontrast.configuration.remote
+            if Kontrast.configuration.run_parallel
                 base_path = Kontrast.configuration.upload_base_uri
             else
                 base_path = ".."

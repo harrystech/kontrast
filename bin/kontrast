@@ -29,7 +29,7 @@ module Kontrast
             load_config(options[:config])
 
             # We're only allowed to give no path in the remote case
-            if options[:result_path].nil? && !Kontrast.configuration.remote
+            if options[:result_path].nil? && !Kontrast.configuration.run_parallel
                 raise GalleryException.new("You can't omit --result-path when running in local mode.")
             end
 
