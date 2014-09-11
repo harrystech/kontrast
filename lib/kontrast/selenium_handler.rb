@@ -24,8 +24,9 @@ module Kontrast
 
         def cleanup
             # Make sure windows are closed
-            @driver.quit
-            @driver2.quit
+            Workers.map([@driver, @driver2]) do |driver|
+                driver.quit
+            end
         end
 
         def run_comparison(width, path, name)

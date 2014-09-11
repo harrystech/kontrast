@@ -1,4 +1,9 @@
 describe Kontrast::TestBuilder do
+    before :each do
+        # Reset the test suite
+        Kontrast.test_suite = nil
+    end
+
     it "can build a test suite" do
         Kontrast.configure do |config|
             config.pages(1280) do |page|
@@ -20,5 +25,28 @@ describe Kontrast::TestBuilder do
                 "other_stuff=" => "/other-stuff"
             }
         })
+    end
+
+    it "can build a test suite with only one set of pages" do
+        Kontrast.configure do |config|
+            config.pages(1280) do |page|
+                page.home "/"
+            end
+        end
+        expect(Kontrast.test_suite.tests).to eql({
+            1280 => {
+                "home" => "/"
+            }
+        })
+    end
+
+    it "does not accept the test name 'tests'" do
+        expect {
+            Kontrast.configure do |config|
+                config.pages(1280) do |page|
+                    page.tests "/"
+                end
+            end
+        }.to raise_error(/not a valid name/)
     end
 end
