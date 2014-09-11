@@ -7,23 +7,8 @@ module Kontrast
         end
 
         def run
-            # Wait for local server to load for a minute
-            tries = 30
-            uri = URI(Kontrast.configuration.test_domain)
-            begin
-                Net::HTTP.get(uri)
-            rescue Errno::ECONNREFUSED => e
-                tries -= 1
-                if tries > 0
-                    puts "Waiting for server..."
-                    sleep 2
-                    retry
-                else
-                    raise RunnerException.new("Could not reach #{uri}.")
-                end
-            rescue Exception => e
-                raise RunnerException.new("An unexpected error occured while trying to reach #{uri}: #{e.inspect}")
-            end
+            # Make sure the local server is running
+            wait_for_server
 
             # Parallelism setup
             # We always assume some kind of "parallelism" even if we only have 1 node
@@ -108,5 +93,25 @@ module Kontrast
                 @selenium_handler.cleanup
             end
         end
+
+        private
+            def wait_for_server
+                tries = 30
+                uri = URI(Kontrast.configuration.test_domain)
+                begin
+                    Net::HTTP.get(uri)
+                rescue Errno::ECONNREFUSED => e
+                    tries -= 1
+                    if tries > 0
+                        puts "Waiting for server..."
+                        sleep 2
+                        retry
+                    else
+                        raise RunnerException.new("Could not reach #{uri}.")
+                    end
+                rescue Exception => e
+                    raise RunnerException.new("An unexpected error occured while trying to reach #{uri}: #{e.inspect}")
+                end
+            end
     end
 end
