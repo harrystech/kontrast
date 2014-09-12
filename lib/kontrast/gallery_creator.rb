@@ -50,7 +50,7 @@ module Kontrast
         def get_manifests
             if Kontrast.configuration.run_parallel
                 # Download manifests
-                files = Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket, prefix: "#{@path}/manifest").files
+                files = Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket, prefix: "#{Kontrast.configuration.remote_path}/manifest").files
                 files.each do |file|
                     filename = "#{@path}/" + file.key.split('/').last
                     File.open(filename, 'w') do |local_file|
