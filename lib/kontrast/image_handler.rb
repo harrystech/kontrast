@@ -71,7 +71,7 @@ module Kontrast
 
         # We upload the images per test
         def upload_images(width, name)
-            Dir.foreach("#{@path}/#{width}_#{name}") do |file|
+            Workers.map(Dir.entries("#{@path}/#{width}_#{name}")) do |file|
                 next if ['.', '..'].include?(file)
                 Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket).files.create(
                     key: "#{Kontrast.configuration.remote_path}/#{width}_#{name}/#{file}",

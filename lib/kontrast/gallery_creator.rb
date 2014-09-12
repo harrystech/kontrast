@@ -12,11 +12,7 @@ module Kontrast
         # and uses them to generate a nice gallery of images.
         def create_gallery(output_dir)
             begin
-                @gallery_dir = FileUtils.mkdir("#{output_dir}/gallery").join('')
-            rescue Errno::ENOENT => e
-                raise GalleryException.new("Directory #{output_dir} does not exist.")
-            rescue Errno::EEXIST => e
-                raise GalleryException.new("The gallery output directory already exists.")
+                @gallery_dir = Kontrast.ensure_output_path("#{output_dir}/gallery")
             rescue Exception => e
                 raise GalleryException.new("An unexpected error occurred while trying to create the gallery's output directory: #{e.inspect}")
             end
@@ -108,7 +104,8 @@ module Kontrast
 
             # This determines where to display images from in the gallery
             if Kontrast.configuration.run_parallel
-                base_path = Kontrast.configuration.upload_base_uri
+                # Build the remote path to S3
+                base_path = "https://#{Kontrast.configuration.aws_bucket}.s3.amazonaws.com/#{Kontrast.configuration.remote_path}"
             else
                 base_path = ".."
             end
