@@ -26,7 +26,8 @@ module Kontrast
             @browser_profile = {}
 
             @run_parallel = false
-            @remote = false
+            @total_nodes = 1
+            @current_node = 0
 
             @distortion_metric = "MeanAbsoluteErrorMetric"
             @highlight_color = "blue"
@@ -43,6 +44,7 @@ module Kontrast
             # If remote, check for more options
             if Kontrast.configuration.run_parallel
                 check_nil_vars(["aws_bucket", "aws_key", "aws_secret"])
+                check_nil_vars(["local_path", "remote_path", "gallery_path"])
             end
         end
 
