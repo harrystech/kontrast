@@ -2,6 +2,8 @@
 
 An automated testing tool for comparing visual differences between two versions of a website.
 
+Kontrast lets you build a test suite to run against your test and production servers. It uses [Selenium](http://www.seleniumhq.org/) to take screenshots of both versions and then uses [ImageMagick](http://www.imagemagick.org/) to visually compare the screenshots. Finally, Kontrast collects its results into a detailed gallery.
+
 ## Prerequisites
 
 1. Install ImageMagick. You can do this on OS X via brew with:
@@ -67,13 +69,88 @@ Run Kontrast (omit the --config flag if you're within a Rails app):
 Review the gallery in your Favorite Browser:
 
 	$ open /tmp/shots/1410309651/gallery/gallery.html
+	
+## Parallelized Usage
+We designed Kontrast from the very beginning to work with multiple containers on our CI server. Our CI setup can extend to any parallelized testing setup with some simple configuration.
+
+### Method of Action
+
+Because we ultimately need to generate a gallery with all test results from all given nodes, Kontrast uploads the test images it creates plus a per-node manifest file to S3. After all the tests have run, a single node downloads all the manifest files and parses them to create a single gallery.
+
+Here's how to get set up:
+
+### Enable Parallelization
+
+	config.remote = true
+
+### Configure Nodes
+Set how many nodes you have in total and the zero-based index of the current node. Kontrast will automatically split up tests among these nodes.
+
+	config.total_nodes = 6
+    config.current_node = 2
+    
+### Configure Remote Options
+Set your S3 details:
+
+    config.aws_bucket = "kontrast-test-results"
+    config.aws_key = ENV['AWS_KEY']
+    config.aws_secret = ENV['AWS_SECRET']
+    
+This is the **local** path where output images will be stored on a node before they are uploaded to S3. This path will be created if it doesn't already exist.
+
+    config.local_path = "tmp/kontrast"
+    
+This is the **remote** path relative to your S3 bucket's root where test images and manifest files will be uploaded to. It should be unique to the current running test.
+
+    config.remote_path = "artifacts.#{ENV['BUILD_NUMBER']}"
+
+This is the **local** path where the gallery will be saved to on the node that creates the gallery. This is usually the artifacts path on a CI server.
+
+    config.gallery_path = ENV["ARTIFACTS_PATH"]
+    
+### Run the Tests
+This command should run in parallel on every node. Omit the config flag if your app is `bundle`'d along with Rails.
+
+	$ bundle exec kontrast run_tests --config /path/to/config.rb
+
+### Create the Gallery
+This command should only run on one node after all the other nodes have completed the previous command. Omit the config flag if your app is `bundle`'d along with Rails.
+
+	$ bundle exec kontrast make_gallery --config /path/to/config.rb
 
 ## Advanced Configuration
 
-### Options
-#### Some option
+### Selenium Driver
+#### browser_driver
+Choose which Selenium driver you'd like to use. Kontrast has only been tested on the default Firefox driver but we would love feedback and/or pull requests for other drivers.
 
-	# todo
+	config.browser_driver = "firefox"
+	
+#### browser_profile
+You may set a driver's profile options in this hash.
+
+	config.browser_profile = {
+        "general.useragent.override" => "Some Cool Kontrast User Agent",
+        "image.animation_mode" => "none"
+    }
+
+### Image Comparisons
+#### distortion_metric
+See [http://www.imagemagick.org/RMagick/doc/constants.html#MetricType]() for available values.
+
+	config.distortion_metric = "MeanAbsoluteErrorMetric"
+	
+#### highlight_color
+The ImageMagick comparison tool emphasizes differences with this color.
+Valid options are an RMagick color name or pixel.
+
+	config.highlight_color = "blue"
+	
+#### lowlight_color
+The ImageMagick comparison tool deemphasizes differences with this color.
+Valid options are an RMagick color name or pixel.
+
+	config.lowlight_color = "rgba(255, 255, 255, 0.3)"
 
 ### Hooks
 #### before_run
