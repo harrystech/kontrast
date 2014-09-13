@@ -31,11 +31,11 @@ module Kontrast
             return @@path if @@path
 
             if Kontrast.configuration.run_parallel
-                @@path = ensure_output_path(Kontrast.configuration.local_path)
+                @@path = FileUtils.mkdir_p(Kontrast.configuration.local_path).join('')
             elsif Kontrast.in_rails?
-                @@path = ensure_output_path(Rails.root + "tmp/shots/#{Time.now.to_i}")
+                @@path = FileUtils.mkdir_p(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
             else
-                @@path = ensure_output_path("/tmp/shots/#{Time.now.to_i}")
+                @@path = FileUtils.mkdir_p("/tmp/shots/#{Time.now.to_i}").join('')
             end
 
             return @@path
@@ -84,17 +84,6 @@ module Kontrast
                 # Call "after" hook
                 Kontrast.configuration.after_gallery(gallery_info[:diffs], gallery_info[:path])
             end
-        end
-
-        def ensure_output_path(path)
-            # Make sure path is created
-            begin
-                FileUtils.mkdir_p(path)
-            rescue Exception => e
-                raise e
-            end
-
-            return path.to_s
         end
     end
 end

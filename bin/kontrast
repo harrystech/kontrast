@@ -57,9 +57,7 @@ module Kontrast
                     begin
                         require config
                     rescue LoadError => e
-                        raise ConfigurationException.new("Could not load the given config file.")
-                    rescue TypeError => e
-                        raise ConfigurationException.new("Config file argument must be a string.")
+                        raise ConfigurationException.new("Could not load '#{config}'.")
                     rescue Exception => e
                         raise ConfigurationException.new("An unexpected error occurred while trying to load the given config file: #{e.inspect}")
                     end

@@ -12,7 +12,7 @@ module Kontrast
         # and uses them to generate a nice gallery of images.
         def create_gallery(output_dir)
             begin
-                @gallery_dir = Kontrast.ensure_output_path("#{output_dir}/gallery")
+                @gallery_dir = FileUtils.mkdir_p("#{output_dir}/gallery").join('')
             rescue Exception => e
                 raise GalleryException.new("An unexpected error occurred while trying to create the gallery's output directory: #{e.inspect}")
             end
