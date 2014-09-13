@@ -88,19 +88,19 @@ module Kontrast
             end
         end
 
-        def before_screenshot(driver1 = nil, driver2 = nil, &block)
+        def before_screenshot(test_driver = nil, production_driver = nil, current_test = nil, &block)
             if block_given?
                 @_before_screenshot = block
             else
-                @_before_screenshot.call(driver1, driver2) if @_before_screenshot
+                @_before_screenshot.call(test_driver, production_driver, current_test) if @_before_screenshot
             end
         end
 
-        def after_screenshot(driver1 = nil, driver2 = nil, &block)
+        def after_screenshot(test_driver = nil, production_driver = nil, current_test = nil, &block)
             if block_given?
                 @_after_screenshot = block
             else
-                @_after_screenshot.call(driver1, driver2) if @_after_screenshot
+                @_after_screenshot.call(test_driver, production_driver, current_test) if @_after_screenshot
             end
         end
 

@@ -14,11 +14,11 @@ module Kontrast
             end
 
             # Get drivers with profile
-            @driver = {
+            @test_driver = {
                 name: "test",
                 driver: Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
             }
-            @driver2 = {
+            @production_driver = {
                 name: "production",
                 driver: Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
             }
@@ -26,7 +26,7 @@ module Kontrast
 
         def cleanup
             # Make sure windows are closed
-            Workers.map([@driver, @driver2]) do |driver|
+            Workers.map([@test_driver, @production_driver]) do |driver|
                 driver[:driver].quit
             end
         end
@@ -43,10 +43,10 @@ module Kontrast
 
             # Take screenshot
             begin
-                Kontrast.configuration.before_screenshot(@driver, @driver2)
+                Kontrast.configuration.before_screenshot(@test_driver, @production_driver, { width: width, name: name })
                 screenshot(current_output)
             ensure
-                Kontrast.configuration.after_screenshot(@driver, @driver2)
+                Kontrast.configuration.after_screenshot(@test_driver, @production_driver, { width: width, name: name })
             end
         end
 
@@ -56,7 +56,7 @@ module Kontrast
                 test_host = Kontrast.configuration.test_domain
                 production_host = Kontrast.configuration.production_domain
 
-                Workers.map([@driver, @driver2]) do |driver|
+                Workers.map([@test_driver, @production_driver]) do |driver|
                     if driver[:name] == "test"
                         driver[:driver].navigate.to("#{test_host}#{path}")
                     elsif driver[:name] == "production"
@@ -66,13 +66,13 @@ module Kontrast
             end
 
             def resize(width)
-                Workers.map([@driver, @driver2]) do |driver|
+                Workers.map([@test_driver, @production_driver]) do |driver|
                     driver[:driver].manage.window.resize_to(width, driver[:driver].manage.window.size.height)
                 end
             end
 
             def screenshot(output_path)
-                Workers.map([@driver, @driver2]) do |driver|
+                Workers.map([@test_driver, @production_driver]) do |driver|
                     if driver[:name] == "test"
                         driver[:driver].save_screenshot("#{output_path}/test.png")
                     elsif driver[:name] == "production"
