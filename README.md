@@ -2,7 +2,7 @@
 
 An automated testing tool for comparing visual differences between two versions of a website.
 
-Kontrast lets you build a test suite to run against your test and production servers. It uses [Selenium](http://www.seleniumhq.org/) to take screenshots of both versions and then uses [ImageMagick](http://www.imagemagick.org/) to visually compare the screenshots. Finally, Kontrast collects its results into a detailed gallery.
+Kontrast lets you build a test suite to run against your test and production servers. It uses [Selenium](http://www.seleniumhq.org/) to take screenshots and [ImageMagick](http://www.imagemagick.org/) to compare them. Kontrast then produces a detailed gallery (similar to [Wraith](https://github.com/BBC-News/wraith)) of its test results.
 
 ## Prerequisites
 
@@ -71,11 +71,11 @@ Review the gallery in your Favorite Browser:
 	$ open /tmp/shots/1410309651/gallery/gallery.html
 	
 ## Parallelized Usage
-We designed Kontrast from the very beginning to work with multiple containers on our CI server. Our CI setup can extend to any parallelized testing setup with some simple configuration.
+We designed Kontrast from the very beginning to work with multiple nodes. At Harry's, we use CircleCI for testing and Kontrast works perfectly with CircleCI's multi-container features.
 
 ### Method of Action
 
-Because we ultimately need to generate a gallery with all test results from all given nodes, Kontrast uploads the test images it creates plus a per-node manifest file to S3. After all the tests have run, a single node downloads all the manifest files and parses them to create a single gallery.
+Because we ultimately need to generate a gallery with all test results from all given nodes, Kontrast uploads the test images it creates plus a per-node manifest file to S3. After all the tests have run, a single node downloads the manifest files and parses them to create a single gallery.
 
 Here's how to get set up:
 
@@ -96,17 +96,13 @@ Set your S3 details:
     config.aws_key = ENV['AWS_KEY']
     config.aws_secret = ENV['AWS_SECRET']
     
-This is the **local** path where output images will be stored on a node before they are uploaded to S3. This path will be created if it doesn't already exist.
+Set the **local** path where output images will be stored before they are uploaded to S3. This is also where the gallery will be saved on the node that runs the `make_gallery` command. This path will be created if it doesn't already exist.
 
     config.local_path = "tmp/kontrast"
     
-This is the **remote** path relative to your S3 bucket's root where test images and manifest files will be uploaded to. It should be unique to the current running test.
+Set the **remote** path relative to your S3 bucket's root where Kontrast's output files will be uploaded to. It should be unique to every test.
 
     config.remote_path = "artifacts.#{ENV['BUILD_NUMBER']}"
-
-This is the **local** path where the gallery will be saved to on the node that creates the gallery. This is usually the artifacts path on a CI server.
-
-    config.gallery_path = ENV["ARTIFACTS_PATH"]
     
 ### Run the Tests
 This command should run in parallel on every node. Omit the config flag if your app is `bundle`'d along with Rails.
@@ -117,6 +113,9 @@ This command should run in parallel on every node. Omit the config flag if your 
 This command should only run on one node after all the other nodes have completed the previous command. Omit the config flag if your app is `bundle`'d along with Rails.
 
 	$ bundle exec kontrast make_gallery --config /path/to/config.rb
+	
+### Review Your Results
+At this point, the gallery should be saved to `config.local_path` and uploaded to `config.remote_path`. Check it out in your Favorite Browser.
 
 ## Advanced Configuration
 
@@ -183,18 +182,19 @@ Runs after the gallery creation step. The block provides a `diffs` hash and a `g
 	end
 
 #### before_screenshot
-Runs on every test before Selenium takes a screenshot.
-The block provides the test and production Selenium drivers for you to control.
+Runs on every test before Selenium takes a screenshot. The block provides the test and production Selenium drivers for you to control. It also gives you a test_info hash with the current test's name and width.
 
-	config.before_screenshot do |test_driver, production_driver|
-		test_driver.find_element(:css, '.active')
-		production_driver.find_element(:css, '.active')
+	config.before_screenshot do |test_driver, production_driver, test_info|
+		if test_info[:name] == "home" && test_info[:width] == 1280
+			test_driver.find_element(:css, '.active')
+			production_driver.find_element(:css, '.active')
+		end
 	end
 
 #### after_screenshot
-Runs on every test after Selenium takes a screenshot. The block provides the test and production Selenium drivers for you to control.
+Runs on every test after Selenium takes a screenshot. The block provides the same variables as the before_screenshot block.
 
-	config.after_screenshot do |test_driver, production_driver|
+	config.after_screenshot do |test_driver, production_driver, test_info|
 		test_driver.find_element(:css, '.inactive')
 		production_driver.find_element(:css, '.inactive')
 	end
