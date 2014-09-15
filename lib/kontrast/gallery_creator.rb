@@ -30,6 +30,14 @@ module Kontrast
                 outf.write(html)
             end
 
+            # Upload file
+            if Kontrast.configuration.run_parallel
+                Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket).files.create(
+                    key: "#{Kontrast.configuration.remote_path}/gallery/gallery.html",
+                    body: File.open("#{@gallery_dir}/gallery.html")
+                )
+            end
+
             # Return diffs and gallery path
             return {
                 diffs: diffs,

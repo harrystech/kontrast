@@ -16,7 +16,7 @@ module Kontrast
         attr_accessor :run_parallel, :total_nodes, :current_node
         attr_accessor :_before_run, :_after_run, :_before_gallery, :_after_gallery, :_before_screenshot, :_after_screenshot
         attr_accessor :distortion_metric, :highlight_color, :lowlight_color
-        attr_accessor :local_path, :remote_path, :gallery_path, :aws_bucket, :aws_key, :aws_secret
+        attr_accessor :local_path, :remote_path, :aws_bucket, :aws_key, :aws_secret
         attr_accessor :test_domain, :production_domain
         attr_accessor :browser_driver, :browser_profile
 
@@ -44,7 +44,7 @@ module Kontrast
             # If remote, check for more options
             if Kontrast.configuration.run_parallel
                 check_nil_vars(["aws_bucket", "aws_key", "aws_secret"])
-                check_nil_vars(["local_path", "remote_path", "gallery_path"])
+                check_nil_vars(["local_path", "remote_path"])
             end
         end
 

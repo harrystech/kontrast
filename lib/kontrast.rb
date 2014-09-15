@@ -67,18 +67,18 @@ module Kontrast
             puts "Time elapsed: #{(end_time - beginning_time)} seconds"
         end
 
-        def make_gallery(path = nil)
+        def make_gallery(result_path = nil)
             puts "Creating gallery..."
             gallery_info = {}
             begin
                 # Call "before" hook
                 Kontrast.configuration.before_gallery
 
-                gallery_creator = GalleryCreator.new(path)
+                gallery_creator = GalleryCreator.new(result_path)
                 if Kontrast.configuration.run_parallel
-                    gallery_info = gallery_creator.create_gallery(Kontrast.configuration.gallery_path)
+                    gallery_info = gallery_creator.create_gallery(Kontrast.configuration.local_path)
                 else
-                    gallery_info = gallery_creator.create_gallery(path)
+                    gallery_info = gallery_creator.create_gallery(result_path)
                 end
             ensure
                 # Call "after" hook
