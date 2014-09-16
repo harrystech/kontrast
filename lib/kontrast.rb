@@ -20,8 +20,14 @@ module Kontrast
         end
 
         def in_rails?
-            Bundler.environment.current_dependencies.each do |dep|
-                return true if dep.name == "rails"
+            # Logic: Rails uses Bundler, so if the Bundler environment contains Rails, return true.
+            # If there's any error whatsoever, return false.
+            begin
+                Bundler.environment.current_dependencies.each do |dep|
+                    return true if dep.name == "rails"
+                end
+            rescue Exception => e
+                # Quietly ignore any exceptions
             end
             return false
         end
