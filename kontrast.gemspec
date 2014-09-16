@@ -9,6 +9,7 @@ Gem::Specification.new do |spec|
     spec.authors       = ["Ilya Rubnich"]
     spec.email         = ["ilya@harrys.com"]
     spec.summary       = %q{An automated testing tool for comparing visual differences between two versions of a website.}
+    spec.description   = %q{Kontrast is a testing tool that lets you build a frontend test suite to run against your test and production websites. It uses Selenium to take screenshots and ImageMagick to compare them. Kontrast then produces a detailed gallery of its test results.}
     spec.homepage      = "https://github.com/harrystech/kontrast"
     spec.license       = "MIT"
 
@@ -17,9 +18,9 @@ Gem::Specification.new do |spec|
     spec.test_files    = spec.files.grep(%r{^spec/})
     spec.require_paths = ["lib"]
 
-    spec.add_development_dependency "rake"
-    spec.add_development_dependency "pry"
-    spec.add_development_dependency "rspec"
+    spec.add_development_dependency "rake", "~> 10.3"
+    spec.add_development_dependency "pry", "~> 0.10"
+    spec.add_development_dependency "rspec", "~> 3.1"
     spec.add_dependency "bundler", "~> 1.6"
     spec.add_dependency "thor", "~> 0.19"
     spec.add_dependency "activesupport", "~> 4.1"
