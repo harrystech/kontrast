@@ -1,5 +1,6 @@
 # Dependencies
 require "fog"
+require "bundler"
 
 # Load classes
 require "kontrast/exceptions"
