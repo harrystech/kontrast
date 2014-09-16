@@ -59,6 +59,23 @@ module Kontrast
             abort if !result && Kontrast.configuration.fail_build
         end
 
+        desc "generate_config", "Generate a Kontrast configuration file"
+        def generate_config
+            template = File.read(Kontrast.root + '/lib/kontrast/config/template.rb')
+
+            if Kontrast.in_rails?
+                target_file = './config/initializers/kontrast.rb'
+            else
+                target_file = './kontrast_config.rb'
+            end
+
+            File.open(target_file, 'w') do |f|
+                f.write(template)
+            end
+
+            puts "Created a Kontrast config file at: #{target_file}"
+        end
+
         private
             def load_config(config)
                 # Let's check if we're within Rails.
