@@ -2,7 +2,7 @@
 
 An automated testing tool for comparing visual differences between two versions of a website.
 
-Kontrast lets you build a test suite to run against your test and production servers. It uses [Selenium](http://www.seleniumhq.org/) to take screenshots and [ImageMagick](http://www.imagemagick.org/) to compare them. Kontrast then produces a detailed gallery of its test results.
+Kontrast lets you build a test suite to run against your test and production websites. It uses [Selenium](http://www.seleniumhq.org/) to take screenshots and [ImageMagick](http://www.imagemagick.org/) to compare them. Kontrast then produces a detailed gallery of its test results.
 
 ## Prerequisites
 
@@ -28,14 +28,14 @@ Or install it yourself as:
 
 Lastly, generate the config file:
 
-	$ bundle exec kontrast generate_config
+	$ kontrast generate_config
 
 If you're in Rails, the config file will be generated in `config/initializers/kontrast.rb`.  
 Otherwise, the config file will be generated in your current directory.
 
 ## Basic Configuration
 
-Here's all the config you need to get started:
+Here's all the config you need to get started (and it's already created by the generator!):
 
 	Kontrast.configure do |config|
 		# Set your test and production domains
@@ -57,9 +57,9 @@ Here's all the config you need to get started:
 	end
 
 ## Basic Usage
-Run Kontrast (omit the --config flag if you're within a Rails app):
+Run Kontrast (use `bundle exec` and omit the --config flag if you're within a Rails app):
 
-	$ bundle exec kontrast local_run --config /path/to/config.rb
+	$ kontrast local_run --config ./kontrast_config.rb
 	...
 	...
 	...
@@ -105,14 +105,14 @@ Set the **remote** path relative to your S3 bucket's root where Kontrast's outpu
     config.remote_path = "artifacts.#{ENV['BUILD_NUMBER']}"
     
 ### Run the Tests
-This command should run in parallel on every node. Omit the config flag if your app is `bundle`'d along with Rails.
+This command should run in parallel on every node. Use `bundle exec` and omit the --config flag if your app is `bundle`'d along with Rails.
 
-	$ bundle exec kontrast run_tests --config /path/to/config.rb
+	$ kontrast run_tests --config /path/to/config.rb
 
 ### Create the Gallery
-This command should only run on one node after all the other nodes have completed the previous command. Omit the config flag if your app is `bundle`'d along with Rails.
+This command should only run on one node after all the other nodes have completed the previous command. Use `bundle exec` and omit the --config flag if your app is `bundle`'d along with Rails.
 
-	$ bundle exec kontrast make_gallery --config /path/to/config.rb
+	$ kontrast make_gallery --config /path/to/config.rb
 	
 ### Review Your Results
 At this point, the gallery should be saved to `config.local_path` and uploaded to `config.remote_path`. Check it out in your Favorite Browser.
