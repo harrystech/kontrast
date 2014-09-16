@@ -2,7 +2,7 @@
 
 An automated testing tool for comparing visual differences between two versions of a website.
 
-Kontrast lets you build a test suite to run against your test and production servers. It uses [Selenium](http://www.seleniumhq.org/) to take screenshots and [ImageMagick](http://www.imagemagick.org/) to compare them. Kontrast then produces a detailed gallery (similar to [Wraith](https://github.com/BBC-News/wraith)) of its test results.
+Kontrast lets you build a test suite to run against your test and production servers. It uses [Selenium](http://www.seleniumhq.org/) to take screenshots and [ImageMagick](http://www.imagemagick.org/) to compare them. Kontrast then produces a detailed gallery of its test results.
 
 ## Prerequisites
 
@@ -178,7 +178,16 @@ Runs after the gallery creation step. The block provides a `diffs` hash and a `g
 
 	config.after_gallery do |diffs, gallery_path|
 		WebMock.enable!
-		puts diffs, gallery_path
+
+		# Report diffs to HipChat using the HipChat gem
+		hipchat_room = "Kontrast Results"
+        hipchat_user = "KontrastBot"
+
+        if !diffs.empty?
+            msg = "Kontrast Diffs: #{diffs.keys.join(', ')}. Don't push to production without reviewing these. You can find the gallery at #{gallery_path}."
+            client = HipChat::Client.new(ENV["HIPCHAT_TOKEN"])
+            client[hipchat_room].send(hipchat_user, msg, :color => "red")
+        end
 	end
 
 #### before_screenshot
