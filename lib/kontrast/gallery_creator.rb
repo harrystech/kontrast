@@ -47,7 +47,6 @@ module Kontrast
 
         def generate_html(files, diffs)
             # Template variables
-            domain = @path.split('/').last
             directories = parse_directories(files, diffs)
 
             # HTML

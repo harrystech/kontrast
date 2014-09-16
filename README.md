@@ -119,6 +119,13 @@ At this point, the gallery should be saved to `config.local_path` and uploaded t
 
 ## Advanced Configuration
 
+### Test Suite
+
+#### fail_build
+If you want Kontrast to exit with an error code if it finds any diffs, use this option:
+
+	config.fail_build = true
+
 ### Selenium Driver
 #### browser_driver
 Choose which Selenium driver you'd like to use. Kontrast has only been tested on the default Firefox driver but we would love feedback and/or pull requests for other drivers.

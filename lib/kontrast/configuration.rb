@@ -19,6 +19,7 @@ module Kontrast
         attr_accessor :local_path, :remote_path, :aws_bucket, :aws_key, :aws_secret
         attr_accessor :test_domain, :production_domain
         attr_accessor :browser_driver, :browser_profile
+        attr_accessor :fail_build
 
         def initialize
             # Set defaults
@@ -32,6 +33,8 @@ module Kontrast
             @distortion_metric = "MeanAbsoluteErrorMetric"
             @highlight_color = "blue"
             @lowlight_color = "rgba(255, 255, 255, 0.3)"
+
+            @fail_build = false
         end
 
         def validate

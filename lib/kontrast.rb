@@ -89,6 +89,9 @@ module Kontrast
                 # Call "after" hook
                 Kontrast.configuration.after_gallery(gallery_info[:diffs], gallery_info[:path])
             end
+
+            # Return based on if we have diffs or not
+            return gallery_info[:diffs].empty?
         end
     end
 end

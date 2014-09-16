@@ -33,7 +33,8 @@ module Kontrast
                 raise GalleryException.new("You can't omit --result-path when running in local mode")
             end
 
-            Kontrast.make_gallery(options[:result_path])
+            result = Kontrast.make_gallery(options[:result_path])
+            abort if !result && Kontrast.configuration.fail_build
         end
 
         # todo: option to specify an output path
@@ -48,11 +49,14 @@ module Kontrast
 
             # Run Kontrast
             Kontrast.run
-            Kontrast.make_gallery(Kontrast.path)
+            result = Kontrast.make_gallery(Kontrast.path)
 
             # Print the gallery path
             puts "Kontrast is all done!"
             puts "You can find the gallery at: #{Kontrast.path}/gallery/gallery.html"
+
+            # Quit with an error code if appropriate
+            abort if !result && Kontrast.configuration.fail_build
         end
 
         private
