@@ -19,12 +19,10 @@ module Kontrast
         end
 
         def in_rails?
-            begin
-                Gem::Specification.find_by_name('rails')
-                return true
-            rescue Gem::LoadError
-                return false
+            Bundler.environment.current_dependencies.each do |dep|
+                return true if dep.name == "rails"
             end
+            return false
         end
 
         def path
