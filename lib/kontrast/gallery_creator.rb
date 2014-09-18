@@ -1,6 +1,5 @@
 require "erb"
 require "json"
-require "active_support/core_ext/hash"
 
 module Kontrast
     class GalleryCreator
@@ -75,7 +74,7 @@ module Kontrast
             manifest_files.each do |manifest|
                 manifest = JSON.parse(File.read(manifest))
                 files.concat(manifest['files'])
-                diffs.reverse_merge!(manifest["diffs"])
+                diffs.merge!(manifest["diffs"])
             end
 
             return {
