@@ -45,9 +45,14 @@ module Kontrast
             end
 
             # If remote, check for more options
-            if Kontrast.configuration.run_parallel
+            if @run_parallel
                 check_nil_vars(["aws_bucket", "aws_key", "aws_secret"])
                 check_nil_vars(["local_path", "remote_path"])
+
+                # Make sure total nodes is >= 1 so we don't get divide by 0 errors
+                if @total_nodes < 1
+                    raise ConfigurationException.new("total_nodes cannot be less than 1.")
+                end
             end
         end
 

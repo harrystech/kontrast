@@ -10,9 +10,19 @@ module Kontrast
             # Make sure the local server is running
             wait_for_server
 
+            # Assign nodes
+            if Kontrast.configuration.run_parallel
+                total_nodes = Kontrast.configuration.total_nodes
+                current_node = Kontrast.configuration.current_node
+            else
+                # Override the config for local use
+                total_nodes = 1
+                current_node = 0
+            end
+
             # Assign tests and run them
-            to_run = split_run(Kontrast.configuration.total_nodes, Kontrast.configuration.current_node)
-            parallel_run(to_run, Kontrast.configuration.current_node)
+            to_run = split_run(total_nodes, current_node)
+            parallel_run(to_run, current_node)
         end
 
         # Given the total number of nodes and the index of the current node,
