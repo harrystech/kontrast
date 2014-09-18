@@ -3,9 +3,8 @@
 # https://github.com/harrystech/kontrast
 
 Kontrast.configure do |config|
-
     # This is the address of your local server
-    config.test_domain = "http://localhost:4000"
+    config.test_domain = "http://localhost:3000"
 
     # This is the address of your production server
     config.production_domain = "http://www.example.com"

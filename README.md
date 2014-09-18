@@ -35,7 +35,7 @@ Otherwise, the config file will be generated in your current directory.
 
 ## Basic Configuration
 
-Here's all the config you need to get started (and it's already created by the generator!):
+Here's all the config you need to get started:
 
 	Kontrast.configure do |config|
 		# Set your test and production domains
@@ -81,7 +81,7 @@ Here's how to get set up:
 
 ### Enable Parallelization
 
-	config.remote = true
+	config.run_parallel = true
 
 ### Configure Nodes
 Set how many nodes you have in total and the zero-based index of the current node. Kontrast will automatically split up tests among these nodes.
