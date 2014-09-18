@@ -91,6 +91,7 @@ module Kontrast
 
         private
             def wait_for_server
+                # Test server
                 tries = 30
                 uri = URI(Kontrast.configuration.test_domain)
                 begin
@@ -98,14 +99,32 @@ module Kontrast
                 rescue Errno::ECONNREFUSED => e
                     tries -= 1
                     if tries > 0
-                        puts "Waiting for server..."
+                        puts "Waiting for test server..."
                         sleep 2
                         retry
                     else
-                        raise RunnerException.new("Could not reach #{uri}.")
+                        raise RunnerException.new("Could not reach the test server at '#{uri}'.")
                     end
                 rescue Exception => e
-                    raise RunnerException.new("An unexpected error occured while trying to reach #{uri}: #{e.inspect}")
+                    raise RunnerException.new("An unexpected error occured while trying to reach the test server at '#{uri}': #{e.inspect}")
+                end
+
+                # Production server
+                tries = 30
+                uri = URI(Kontrast.configuration.production_domain)
+                begin
+                    Net::HTTP.get(uri)
+                rescue Errno::ECONNREFUSED => e
+                    tries -= 1
+                    if tries > 0
+                        puts "Waiting for production server..."
+                        sleep 2
+                        retry
+                    else
+                        raise RunnerException.new("Could not reach the production server at '#{uri}'.")
+                    end
+                rescue Exception => e
+                    raise RunnerException.new("An unexpected error occured while trying to reach the production server at '#{uri}': #{e.inspect}")
                 end
             end
     end
