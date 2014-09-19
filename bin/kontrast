@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+
+#######################################
+# This is the entry point to Kontrast #
+#######################################
+
 begin
     require "rubygems"
     require "kontrast"
@@ -10,41 +15,95 @@ require "thor"
 
 module Kontrast
     class CLI < Thor
-        desc "run_tests CONFIG_FILE", "Run Kontrast test suite"
-        def run_tests(config)
-            load_config(config)
+        class_option :config
+
+        desc "run_tests", "Run Kontrast test suite"
+        def run_tests
+            load_config(options[:config])
             Kontrast.run
         end
 
-        desc "make_gallery CONFIG_FILE PATH", "Create gallery given a path of test results"
-        def make_gallery(config, path = nil)
-            load_config(config)
+        desc "make_gallery --result-path PATH", "Create gallery given an optional local path of test results"
+        option :result_path
+        def make_gallery
+            load_config(options[:config])
 
             # We're only allowed to give no path in the remote case
-            if path.nil? && !Kontrast.configuration.remote
-                raise Exception.new("You can't omit a path when running in remote mode.")
+            if options[:result_path].nil? && !Kontrast.configuration.run_parallel
+                raise GalleryException.new("You can't omit --result-path when running in local mode")
             end
 
-            Kontrast.make_gallery(path)
+            result = Kontrast.make_gallery(options[:result_path])
+            abort if !result && Kontrast.configuration.fail_build
         end
 
-        desc "local_run CONFIG_FILE", "Run Kontrast locally"
-        def local_run(config)
-            load_config(config)
+        # todo: option to specify an output path
+        desc "local_run", "Run Kontrast locally"
+        def local_run
+            load_config(options[:config])
+
+            # Make sure config run_parallel is set to false
+            if Kontrast.configuration.run_parallel
+                raise ConfigurationException.new("You can't run in parallel locally")
+            end
 
             # Run Kontrast
             Kontrast.run
-            Kontrast.make_gallery(Kontrast.path)
+            result = Kontrast.make_gallery(Kontrast.path)
+
+            # Print the gallery path
+            puts "Kontrast is all done!"
+            puts "You can find the gallery at: #{Kontrast.path}/gallery/gallery.html"
+
+            # Quit with an error code if appropriate
+            abort if !result && Kontrast.configuration.fail_build
+        end
+
+        desc "generate_config", "Generate a Kontrast configuration file"
+        def generate_config
+            template = File.read(Kontrast.root + '/lib/kontrast/config/template.rb')
+
+            if Kontrast.in_rails?
+                target_file = './config/initializers/kontrast.rb'
+            else
+                target_file = './kontrast_config.rb'
+            end
+
+            File.open(target_file, 'w') do |f|
+                f.write(template)
+            end
+
+            puts "Created a Kontrast config file at: #{target_file}"
         end
 
         private
             def load_config(config)
-                begin
-                    require config
-                rescue LoadError => e
-                    puts "Could not load the Kontrast configuration!"
-                    raise e
+                # Let's check if we're within Rails.
+                if !Kontrast.in_rails?
+                    begin
+                        require config
+                    rescue TypeError => e
+                        raise ConfigurationException.new("Error parsing the config flag '#{config}'")
+                    rescue LoadError => e
+                        raise ConfigurationException.new("Could not load '#{config}'")
+                    rescue Exception => e
+                        raise ConfigurationException.new("An unexpected error occurred while trying to load the given config file: #{e.inspect}")
+                    end
+                else
+                    # Load Rails environment
+                    # We will assume the config was loaded from an initializer
+                    require './config/environment'
                 end
+
+                # Check that we actually got a configuration block
+                if !Kontrast.configuration
+                    raise ConfigurationException.new("No configuration has been loaded")
+                end
+
+                # Make sure we have the bare minimum configuration to continue
+                Kontrast.configuration.validate
+
+                return true
             end
     end
 end

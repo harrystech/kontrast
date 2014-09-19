@@ -1,7 +1,9 @@
 # Dependencies
 require "fog"
+require "bundler"
 
 # Load classes
+require "kontrast/exceptions"
 require "kontrast/configuration"
 require "kontrast/test_builder"
 require "kontrast/selenium_handler"
@@ -17,20 +19,28 @@ module Kontrast
             File.expand_path('../..', __FILE__)
         end
 
+        def in_rails?
+            # Logic: Rails uses Bundler, so if the Bundler environment contains Rails, return true.
+            # If there's any error whatsoever, return false.
+            begin
+                Bundler.environment.current_dependencies.each do |dep|
+                    return true if dep.name == "rails"
+                end
+            rescue Exception => e
+                # Quietly ignore any exceptions
+            end
+            return false
+        end
+
         def path
             return @@path if @@path
 
-            if Kontrast.configuration.remote
-                if Dir.exists?(Kontrast.configuration.remote_path)
-                    @@path = Kontrast.configuration.remote_path
-                else
-                    @@path = FileUtils.mkdir(Kontrast.configuration.remote_path).join('')
-                end
-            elsif Dir.exists?("/tmp/shots")
-                @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
+            if Kontrast.configuration.run_parallel
+                @@path = FileUtils.mkdir_p(Kontrast.configuration.local_path).join('')
+            elsif Kontrast.in_rails?
+                @@path = FileUtils.mkdir_p(Rails.root + "tmp/shots/#{Time.now.to_i}").join('')
             else
-                FileUtils.mkdir("/tmp/shots")
-                @@path = FileUtils.mkdir("/tmp/shots/#{Time.now.to_i}").join('')
+                @@path = FileUtils.mkdir_p("/tmp/shots/#{Time.now.to_i}").join('')
             end
 
             return @@path
@@ -62,23 +72,26 @@ module Kontrast
             puts "Time elapsed: #{(end_time - beginning_time)} seconds"
         end
 
-        def make_gallery(path = nil)
+        def make_gallery(result_path = nil)
             puts "Creating gallery..."
             gallery_info = {}
             begin
                 # Call "before" hook
                 Kontrast.configuration.before_gallery
 
-                gallery_creator = GalleryCreator.new(path)
-                if Kontrast.configuration.remote
-                    gallery_info = gallery_creator.create_gallery(Kontrast.configuration.gallery_path)
+                gallery_creator = GalleryCreator.new(result_path)
+                if Kontrast.configuration.run_parallel
+                    gallery_info = gallery_creator.create_gallery(Kontrast.configuration.local_path)
                 else
-                    gallery_info = gallery_creator.create_gallery(path)
+                    gallery_info = gallery_creator.create_gallery(result_path)
                 end
             ensure
                 # Call "after" hook
                 Kontrast.configuration.after_gallery(gallery_info[:diffs], gallery_info[:path])
             end
+
+            # Return based on if we have diffs or not
+            return gallery_info[:diffs].empty?
         end
     end
 end

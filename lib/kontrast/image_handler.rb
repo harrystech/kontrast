@@ -1,4 +1,5 @@
 require "RMagick"
+require "workers"
 
 module Kontrast
     class ImageHandler
@@ -25,8 +26,9 @@ module Kontrast
             max_height = [test_image.rows, production_image.rows].max
 
             # Crop
-            test_image.extent(width, max_height).write(test_image.filename)
-            production_image.extent(width, max_height).write(production_image.filename)
+            Workers.map([test_image, production_image]) do |image|
+                image.extent(width, max_height).write(image.filename)
+            end
         end
 
         # Uses the compare_channel function to highlight the differences between two images
@@ -61,14 +63,15 @@ module Kontrast
             diff_image = Image.read("#{@path}/#{width}_#{name}/diff.png").first
 
             # Crop images
-            test_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/test_thumb.png")
-            production_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/production_thumb.png")
-            diff_image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/diff_thumb.png")
+            Workers.map([test_image, production_image, diff_image]) do |image|
+                filename = image.filename.split('/').last.split('.').first + "_thumb"
+                image.resize_to_fill(200, 200, NorthGravity).write("#{@path}/#{width}_#{name}/#{filename}.png")
+            end
         end
 
         # We upload the images per test
         def upload_images(width, name)
-            Dir.foreach("#{@path}/#{width}_#{name}") do |file|
+            Workers.map(Dir.entries("#{@path}/#{width}_#{name}")) do |file|
                 next if ['.', '..'].include?(file)
                 Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket).files.create(
                     key: "#{Kontrast.configuration.remote_path}/#{width}_#{name}/#{file}",
@@ -97,7 +100,7 @@ module Kontrast
                 end
             end
 
-            if Kontrast.configuration.remote
+            if Kontrast.configuration.run_parallel
                 # Upload manifest
                 Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket).files.create(
                     key: "#{build}/manifest_#{current_node}.json",

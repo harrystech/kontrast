@@ -7,26 +7,18 @@ module Kontrast
         end
 
         def run
-            # Wait for local server to load for a minute
-            tries = 30
-            uri = URI(Kontrast.configuration.test_domain)
-            begin
-                Net::HTTP.get(uri)
-            rescue Errno::ECONNREFUSED => e
-                tries -= 1
-                if tries > 0
-                    puts "Waiting for server..."
-                    sleep 2
-                    retry
-                else
-                    raise Exception.new("Could not reach the local server.")
-                end
-            end
+            # Make sure the local server is running
+            wait_for_server
 
-            # Parallelism setup
-            # We always assume some kind of "parallelism" even if we only have 1 node
-            total_nodes = Kontrast.configuration.run_parallel ? Kontrast.configuration.total_nodes : 1
-            current_node = Kontrast.configuration.run_parallel ? Kontrast.configuration.current_node : 0
+            # Assign nodes
+            if Kontrast.configuration.run_parallel
+                total_nodes = Kontrast.configuration.total_nodes
+                current_node = Kontrast.configuration.current_node
+            else
+                # Override the config for local use
+                total_nodes = 1
+                current_node = 0
+            end
 
             # Assign tests and run them
             to_run = split_run(total_nodes, current_node)
@@ -83,7 +75,7 @@ module Kontrast
                         @image_handler.create_thumbnails(width, name)
 
                         # Upload to S3
-                        if Kontrast.configuration.remote
+                        if Kontrast.configuration.run_parallel
                             print "Uploading... "
                             @image_handler.upload_images(width, name)
                         end
@@ -97,7 +89,7 @@ module Kontrast
 
                 # Create manifest
                 puts "Creating manifest..."
-                if Kontrast.configuration.remote
+                if Kontrast.configuration.run_parallel
                     @image_handler.create_manifest(current_node, Kontrast.configuration.remote_path)
                 else
                     @image_handler.create_manifest(current_node)
@@ -106,5 +98,44 @@ module Kontrast
                 @selenium_handler.cleanup
             end
         end
+
+        private
+            def wait_for_server
+                # Test server
+                tries = 30
+                uri = URI(Kontrast.configuration.test_domain)
+                begin
+                    Net::HTTP.get(uri)
+                rescue Errno::ECONNREFUSED => e
+                    tries -= 1
+                    if tries > 0
+                        puts "Waiting for test server..."
+                        sleep 2
+                        retry
+                    else
+                        raise RunnerException.new("Could not reach the test server at '#{uri}'.")
+                    end
+                rescue Exception => e
+                    raise RunnerException.new("An unexpected error occured while trying to reach the test server at '#{uri}': #{e.inspect}")
+                end
+
+                # Production server
+                tries = 30
+                uri = URI(Kontrast.configuration.production_domain)
+                begin
+                    Net::HTTP.get(uri)
+                rescue Errno::ECONNREFUSED => e
+                    tries -= 1
+                    if tries > 0
+                        puts "Waiting for production server..."
+                        sleep 2
+                        retry
+                    else
+                        raise RunnerException.new("Could not reach the production server at '#{uri}'.")
+                    end
+                rescue Exception => e
+                    raise RunnerException.new("An unexpected error occured while trying to reach the production server at '#{uri}': #{e.inspect}")
+                end
+            end
     end
 end
