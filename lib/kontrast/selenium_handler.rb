@@ -43,10 +43,10 @@ module Kontrast
 
             # Take screenshot
             begin
-                Kontrast.configuration.before_screenshot(@test_driver, @production_driver, { width: width, name: name })
+                Kontrast.configuration.before_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
                 screenshot(current_output)
             ensure
-                Kontrast.configuration.after_screenshot(@test_driver, @production_driver, { width: width, name: name })
+                Kontrast.configuration.after_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
             end
         end
 
