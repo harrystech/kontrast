@@ -79,17 +79,17 @@ Because we ultimately need to generate a gallery with all test results from all 
 
 Here's how to get set up:
 
-### Enable Parallelization
+### 1. Enable Parallelization
 
 	config.run_parallel = true
 
-### Configure Nodes
+### 2. Configure Nodes
 Set how many nodes you have in total and the zero-based index of the current node. Kontrast will automatically split up tests among these nodes.
 
 	config.total_nodes = 6
     config.current_node = 2
     
-### Configure Remote Options
+### 3. Configure Remote Options
 Set your S3 details:
 
     config.aws_bucket = "kontrast-test-results"
@@ -104,18 +104,30 @@ Set the **remote** path relative to your S3 bucket's root where Kontrast's outpu
 
     config.remote_path = "artifacts.#{ENV['BUILD_NUMBER']}"
     
-### Run the Tests
+### 4. Run the Tests
 This command should run in parallel on every node. Use `bundle exec` and omit the --config flag if your app is `bundle`'d along with Rails.
 
 	$ kontrast run_tests --config /path/to/config.rb
 
-### Create the Gallery
+### 5. Create the Gallery
 This command should only run on one node after all the other nodes have completed the previous command. Use `bundle exec` and omit the --config flag if your app is `bundle`'d along with Rails.
 
 	$ kontrast make_gallery --config /path/to/config.rb
 	
-### Review Your Results
+### 6. Review Your Results
 At this point, the gallery should be saved to `config.local_path` and uploaded to `config.remote_path`. Check it out in your Favorite Browser.
+
+### Sample circle.yml
+Here's an example of how to run Kontrast within a Rails app using CircleCI:
+
+	test:
+  		post:
+      		- bundle exec rails server:
+          		background: true
+          		parallel: true
+      		- bundle exec kontrast run_tests:
+          		parallel: true
+          	- bundle exec kontrast make_gallery
 
 ## Advanced Configuration
 
@@ -159,6 +171,8 @@ Valid options are an RMagick color name or pixel.
 	config.lowlight_color = "rgba(255, 255, 255, 0.3)"
 
 ### Hooks
+To make Kontrast even more powerful, we provided a set of hooks that you can use in your configuration.
+
 #### before_run
 Runs before the entire suite.
 
@@ -181,12 +195,35 @@ Runs before the gallery creation step.
 	end
 
 #### after_gallery
-Runs after the gallery creation step. The block provides a `diffs` hash and a `gallery_path` for you to use.
+Runs after the gallery creation step.
 
 	config.after_gallery do |diffs, gallery_path|
-		WebMock.enable!
+		# diffs is a hash containing all the differences that Kontrast found in your test suite
+		# gallery_path is where Kontrast saved the gallery
+	end
 
-		# Report diffs to HipChat using the HipChat gem
+#### before_screenshot
+Runs on every test before Selenium takes a screenshot.
+
+	config.before_screenshot do |test_driver, production_driver, test_info|
+		# test_driver and production_driver are instances of Selenium::WebDriver that you can control
+		# test_info is a hash with the current test's name and width
+	end
+
+#### after_screenshot
+Runs on every test after Selenium takes a screenshot.
+
+	config.after_screenshot do |test_driver, production_driver, test_info|
+		# same variables are available as with before_screenshot
+	end
+	
+## Customizing Kontrast
+Kontrast's hooks allow you to insert custom functionality into many parts of the test suite. Here are some examples of how we use hooks at Harry's:
+
+### Integrating with HipChat
+Once a build finishes, we let HipChat know if Kontrast found any diffs using the `hipchat` gem:
+
+	config.after_gallery do |diffs, gallery_path|
 		hipchat_room = "Kontrast Results"
         hipchat_user = "KontrastBot"
 
@@ -196,24 +233,25 @@ Runs after the gallery creation step. The block provides a `diffs` hash and a `g
             client[hipchat_room].send(hipchat_user, msg, :color => "red")
         end
 	end
+	
+### Setting Cookies
+Testing our cart page required a bit more setup before we could take a screenshot of it:
 
-#### before_screenshot
-Runs on every test before Selenium takes a screenshot. The block provides the test and production Selenium drivers for you to control. It also gives you a test_info hash with the current test's name and width.
-
-	config.before_screenshot do |test_driver, production_driver, test_info|
-		if test_info[:name] == "home" && test_info[:width] == 1280
-			test_driver.find_element(:css, '.active')
-			production_driver.find_element(:css, '.active')
-		end
-	end
-
-#### after_screenshot
-Runs on every test after Selenium takes a screenshot. The block provides the same variables as the before_screenshot block.
-
-	config.after_screenshot do |test_driver, production_driver, test_info|
-		test_driver.find_element(:css, '.inactive')
-		production_driver.find_element(:css, '.inactive')
-	end
+	config.before_screenshot do |test_driver, production_driver, test|
+		if test[:name] == "cart"
+			# prepare our cookie value
+       		cookie_value = super_secret_magic_cart_cookie
+       	
+       		# write cookies using Mootools
+       		# http://mootools.net/docs/core/Utilities/Cookie
+        	test_driver.execute_script("Cookie.write('cart', '#{cookie_value}');")
+        	production_driver.execute_script("Cookie.write('cart', '#{cookie_value}');")
+        
+        	# refresh the page
+        	test_driver.navigate.refresh
+        	production_driver.navigate.refresh
+    	end
+    end
 
 ## Contributing
 
