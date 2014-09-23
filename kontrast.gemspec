@@ -18,13 +18,13 @@ Gem::Specification.new do |spec|
     spec.test_files    = spec.files.grep(%r{^spec/})
     spec.require_paths = ["lib"]
 
-    spec.add_development_dependency "rake", "~> 10.3"
+    spec.add_development_dependency "rake", "~> 10.0"
     spec.add_development_dependency "pry", "~> 0.10"
-    spec.add_development_dependency "rspec", "~> 3.1"
+    spec.add_development_dependency "rspec", "~> 3.0"
     spec.add_dependency "bundler", "~> 1.6"
-    spec.add_dependency "thor", "~> 0.19"
-    spec.add_dependency "selenium-webdriver", "~> 2.43"
+    spec.add_dependency "thor", "~> 0.0"
+    spec.add_dependency "selenium-webdriver", "~> 2.0"
     spec.add_dependency "workers", "~> 0.2"
     spec.add_dependency "rmagick", "2.13.2"
-    spec.add_dependency "fog", "~> 1.23"
+    spec.add_dependency "fog", "~> 1.0"
 end
