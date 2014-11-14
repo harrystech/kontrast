@@ -84,6 +84,9 @@ module Kontrast
                             puts "\n", ("=" * 85)
                         rescue Net::ReadTimeout => e
                             puts "Test timed out. Message: #{e.inspect}"
+                            if Kontrast.configuration.fail_build
+                                raise e
+                            end
                         end
                     end
                 end
