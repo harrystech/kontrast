@@ -1,5 +1,6 @@
 require "selenium-webdriver"
 require "workers"
+require 'timeout'
 
 module Kontrast
     class SeleniumHandler
@@ -35,18 +36,20 @@ module Kontrast
             # Create folder for this test
             current_output = FileUtils.mkdir_p("#{@path}/#{width}_#{name}").join('')
 
-            # Open test host tabs
-            navigate(path)
+            Timeout::timeout(300) do
+                # Open test host tabs
+                navigate(path)
 
-            # Resize to given width and total height
-            resize(width)
+                # Resize to given width and total height
+                resize(width)
 
-            # Take screenshot
-            begin
-                Kontrast.configuration.before_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
-                screenshot(current_output)
-            ensure
-                Kontrast.configuration.after_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
+                # Take screenshot
+                begin
+                    Kontrast.configuration.before_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
+                    screenshot(current_output)
+                ensure
+                    Kontrast.configuration.after_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
+                end
             end
         end
 
