@@ -48,37 +48,27 @@ module Kontrast
             ensure
                 Kontrast.configuration.after_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
             end
+
         end
 
         private
             def navigate(path)
                 # Get domains
                 test_host = Kontrast.configuration.test_domain
-                production_host = Kontrast.configuration.production_domain
+                @test_driver[:driver].navigate.to("#{test_host}#{path}")
 
-                Workers.map([@test_driver, @production_driver]) do |driver|
-                    if driver[:name] == "test"
-                        driver[:driver].navigate.to("#{test_host}#{path}")
-                    elsif driver[:name] == "production"
-                        driver[:driver].navigate.to("#{production_host}#{path}")
-                    end
-                end
+                production_host = Kontrast.configuration.production_domain
+                @production_driver[:driver].navigate.to("#{production_host}#{path}")
             end
 
             def resize(width)
-                Workers.map([@test_driver, @production_driver]) do |driver|
-                    driver[:driver].manage.window.resize_to(width, driver[:driver].manage.window.size.height)
-                end
+                @test_driver[:driver].manage.window.resize_to(width, @test_driver[:driver].manage.window.size.height)
+                @production_driver[:driver].manage.window.resize_to(width, @production_driver[:driver].manage.window.size.height)
             end
 
             def screenshot(output_path)
-                Workers.map([@test_driver, @production_driver]) do |driver|
-                    if driver[:name] == "test"
-                        driver[:driver].save_screenshot("#{output_path}/test.png")
-                    elsif driver[:name] == "production"
-                        driver[:driver].save_screenshot("#{output_path}/production.png")
-                    end
-                end
+                @test_driver[:driver].save_screenshot("#{output_path}/test.png")
+                @production_driver[:driver].save_screenshot("#{output_path}/production.png")
             end
     end
 end
