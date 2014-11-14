@@ -57,30 +57,37 @@ module Kontrast
                 tests.each do |width, pages|
                     next if pages.nil?
                     pages.each do |name, path|
-                        print "Processing #{name} @ #{width}... "
+                        begin
+                            print "Processing #{name} @ #{width}... "
 
-                        # Run the browser and take screenshots
-                        @selenium_handler.run_comparison(width, path, name)
+                            # Run the browser and take screenshots
+                            @selenium_handler.run_comparison(width, path, name)
 
-                        # Crop images
-                        print "Cropping... "
-                        @image_handler.crop_images(width, name)
+                            # Crop images
+                            print "Cropping... "
+                            @image_handler.crop_images(width, name)
 
-                        # Compare images
-                        print "Diffing... "
-                        @image_handler.diff_images(width, name)
+                            # Compare images
+                            print "Diffing... "
+                            @image_handler.diff_images(width, name)
 
-                        # Create thumbnails for gallery
-                        print "Creating thumbnails... "
-                        @image_handler.create_thumbnails(width, name)
+                            # Create thumbnails for gallery
+                            print "Creating thumbnails... "
+                            @image_handler.create_thumbnails(width, name)
 
-                        # Upload to S3
-                        if Kontrast.configuration.run_parallel
-                            print "Uploading... "
-                            @image_handler.upload_images(width, name)
+                            # Upload to S3
+                            if Kontrast.configuration.run_parallel
+                                print "Uploading... "
+                                @image_handler.upload_images(width, name)
+                            end
+
+                            puts "\n", ("=" * 85)
+                        rescue Net::ReadTimeout => e
+                            puts "Test timed out. Message: #{e.inspect}"
+                            if Kontrast.configuration.fail_build
+                                raise e
+                            end
                         end
-
-                        puts "\n", ("=" * 85)
                     end
                 end
 
@@ -93,6 +100,11 @@ module Kontrast
                     @image_handler.create_manifest(current_node, Kontrast.configuration.remote_path)
                 else
                     @image_handler.create_manifest(current_node)
+                end
+            rescue Exception => e
+                puts "Exception: #{e.inspect}"
+                if Kontrast.configuration.fail_build
+                    raise e
                 end
             ensure
                 @selenium_handler.cleanup

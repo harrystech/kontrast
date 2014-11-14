@@ -134,7 +134,7 @@ Here's an example of how to run Kontrast within a Rails app using CircleCI:
 ### Test Suite
 
 #### fail_build
-If you want Kontrast to exit with an error code if it finds any diffs, use this option:
+If you want Kontrast to exit with an error code (and fail your build) if an exception is raised while running, use this option:
 
 	config.fail_build = true
 
