@@ -81,6 +81,11 @@ module Kontrast
                         end
 
                         puts "\n", ("=" * 85)
+                    rescue Exception => e
+                        puts "Exception: #{e.inspect}"
+                        if Kontrast.configuration.fail_build
+                            raise e
+                        end
                     end
                 end
 
