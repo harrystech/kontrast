@@ -18,10 +18,12 @@ module Kontrast
                 name: "test",
                 driver: Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
             }
+            @test_driver[:driver].manage.timeouts.page_load = Kontrast.configuration.browser_timeout
             @production_driver = {
                 name: "production",
                 driver: Selenium::WebDriver.for(driver_name.to_sym, profile: profile)
             }
+            @production_driver[:driver].manage.timeouts.page_load = Kontrast.configuration.browser_timeout
         end
 
         def cleanup

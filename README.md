@@ -152,6 +152,11 @@ You may set a driver's profile options in this hash.
         "image.animation_mode" => "none"
     }
 
+#### browser_timeout
+You may set a driver's timeout for page load in seconds. Default value is 300 (5 minutes)
+
+	config.browser_timeout = 300
+
 ### Image Comparisons
 #### distortion_metric
 See [http://www.imagemagick.org/RMagick/doc/constants.html#MetricType]() for available values.

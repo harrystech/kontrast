@@ -18,13 +18,14 @@ module Kontrast
         attr_accessor :distortion_metric, :highlight_color, :lowlight_color
         attr_accessor :local_path, :remote_path, :aws_bucket, :aws_key, :aws_secret
         attr_accessor :test_domain, :production_domain
-        attr_accessor :browser_driver, :browser_profile
+        attr_accessor :browser_driver, :browser_profile, :browser_timeout
         attr_accessor :fail_build
 
         def initialize
             # Set defaults
             @browser_driver = "firefox"
             @browser_profile = {}
+            @browser_timeout = 300
 
             @run_parallel = false
             @total_nodes = 1
