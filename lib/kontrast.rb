@@ -5,6 +5,7 @@ require "bundler"
 # Load classes
 require "kontrast/exceptions"
 require "kontrast/configuration"
+require "kontrast/test"
 require "kontrast/test_builder"
 require "kontrast/selenium_handler"
 require "kontrast/image_handler"

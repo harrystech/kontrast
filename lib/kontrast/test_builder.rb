@@ -1,11 +1,10 @@
 module Kontrast
     class TestBuilder
         def initialize
-            @tests = Hash.new
+            @tests = []
         end
 
         def add_width(width)
-            @tests[width] = Hash.new
             @current_width = width
         end
 
@@ -19,7 +18,7 @@ module Kontrast
 
         # Adds a given test from config to the suite
         def method_missing(name, *args)
-            @tests[@current_width][name.to_s] = args.first
+            @tests << Test.new(@current_width, name.to_s, args.first)
         end
     end
 end

@@ -31,22 +31,22 @@ module Kontrast
             end
         end
 
-        def run_comparison(width, path, name)
+        def run_comparison(test)
             # Create folder for this test
-            current_output = FileUtils.mkdir_p("#{@path}/#{width}_#{name}").join('')
+            current_output = FileUtils.mkdir_p("#{@path}/#{test.width}_#{test.name}").join('')
 
             # Open test host tabs
-            navigate(path)
+            navigate(test.path)
 
             # Resize to given width and total height
-            resize(width)
+            resize(test.width)
 
             # Take screenshot
             begin
-                Kontrast.configuration.before_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
+                Kontrast.configuration.before_screenshot(@test_driver[:driver], @production_driver[:driver], { width: test.width, name: test.name })
                 screenshot(current_output)
             ensure
-                Kontrast.configuration.after_screenshot(@test_driver[:driver], @production_driver[:driver], { width: width, name: name })
+                Kontrast.configuration.after_screenshot(@test_driver[:driver], @production_driver[:driver], { width: test.width, name: test.name })
             end
         end
 
