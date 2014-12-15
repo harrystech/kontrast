@@ -33,7 +33,7 @@ module Kontrast
 
         def run_comparison(test)
             # Create folder for this test
-            current_output = FileUtils.mkdir_p("#{@path}/#{test.width}_#{test.name}").join('')
+            current_output = FileUtils.mkdir_p("#{@path}/#{test}").join('')
 
             # Open test host tabs
             navigate(test.path)
