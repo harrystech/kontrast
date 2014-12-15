@@ -2,8 +2,8 @@ module Kontrast
     class TestSuite
         attr_reader :tests
 
-        def initialize(tests = nil)
-            @tests = tests || []
+        def initialize
+            @tests = []
         end
 
         def <<(test)

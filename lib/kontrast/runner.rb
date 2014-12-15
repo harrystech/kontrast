@@ -18,36 +18,36 @@ module Kontrast
             end
 
             # Assign tests and run them
-            to_run = split_run(total_nodes, current_node)
-            parallel_run(to_run, current_node)
+            suite = split_run(total_nodes, current_node)
+            parallel_run(suite, current_node)
         end
 
         # Given the total number of nodes and the index of the current node,
         # we determine which tests the current node will run
         def split_run(total_nodes, current_node)
-            all_tests = Kontrast.test_suite.tests
-            tests_to_run = []
+            test_suite = Kontrast.test_suite
+            tests_to_run = TestSuite.new
 
             index = 0
-            all_tests.each do |test|
+            test_suite.tests.each do |test|
                 if index % total_nodes == current_node
                     tests_to_run << test
                 end
                 index += 1
             end
 
-            return TestSuite.new(tests_to_run)
+            return tests_to_run
         end
 
         # Runs tests, handles all image operations, creates manifest for current node
-        def parallel_run(tests, current_node)
+        def parallel_run(suite, current_node)
             # Load test handlers
             @selenium_handler = SeleniumHandler.new
             @image_handler = ImageHandler.new
 
             begin
                 # Run per-page tasks
-                tests.each do |test|
+                suite.tests.each do |test|
                     begin
                         print "Processing #{test.name} @ #{test.width}... "
 
