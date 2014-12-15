@@ -1,14 +1,18 @@
 module Kontrast
     class << self
-        attr_accessor :configuration, :test_suite
+        attr_accessor :configuration, :builder
 
         def configure
             self.configuration ||= Configuration.new
             yield(configuration)
         end
 
-        def tests
-            self.test_suite ||= TestBuilder.new
+        def test_builder
+            self.builder ||= TestBuilder.new
+        end
+
+        def test_suite
+            self.builder.suite
         end
     end
 
@@ -40,7 +44,7 @@ module Kontrast
         def validate
             # Check that Kontrast has everything it needs to proceed
             check_nil_vars(["test_domain", "production_domain"])
-            if Kontrast.test_suite.nil?
+            if Kontrast.builder.nil?
                 raise ConfigurationException.new("Kontrast has no tests to run.")
             end
 
@@ -60,8 +64,8 @@ module Kontrast
             if !block_given?
                 raise ConfigurationException.new("You must pass a block to the pages config option.")
             end
-            Kontrast.tests.add_width(width)
-            yield(Kontrast.tests)
+            Kontrast.test_builder.add_width(width)
+            yield(Kontrast.test_builder)
         end
 
         def before_run(&block)

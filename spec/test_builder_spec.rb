@@ -15,7 +15,8 @@ describe Kontrast::TestBuilder do
                 page.other_stuff = "/other-stuff"
             end
         end
-        expect(Kontrast.test_suite.tests).to eql({
+
+        expect(Kontrast.test_suite.to_h).to eql({
             1280 => {
                 "home" => "/",
                 "products" => "/products"
