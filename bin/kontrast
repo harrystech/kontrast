@@ -16,17 +16,18 @@ require "thor"
 module Kontrast
     class CLI < Thor
         class_option :config
+        class_option :specs_path
 
         desc "run_tests", "Run Kontrast test suite"
         def run_tests
-            load_config(options[:config])
+            load_config(options[:config], options[:specs_path])
             Kontrast.run
         end
 
         desc "make_gallery --result-path PATH", "Create gallery given an optional local path of test results"
         option :result_path
         def make_gallery
-            load_config(options[:config])
+            load_config(options[:config], options[:specs_path])
 
             # We're only allowed to give no path in the remote case
             if options[:result_path].nil? && !Kontrast.configuration.run_parallel
@@ -40,7 +41,7 @@ module Kontrast
         # todo: option to specify an output path
         desc "local_run", "Run Kontrast locally"
         def local_run
-            load_config(options[:config])
+            load_config(options[:config], options[:specs_path])
 
             # Make sure config run_parallel is set to false
             if Kontrast.configuration.run_parallel
@@ -77,7 +78,7 @@ module Kontrast
         end
 
         private
-            def load_config(config)
+            def load_config(config, specs_path = nil)
                 # Let's check if we're within Rails.
                 if !Kontrast.in_rails?
                     begin
@@ -102,6 +103,9 @@ module Kontrast
 
                 # Make sure we have the bare minimum configuration to continue
                 Kontrast.configuration.validate
+
+                # Load specs
+                SpecBuilder.load_specs(specs_path)
 
                 return true
             end

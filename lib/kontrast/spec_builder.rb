@@ -33,11 +33,13 @@ module Kontrast
             @current_spec._after_screenshot = block
         end
 
-        def self.load_specs
-            if Kontrast.in_rails?
+        def self.load_specs(specs_path = nil)
+            if !specs_path.nil?
+                spec_folder = specs_path
+            elsif Kontrast.in_rails?
                 spec_folder = Rails.root.to_s + "/kontrast_specs"
             else
-                spec_folder = Kontrast.root + "/kontrast_specs"
+                spec_folder = "./kontrast_specs"
             end
 
             spec_files = Dir[spec_folder + "/**/*_spec.rb"]

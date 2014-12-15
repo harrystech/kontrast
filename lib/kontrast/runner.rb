@@ -18,7 +18,6 @@ module Kontrast
             end
 
             # Load & bind specs
-            SpecBuilder.load_specs
             Kontrast.test_suite.bind_specs
 
             # Assign tests and run them
