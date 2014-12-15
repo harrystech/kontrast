@@ -35,7 +35,7 @@ module Kontrast
 
         def self.load_specs
             if Kontrast.in_rails?
-                spec_folder = Rails.root + "/kontrast_specs"
+                spec_folder = Rails.root.to_s + "/kontrast_specs"
             else
                 spec_folder = Kontrast.root + "/kontrast_specs"
             end
