@@ -41,12 +41,27 @@ module Kontrast
             # Resize to given width and total height
             resize(test.width)
 
+            screenshot_args = [@test_driver[:driver], @production_driver[:driver], { width: test.width, name: test.name }]
+
             # Take screenshot
             begin
-                Kontrast.configuration.before_screenshot(@test_driver[:driver], @production_driver[:driver], { width: test.width, name: test.name })
+                # Global callback
+                Kontrast.configuration.before_screenshot(*screenshot_args)
+
+                # Spec callback
+                if !test.spec.nil?
+                    test.spec.before_screenshot(*screenshot_args)
+                end
+
                 screenshot(current_output)
             ensure
-                Kontrast.configuration.after_screenshot(@test_driver[:driver], @production_driver[:driver], { width: test.width, name: test.name })
+                # Global callback
+                Kontrast.configuration.after_screenshot(*screenshot_args)
+
+                # Spec callback
+                if !test.spec.nil?
+                    test.spec.after_screenshot(*screenshot_args)
+                end
             end
         end
 

@@ -7,10 +7,30 @@ module Kontrast
         end
 
         def <<(test)
+            if(!test.is_a?(Test))
+                raise TestSuiteException.new("Cannot add a #{test.class} to the test suite.")
+            end
             @tests << test
         end
 
-        # Mostly used for testing
+        def load_specs
+            spec_files = Dir[Kontrast.root + "/kontrast_specs/**/*_spec.rb"]
+            spec_files.each do |file|
+                require file
+            end
+        end
+
+        def bind_specs
+            specs = Kontrast.spec_builder.specs
+            specs.each do |spec|
+                test = @tests.find { |t| t.to_s == spec.name }
+                if test
+                    test.bind_spec(spec)
+                end
+            end
+        end
+
+        # For rspec
         def to_h
             suite_hash = Hash.new
 

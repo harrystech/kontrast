@@ -17,6 +17,10 @@ module Kontrast
                 current_node = 0
             end
 
+            # Load & bind specs
+            Kontrast.test_suite.load_specs
+            Kontrast.test_suite.bind_specs
+
             # Assign tests and run them
             suite = split_run(total_nodes, current_node)
             parallel_run(suite, current_node)
@@ -45,60 +49,58 @@ module Kontrast
             @selenium_handler = SeleniumHandler.new
             @image_handler = ImageHandler.new
 
-            begin
-                # Run per-page tasks
-                suite.tests.each do |test|
-                    begin
-                        print "Processing #{test.name} @ #{test.width}... "
+            # Run per-page tasks
+            suite.tests.each do |test|
+                begin
+                    print "Processing #{test.name} @ #{test.width}... "
 
-                        # Run the browser and take screenshots
-                        @selenium_handler.run_comparison(test)
+                    # Run the browser and take screenshots
+                    @selenium_handler.run_comparison(test)
 
-                        # Crop images
-                        print "Cropping... "
-                        @image_handler.crop_images(test)
+                    # Crop images
+                    print "Cropping... "
+                    @image_handler.crop_images(test)
 
-                        # Compare images
-                        print "Diffing... "
-                        @image_handler.diff_images(test)
+                    # Compare images
+                    print "Diffing... "
+                    @image_handler.diff_images(test)
 
-                        # Create thumbnails for gallery
-                        print "Creating thumbnails... "
-                        @image_handler.create_thumbnails(test)
+                    # Create thumbnails for gallery
+                    print "Creating thumbnails... "
+                    @image_handler.create_thumbnails(test)
 
-                        # Upload to S3
-                        if Kontrast.configuration.run_parallel
-                            print "Uploading... "
-                            @image_handler.upload_images(test)
-                        end
+                    # Upload to S3
+                    if Kontrast.configuration.run_parallel
+                        print "Uploading... "
+                        @image_handler.upload_images(test)
+                    end
 
-                        puts "\n", ("=" * 85)
-                    rescue Net::ReadTimeout => e
-                        puts "Test timed out. Message: #{e.inspect}"
-                        if Kontrast.configuration.fail_build
-                            raise e
-                        end
+                    puts "\n", ("=" * 85)
+                rescue Net::ReadTimeout => e
+                    puts "Test timed out. Message: #{e.inspect}"
+                    if Kontrast.configuration.fail_build
+                        raise e
                     end
                 end
-
-                # Log diffs
-                puts @image_handler.diffs
-
-                # Create manifest
-                puts "Creating manifest..."
-                if Kontrast.configuration.run_parallel
-                    @image_handler.create_manifest(current_node, Kontrast.configuration.remote_path)
-                else
-                    @image_handler.create_manifest(current_node)
-                end
-            rescue Exception => e
-                puts "Exception: #{e.inspect}"
-                if Kontrast.configuration.fail_build
-                    raise e
-                end
-            ensure
-                @selenium_handler.cleanup
             end
+
+            # Log diffs
+            puts @image_handler.diffs
+
+            # Create manifest
+            puts "Creating manifest..."
+            if Kontrast.configuration.run_parallel
+                @image_handler.create_manifest(current_node, Kontrast.configuration.remote_path)
+            else
+                @image_handler.create_manifest(current_node)
+            end
+        rescue Exception => e
+            puts "Exception: #{e.inspect}"
+            if Kontrast.configuration.fail_build
+                raise e
+            end
+        ensure
+            @selenium_handler.cleanup
         end
 
         private
