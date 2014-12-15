@@ -1,7 +1,9 @@
 describe Kontrast::TestBuilder do
     before :each do
         # Reset the test suite
-        Kontrast.test_suite = nil
+        if !Kontrast.test_suite.nil?
+            Kontrast.test_suite.send(:clear)
+        end
     end
 
     it "can build a test suite" do
@@ -34,7 +36,7 @@ describe Kontrast::TestBuilder do
                 page.home "/"
             end
         end
-        expect(Kontrast.test_suite.tests).to eql({
+        expect(Kontrast.test_suite.to_h).to eql({
             1280 => {
                 "home" => "/"
             }

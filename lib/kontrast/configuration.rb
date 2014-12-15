@@ -12,7 +12,7 @@ module Kontrast
         end
 
         def test_suite
-            self.builder.suite
+            self.builder ? self.builder.suite : nil
         end
     end
 
@@ -44,7 +44,7 @@ module Kontrast
         def validate
             # Check that Kontrast has everything it needs to proceed
             check_nil_vars(["test_domain", "production_domain"])
-            if Kontrast.builder.nil?
+            if Kontrast.test_suite.nil?
                 raise ConfigurationException.new("Kontrast has no tests to run.")
             end
 
