@@ -34,7 +34,13 @@ module Kontrast
         end
 
         def self.load_specs
-            spec_files = Dir[Kontrast.root + "/kontrast_specs/**/*_spec.rb"]
+            if Kontrast.in_rails?
+                spec_folder = Rails.root + "/kontrast_specs"
+            else
+                spec_folder = Kontrast.root + "/kontrast_specs"
+            end
+
+            spec_files = Dir[spec_folder + "/**/*_spec.rb"]
             spec_files.each do |file|
                 require file
             end
