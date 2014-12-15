@@ -21,7 +21,7 @@ module Kontrast
         end
 
         def bind_specs
-            specs = Kontrast.spec_builder.specs
+            specs = Kontrast.get_spec_builder.specs
             specs.each do |spec|
                 test = @tests.find { |t| t.to_s == spec.name }
                 if test

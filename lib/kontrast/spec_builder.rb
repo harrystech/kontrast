@@ -2,10 +2,13 @@ module Kontrast
     class << self
         attr_accessor :spec_builder
 
-        def describe(spec_name)
+        def get_spec_builder
             self.spec_builder ||= SpecBuilder.new
-            self.spec_builder.add(spec_name)
-            yield(self.spec_builder)
+        end
+
+        def describe(spec_name)
+            self.get_spec_builder.add(spec_name)
+            yield(self.get_spec_builder)
         end
     end
 
