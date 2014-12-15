@@ -32,5 +32,12 @@ module Kontrast
         def after_screenshot(&block)
             @current_spec._after_screenshot = block
         end
+
+        def self.load_specs
+            spec_files = Dir[Kontrast.root + "/kontrast_specs/**/*_spec.rb"]
+            spec_files.each do |file|
+                require file
+            end
+        end
     end
 end
