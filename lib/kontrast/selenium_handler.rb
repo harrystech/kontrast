@@ -49,9 +49,7 @@ module Kontrast
                 Kontrast.configuration.before_screenshot(*screenshot_args)
 
                 # Spec callback
-                if !test.spec.nil?
-                    test.spec.before_screenshot(*screenshot_args)
-                end
+                test.run_callback(:before_screenshot, *screenshot_args)
 
                 screenshot(current_output)
             ensure
@@ -59,9 +57,7 @@ module Kontrast
                 Kontrast.configuration.after_screenshot(*screenshot_args)
 
                 # Spec callback
-                if !test.spec.nil?
-                    test.spec.after_screenshot(*screenshot_args)
-                end
+                test.run_callback(:after_screenshot, *screenshot_args)
             end
         end
 

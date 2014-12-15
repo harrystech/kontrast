@@ -13,6 +13,7 @@ module Kontrast
             @tests << test
         end
 
+        # Binds specs to tests automatically by matching the test's name to the spec's name
         def bind_specs
             specs = Kontrast.get_spec_builder.specs
             specs.each do |spec|
