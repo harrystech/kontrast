@@ -13,13 +13,6 @@ module Kontrast
             @tests << test
         end
 
-        def load_specs
-            spec_files = Dir[Kontrast.root + "/kontrast_specs/**/*_spec.rb"]
-            spec_files.each do |file|
-                require file
-            end
-        end
-
         def bind_specs
             specs = Kontrast.get_spec_builder.specs
             specs.each do |spec|

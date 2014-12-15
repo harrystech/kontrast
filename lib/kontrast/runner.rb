@@ -18,7 +18,7 @@ module Kontrast
             end
 
             # Load & bind specs
-            Kontrast.test_suite.load_specs
+            load_specs
             Kontrast.test_suite.bind_specs
 
             # Assign tests and run them
@@ -139,6 +139,13 @@ module Kontrast
                     end
                 rescue Exception => e
                     raise RunnerException.new("An unexpected error occured while trying to reach the production server at '#{uri}': #{e.inspect}")
+                end
+            end
+
+            def load_specs
+                spec_files = Dir[Kontrast.root + "/kontrast_specs/**/*_spec.rb"]
+                spec_files.each do |file|
+                    require file
                 end
             end
     end
