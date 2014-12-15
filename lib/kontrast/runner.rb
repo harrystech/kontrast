@@ -36,7 +36,7 @@ module Kontrast
                 index += 1
             end
 
-            return tests_to_run
+            return TestSuite.new(tests_to_run)
         end
 
         # Runs tests, handles all image operations, creates manifest for current node

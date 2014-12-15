@@ -19,18 +19,17 @@ describe Kontrast::Runner do
 
     describe "split_run" do
         it "return all tests when there is only one node" do
-            expect(@runner.split_run(1, 0)).to eql(Kontrast.test_suite.tests)
+            expect(@runner.split_run(1, 0).to_h).to eql(Kontrast.test_suite.to_h)
         end
 
         it "returns a subset of the tests when there are multiple nodes" do
             tests = @runner.split_run(4, 0)
 
             expect(tests).not_to eql Kontrast.test_suite.tests
-            expect(tests).to eql({
+            expect(tests.to_h).to eql({
                 1280 => {
                     "home" => "/"
-                },
-                320 => {}
+                }
             })
         end
     end
