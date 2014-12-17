@@ -17,4 +17,9 @@ describe Kontrast::Test do
         test = Kontrast.test_suite.tests.first
         expect(test.run_callback(:before_screenshot, 1, 2, 3)).to eql("before! 1 2 3")
     end
+
+    it "doesn't run a callback if it doesn't exist" do
+        test = Kontrast.test_suite.tests.first
+        expect { test.run_callback(:foo, 1) }.to raise_error(NoMethodError)
+    end
 end
