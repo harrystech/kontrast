@@ -1,6 +1,12 @@
 describe Kontrast::TestSuite do
     context "with a spec description and a test suite" do
         before :each do
+            # Reset tests & specs
+            Kontrast.get_spec_builder.send(:clear)
+            if !Kontrast.test_suite.nil?
+                Kontrast.test_suite.send(:clear)
+            end
+
             Kontrast.describe("test") do |spec|
                 spec.before_screenshot do |test_driver, production_driver, test|
                     puts "before"
