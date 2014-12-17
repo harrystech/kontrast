@@ -47,5 +47,10 @@ module Kontrast
                 require file
             end
         end
+
+        private
+            def clear
+                @specs = []
+            end
     end
 end
