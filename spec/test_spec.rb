@@ -1,5 +1,12 @@
 describe Kontrast::Test do
     before :each do
+        # Reset specs & tests
+        Kontrast.get_spec_builder.send(:clear)
+        if !Kontrast.test_suite.nil?
+            Kontrast.test_suite.send(:clear)
+        end
+
+        # Add a spec and a test
         Kontrast.describe("test") do |spec|
             spec.before_screenshot do |test_driver, production_driver, test|
                 "before! #{test_driver} #{production_driver} #{test}"
