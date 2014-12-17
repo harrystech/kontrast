@@ -4,11 +4,11 @@ describe Kontrast::Runner do
             # Set up some tests
             config.pages(1280) do |page|
                 page.home "/"
-                page.products "/"
+                page.products "/products"
             end
             config.pages(320) do |page|
                 page.home "/"
-                page.products "/"
+                page.products "/products"
             end
         end
     end
@@ -23,14 +23,19 @@ describe Kontrast::Runner do
         end
 
         it "returns a subset of the tests when there are multiple nodes" do
-            tests = @runner.split_run(4, 0)
+            # Expect no split to be complete but all splits should combine into the total suite
+            collector_hash = Hash.new
+            (0..3).each do |i|
+                tests = @runner.split_run(4, i)
+                expect(tests.to_h).to_not eql(Kontrast.test_suite.to_h)
 
-            expect(tests).not_to eql Kontrast.test_suite.tests
-            expect(tests.to_h).to eql({
-                1280 => {
-                    "home" => "/"
-                }
-            })
+                tests.tests.each do |test|
+                    collector_hash[test.width] ||= {}
+                    collector_hash[test.width][test.name] = test.path
+                end
+            end
+
+            expect(collector_hash).to eql(Kontrast.test_suite.to_h)
         end
     end
 end
