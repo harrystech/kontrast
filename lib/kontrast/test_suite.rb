@@ -17,10 +17,8 @@ module Kontrast
         def bind_specs
             specs = Kontrast.get_spec_builder.specs
             specs.each do |spec|
-                test = @tests.find { |t| t.to_s == spec.name }
-                if test
-                    test.bind_spec(spec)
-                end
+                matched_tests = @tests.select { |t| t.to_s.include?(spec.name) }
+                matched_tests.each { |t| t.bind_spec(spec) }
             end
         end
 
