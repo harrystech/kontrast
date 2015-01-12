@@ -29,7 +29,7 @@ module Kontrast
         # we determine which tests the current node will run
         def split_run(total_nodes, current_node)
             test_suite = Kontrast.test_suite
-            tests_to_run = TestSuite.new
+            tests_to_run = []
 
             index = 0
             test_suite.tests.each do |test|
@@ -49,7 +49,7 @@ module Kontrast
             @image_handler = ImageHandler.new
 
             # Run per-page tasks
-            suite.tests.each do |test|
+            suite.each do |test|
                 begin
                     print "Processing #{test.name} @ #{test.width}... "
 
