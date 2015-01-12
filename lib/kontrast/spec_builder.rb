@@ -47,9 +47,8 @@ module Kontrast
             end
         end
 
-        private
-            def clear
-                @specs = []
-            end
+        def clear!
+            @specs = []
+        end
     end
 end

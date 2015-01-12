@@ -1,7 +1,7 @@
 describe Kontrast::SpecBuilder do
     before :each do
         # Reset the spec suite
-        Kontrast.get_spec_builder.send(:clear)
+        Kontrast.get_spec_builder.clear!
     end
 
     context "with a spec description" do

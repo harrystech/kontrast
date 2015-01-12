@@ -2,7 +2,7 @@ describe Kontrast::TestBuilder do
     before :each do
         # Reset the test suite
         if !Kontrast.test_suite.nil?
-            Kontrast.test_suite.send(:clear)
+            Kontrast.test_suite.clear!
         end
     end
 

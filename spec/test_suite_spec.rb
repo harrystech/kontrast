@@ -2,9 +2,9 @@ describe Kontrast::TestSuite do
     context "with a spec description and a test suite" do
         before :each do
             # Reset tests & specs
-            Kontrast.get_spec_builder.send(:clear)
+            Kontrast.get_spec_builder.clear!
             if !Kontrast.test_suite.nil?
-                Kontrast.test_suite.send(:clear)
+                Kontrast.test_suite.clear!
             end
 
             Kontrast.describe("test") do |spec|

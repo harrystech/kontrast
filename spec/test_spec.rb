@@ -1,9 +1,9 @@
 describe Kontrast::Test do
     before :each do
         # Reset specs & tests
-        Kontrast.get_spec_builder.send(:clear)
+        Kontrast.get_spec_builder.clear!
         if !Kontrast.test_suite.nil?
-            Kontrast.test_suite.send(:clear)
+            Kontrast.test_suite.clear!
         end
 
         # Add a spec and a test

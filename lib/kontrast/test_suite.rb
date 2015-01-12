@@ -34,9 +34,8 @@ module Kontrast
             return suite_hash
         end
 
-        private
-            def clear
-                @tests = []
-            end
+        def clear!
+            @tests = []
+        end
     end
 end
