@@ -20,9 +20,8 @@ module Kontrast
         end
 
         def add(spec_name)
-            new_spec = Spec.new(spec_name)
-            @specs << new_spec
-            @current_spec = new_spec
+            @current_spec = Spec.new(spec_name)
+            @specs << @current_spec
         end
 
         def before_screenshot(&block)
