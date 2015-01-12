@@ -19,13 +19,11 @@ describe Kontrast::ImageHandler do
 
     it "can create a manifest for the current node" do
         # Create some files
-        Kontrast.test_suite.tests.each do |size, tests|
-            tests.each do |name, path|
-                test_name = "#{size}_#{name}"
-                path = FileUtils.mkdir_p(@image_handler.path + "/#{test_name}").join('')
-                Dir.chdir(path)
-                FileUtils.touch("diff_thumb.png")
-            end
+        Kontrast.test_suite.tests.each do |test|
+            test_name = "#{test.width}_#{test.name}"
+            path = FileUtils.mkdir_p(@image_handler.path + "/#{test_name}").join('')
+            Dir.chdir(path)
+            FileUtils.touch("diff_thumb.png")
         end
 
         # Create a diff

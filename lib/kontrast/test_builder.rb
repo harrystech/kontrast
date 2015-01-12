@@ -1,11 +1,12 @@
 module Kontrast
     class TestBuilder
+        attr_reader :suite
+
         def initialize
-            @tests = Hash.new
+            @suite = TestSuite.new
         end
 
         def add_width(width)
-            @tests[width] = Hash.new
             @current_width = width
         end
 
@@ -14,12 +15,12 @@ module Kontrast
             if param
                 raise ConfigurationException.new("'tests' is not a valid name for a test.")
             end
-            return @tests
+            return @suite.tests
         end
 
         # Adds a given test from config to the suite
         def method_missing(name, *args)
-            @tests[@current_width][name.to_s] = args.first
+            @suite << Test.new(@current_width, name.to_s, args.first)
         end
     end
 end
