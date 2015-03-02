@@ -95,6 +95,7 @@ module Kontrast
             end
         rescue Exception => e
             puts "Exception: #{e.inspect}"
+            puts e.backtrace.inspect
             if Kontrast.configuration.fail_build
                 raise e
             end
