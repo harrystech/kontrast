@@ -30,7 +30,7 @@ module Kontrast
                 Bundler.environment.current_dependencies.each do |dep|
                     return true if dep.name == "rails"
                 end
-            rescue Exception => e
+            rescue StandardError => e
                 # Quietly ignore any exceptions
             end
             return false

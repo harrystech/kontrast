@@ -80,9 +80,15 @@ module Kontrast
                     if Kontrast.configuration.fail_build
                         raise e
                     end
+                rescue StandardError => e
+                    puts "Exception: #{e.inspect}"
+                    puts e.backtrace.inspect
+                    if Kontrast.configuration.fail_build
+                        raise e
+                    end
                 end
             end
-
+        ensure
             # Log diffs
             puts @image_handler.diffs
 
@@ -93,13 +99,7 @@ module Kontrast
             else
                 @image_handler.create_manifest(current_node)
             end
-        rescue Exception => e
-            puts "Exception: #{e.inspect}"
-            puts e.backtrace.inspect
-            if Kontrast.configuration.fail_build
-                raise e
-            end
-        ensure
+
             @selenium_handler.cleanup
         end
 
@@ -119,7 +119,7 @@ module Kontrast
                     else
                         raise RunnerException.new("Could not reach the test server at '#{uri}'.")
                     end
-                rescue Exception => e
+                rescue StandardError => e
                     raise RunnerException.new("An unexpected error occured while trying to reach the test server at '#{uri}': #{e.inspect}")
                 end
 
@@ -137,7 +137,7 @@ module Kontrast
                     else
                         raise RunnerException.new("Could not reach the production server at '#{uri}'.")
                     end
-                rescue Exception => e
+                rescue StandardError => e
                     raise RunnerException.new("An unexpected error occured while trying to reach the production server at '#{uri}': #{e.inspect}")
                 end
             end
