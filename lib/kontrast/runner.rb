@@ -119,7 +119,7 @@ module Kontrast
                     else
                         raise RunnerException.new("Could not reach the test server at '#{uri}'.")
                     end
-                rescue Exception => e
+                rescue StandardError => e
                     raise RunnerException.new("An unexpected error occured while trying to reach the test server at '#{uri}': #{e.inspect}")
                 end
 
@@ -137,7 +137,7 @@ module Kontrast
                     else
                         raise RunnerException.new("Could not reach the production server at '#{uri}'.")
                     end
-                rescue Exception => e
+                rescue StandardError => e
                     raise RunnerException.new("An unexpected error occured while trying to reach the production server at '#{uri}': #{e.inspect}")
                 end
             end

@@ -12,7 +12,7 @@ module Kontrast
         def create_gallery(output_dir)
             begin
                 @gallery_dir = FileUtils.mkdir_p("#{output_dir}/gallery").join('')
-            rescue Exception => e
+            rescue StandardError => e
                 raise GalleryException.new("An unexpected error occurred while trying to create the gallery's output directory: #{e.inspect}")
             end
 

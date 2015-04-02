@@ -87,7 +87,7 @@ module Kontrast
                         raise ConfigurationException.new("Error parsing the config flag '#{config}'")
                     rescue LoadError => e
                         raise ConfigurationException.new("Could not load '#{config}'")
-                    rescue Exception => e
+                    rescue StandardError => e
                         raise ConfigurationException.new("An unexpected error occurred while trying to load the given config file: #{e.inspect}")
                     end
                 else
