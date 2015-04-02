@@ -80,9 +80,15 @@ module Kontrast
                     if Kontrast.configuration.fail_build
                         raise e
                     end
+                rescue StandardError => e
+                    puts "Exception: #{e.inspect}"
+                    puts e.backtrace.inspect
+                    if Kontrast.configuration.fail_build
+                        raise e
+                    end
                 end
             end
-
+        ensure
             # Log diffs
             puts @image_handler.diffs
 
@@ -93,13 +99,7 @@ module Kontrast
             else
                 @image_handler.create_manifest(current_node)
             end
-        rescue Exception => e
-            puts "Exception: #{e.inspect}"
-            puts e.backtrace.inspect
-            if Kontrast.configuration.fail_build
-                raise e
-            end
-        ensure
+
             @selenium_handler.cleanup
         end
 
