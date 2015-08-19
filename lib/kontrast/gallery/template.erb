@@ -7,6 +7,11 @@
                 height: 200px;
                 width: 200px;
             }
+            #diffs {
+                position: fixed;
+                z-index: 1;
+                margin-left: 33%;
+            }
         </style>
     </head>
     <body>
@@ -22,7 +27,7 @@
                             <% directories.keys.sort.each do |size| %>
                                 <li class="list-group-item"><strong><%=size%></strong></li>
                                 <% directories[size].keys.each do |name| %>
-                                    <li class="list-group-item"><a href="#<%= "#{size}_#{name}" %>"><%=name%></a></li>
+                                    <li class="list-group-item"><a href="#<%= "#{size}_#{name}" %>-nondiff"><%=name%></a></li>
                                 <% end %>
                             <% end %>
                         </ul>
@@ -31,12 +36,12 @@
                 <div class="col-lg-10">
                     <% if diffs.any? %>
                         <div class="row">
-                            <div class="alert alert-warning" role="alert">
+                            <div id="diffs" class="alert alert-warning" role="alert">
                                 Tests with diffs:
                                 <ul>
                                     <% diffs.each do |test, diff| %>
                                         <li>
-                                            <a href="#<%= test %>"><%= test %></a>
+                                            <a href="#<%= test %>-diff"><%= test %></a>
                                         </li>
                                     <% end %>
                                 </ul>
@@ -44,6 +49,34 @@
                         </div>
                     <% end %>
 
+                    <h1>Diffs</h1>
+                    <% with_diffs.keys.sort.each do |size| %>
+                        <div class="row">
+                            <a name="<%= size %>"></a>
+                            <h2><%= size %></h2>
+                        </div>
+
+                        <% with_diffs[size].each do |comparison| %>
+                            <div id="<%= "#{size}_#{comparison.first}" %>-diff" class="row">
+                                <div class="row">
+                                    <h2><%= comparison.first %></h2>
+                                </div>
+                                <% comparison.last[:variants].each do |file| %>
+                                    <div class="col-lg-3">
+                                        <a href="<%=file[:image]%>">
+                                            <img class="short-screenshot img-thumbnail" src="<%=file[:thumb]%>">
+                                        </a>
+                                        <p class="text-center"><%=file[:domain]%></p>
+                                        <% if file[:diff_amt] %>
+                                            <p class="text-center text-muted"><%=file[:diff_amt]%></p>
+                                        <% end %>
+                                    </div>
+                                <% end %>
+                            </div>
+                        <% end %>
+                    <% end %>
+
+                    <h1>Non-diffs</h1>
                     <% directories.keys.sort.each do |size| %>
                         <div class="row">
                             <a name="<%= size %>"></a>
@@ -51,7 +84,7 @@
                         </div>
 
                         <% directories[size].each do |comparison| %>
-                            <div id="<%= "#{size}_#{comparison.first}" %>" class="row">
+                            <div id="<%= "#{size}_#{comparison.first}" %>-nondiff" class="row">
                                 <div class="row">
                                     <h2><%= comparison.first %></h2>
                                 </div>

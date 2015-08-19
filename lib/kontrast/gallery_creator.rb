@@ -46,7 +46,7 @@ module Kontrast
 
         def generate_html(files, diffs)
             # Template variables
-            directories = parse_directories(files, diffs)
+            directories, with_diffs = parse_directories(files, diffs)
 
             # HTML
             template = File.read(Kontrast.root + '/lib/kontrast/gallery/template.erb')
@@ -89,12 +89,15 @@ module Kontrast
             files.sort!
 
             dirs = {}
+            with_diffs = {}
+
             directories = files.map { |f| f.split('/').first }.uniq
 
             # Get all sizes
             sizes = directories.map { |d| d.split('_').first }
             sizes.each { |size|
                 dirs[size] = {}
+                with_diffs[size] = {}
 
                 # Get all directories for this size
                 tests_for_size = directories.select { |d| d.index(size + "_") == 0 }
@@ -103,6 +106,9 @@ module Kontrast
                     array.delete_at(0)
                     test_name = array.join('_')
                     dirs[size][test_name] = {
+                        variants: []
+                    }
+                    with_diffs[size][test_name] = {
                         variants: []
                     }
                 end
@@ -123,7 +129,35 @@ module Kontrast
                 array.delete_at(0)
                 test_name = array.join('_')
 
-                # Add variations
+                if diffs["#{size}_#{test_name}"]
+                    # Add variations w/ diffs
+                    ['test', 'production', 'diff'].each_with_index do |type, i|
+                        with_diffs[size][test_name][:variants] << {
+                            image: "#{base_path}/#{size}_#{test_name}/" + type + ".png",
+                            thumb: "#{base_path}/#{size}_#{test_name}/" + type + "_thumb.png",
+                            domain: type
+                        }
+                        if type == 'diff'
+                            with_diffs[size][test_name][:variants][i][:diff_amt] = diffs["#{size}_#{test_name}"]["diff"]
+                        end
+                    end
+                else
+                    with_diffs[size].delete(test_name)
+                end
+            end
+
+            directories.each do |directory|
+                array = directory.split('_')
+                size = array.first
+                array.delete_at(0)
+                test_name = array.join('_')
+
+                if diffs["#{size}_#{test_name}"]
+                    dirs[size].delete(test_name)
+                    next
+                end
+
+                # Add variations w/o diffs
                 ['test', 'production', 'diff'].each_with_index do |type, i|
                     dirs[size][test_name][:variants] << {
                         image: "#{base_path}/#{size}_#{test_name}/" + type + ".png",
@@ -131,12 +165,12 @@ module Kontrast
                         domain: type
                     }
                     if type == 'diff'
-                        dirs[size][test_name][:variants][i][:diff_amt] = (diffs["#{size}_#{test_name}"]) ? diffs["#{size}_#{test_name}"]["diff"] : 0
+                        dirs[size][test_name][:variants][i][:diff_amt] = 0
                     end
                 end
             end
 
-            return dirs
+            return dirs, with_diffs
 
             # For reference
             # gallery_format = {
@@ -154,7 +188,7 @@ module Kontrast
             #                 image: "diff_src",
             #                 thumb: "diff_thumb_src",
             #                 domain: "diff",
-            #                 size: 0.1
+            #                 diff_amt: 0.1
             #             }]
             #         }
             #     }
