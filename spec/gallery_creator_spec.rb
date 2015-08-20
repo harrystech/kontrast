@@ -84,15 +84,9 @@ describe Kontrast::GalleryCreator do
             }
         }
 
-        dirs = @gallery_creator.parse_directories(files, diffs)
+        dirs, with_diffs = @gallery_creator.parse_directories(files, diffs)
         expect(dirs).to eql({
-            "1280" => {
-                "home" => {
-                    :variants => [{:image=>"../1280_home/test.png", :thumb=>"../1280_home/test_thumb.png", :domain=>"test"},
-                                {:image=>"../1280_home/production.png", :thumb=>"../1280_home/production_thumb.png", :domain=>"production"},
-                                {:image=>"../1280_home/diff.png", :thumb=>"../1280_home/diff_thumb.png", :domain=>"diff", :diff_amt=>0.1337}]
-                    }
-                },
+            "1280" => {},
             "320" => {
                 "home" => {
                     :variants => [{:image=>"../320_home/test.png", :thumb=>"../320_home/test_thumb.png", :domain=>"test"},
@@ -100,6 +94,17 @@ describe Kontrast::GalleryCreator do
                                 {:image=>"../320_home/diff.png", :thumb=>"../320_home/diff_thumb.png", :domain=>"diff", :diff_amt=>0}]
                     }
             }
+        })
+
+        expect(with_diffs).to eql({
+            "1280" => {
+                "home" => {
+                    :variants => [{:image=>"../1280_home/test.png", :thumb=>"../1280_home/test_thumb.png", :domain=>"test"},
+                                {:image=>"../1280_home/production.png", :thumb=>"../1280_home/production_thumb.png", :domain=>"production"},
+                                {:image=>"../1280_home/diff.png", :thumb=>"../1280_home/diff_thumb.png", :domain=>"diff", :diff_amt=>0.1337}]
+                    }
+                },
+            "320" => {}
         })
     end
 end
