@@ -1,8 +1,8 @@
 describe Kontrast::TestBuilder do
     before :each do
         # Reset the test suite
-        if !Kontrast.test_suite.nil?
-            Kontrast.test_suite.clear!
+        if !Kontrast.page_test_suite.nil?
+            Kontrast.page_test_suite.clear!
         end
     end
 
@@ -18,7 +18,7 @@ describe Kontrast::TestBuilder do
             end
         end
 
-        expect(Kontrast.test_suite.to_h).to eql({
+        expect(Kontrast.page_test_suite.to_h).to eql({
             1280 => {
                 "home" => "/",
                 "products" => "/products"
@@ -36,7 +36,7 @@ describe Kontrast::TestBuilder do
                 page.home "/"
             end
         end
-        expect(Kontrast.test_suite.to_h).to eql({
+        expect(Kontrast.page_test_suite.to_h).to eql({
             1280 => {
                 "home" => "/"
             }

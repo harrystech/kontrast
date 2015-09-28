@@ -1,9 +1,10 @@
 module Kontrast
     class TestSuite
-        attr_reader :tests
+        attr_reader :tests, :lazy_tests
 
         def initialize
             @tests = []
+            @lazy_tests = []
         end
 
         def <<(test)

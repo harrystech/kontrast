@@ -1,9 +1,9 @@
 module Kontrast
     class Test
-        attr_reader :name, :width, :path, :spec
+        attr_reader :name, :path, :spec, :prefix, :headers
 
-        def initialize(width, name, path)
-            @width, @name, @path = width, name, path
+        def initialize(prefix, name, path, headers: {})
+            @prefix, @name, @path, @headers = prefix, name, path, headers
         end
 
         def bind_spec(spec)
@@ -17,7 +17,11 @@ module Kontrast
         end
 
         def to_s
-            "#{@width}_#{@name}"
+            return "#{@prefix}_#{@name}"
+        end
+
+        def to_str
+            return to_s
         end
     end
 end

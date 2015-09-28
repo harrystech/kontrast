@@ -6,14 +6,22 @@ require "bundler"
 require "kontrast/exceptions"
 require "kontrast/configuration"
 require "kontrast/test"
+require "kontrast/page_test"
+require "kontrast/api_endpoint_test"
 require "kontrast/test_builder"
 require "kontrast/test_suite"
 require "kontrast/spec"
 require "kontrast/spec_builder"
 require "kontrast/selenium_handler"
-require "kontrast/image_handler"
+require "kontrast/image_helper"
 require "kontrast/gallery_creator"
-require "kontrast/runner"
+require "kontrast/global_runner"
+require "kontrast/image_uploader"
+require "kontrast/thumbnail_creator"
+require "kontrast/page_runner"
+require "kontrast/api_endpoint_runner"
+require "kontrast/page_comparator"
+require "kontrast/api_endpoint_comparator"
 
 module Kontrast
     class << self
@@ -65,7 +73,7 @@ module Kontrast
                 # Call "before" hook
                 Kontrast.configuration.before_run
 
-                runner = Runner.new
+                runner = GlobalRunner.new
                 runner.run
             ensure
                 # Call "after" hook

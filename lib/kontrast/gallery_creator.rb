@@ -46,7 +46,7 @@ module Kontrast
 
         def generate_html(files, diffs)
             # Template variables
-            directories, with_diffs = parse_directories(files, diffs)
+            groups, without_diffs, with_diffs = parse_directories(files, diffs)
 
             # HTML
             template = File.read(Kontrast.root + '/lib/kontrast/gallery/template.erb')
@@ -83,100 +83,124 @@ module Kontrast
             }
         end
 
+        def test_name_from_dir(dir)
+            # dir is a string prefixed with a group name:
+            # '1280_home' or '2x_home_screen'
+            return dir.split('_')[1..-1].join('_')
+        end
+
+        def base_path
+            # This determines where to display images from in the gallery
+            if Kontrast.configuration.run_parallel
+                # Build the remote path to S3
+                return "https://#{Kontrast.configuration.aws_bucket}.s3.amazonaws.com/#{Kontrast.configuration.remote_path}"
+            else
+                return ".."
+            end
+        end
+
+        def variants_for_page(directory, diffs)
+            # Return a hash that will be used in the erb template to show the
+            # diffs for a given test.
+            variants = []
+            ['test', 'production', 'diff'].each do |type|
+                variant = {
+                    image: "#{base_path}/#{directory}/" + type + ".png",
+                    thumb: "#{base_path}/#{directory}/" + type + "_thumb.png",
+                    domain: type,
+                    type: 'page',
+                }
+                if type == 'diff' && diffs[directory]
+                    variant[:diff_amt] = diffs[directory]["diff"]
+                end
+                variants << variant
+            end
+
+            return variants
+        end
+
+        def variants_for_api_endpoint(directory, diffs, files)
+            # Return a hash that will be used in the erb template to show the
+            # diffs for a given test.
+            variants = []
+            ['test', 'production', 'diff'].each do |type|
+                variant = {
+                    file: "#{base_path}/#{directory}/#{type}.json",
+                    domain: type,
+                    type: 'api_endpoint',
+                    diff_amt: 0,
+                }
+                if diffs[directory]
+                    variant[:diff_amt] = 1
+                end
+
+                # Get all images
+                image_files = files.select { |file_name|
+                    file_name.match /#{directory}\/#{type}_\d+.(jpg|png)/
+                }.map { |file_name|
+                    name_without_extension = file_name.split('.')[0..-2].join('.')
+                    {
+                        image: "#{base_path}/#{file_name}",
+                        thumb: "#{base_path}/#{name_without_extension}_thumb.png",
+                    }
+                }
+                variant[:images] = image_files
+                variants << variant
+            end
+
+            return variants
+        end
+
         # This function just turns the list of files and diffs into a hash that the gallery
         # creator can insert into a template. See an example of the created hash below.
         def parse_directories(files, diffs)
             files.sort!
 
-            dirs = {}
-            with_diffs = {}
+            # Initialize those hashes, where each key will map to hash, in wich
+            # each key maps to an array:
+            # {
+            #   key1: {
+            #   },
+            #   key2: {
+            #   },
+            # }
+            #
+            without_diffs = Hash.new { |h,k| h[k] = {} }
+            with_diffs = Hash.new { |h,k| h[k] = {} }
 
             directories = files.map { |f| f.split('/').first }.uniq
+            groups = directories.map { |dir| dir.split('_').first }.uniq
 
-            # Get all sizes
-            sizes = directories.map { |d| d.split('_').first }
-            sizes.each { |size|
-                dirs[size] = {}
-                with_diffs[size] = {}
-
-                # Get all directories for this size
-                tests_for_size = directories.select { |d| d.index(size + "_") == 0 }
-                tests_for_size.each do |dir|
-                    array = dir.split('_')
-                    array.delete_at(0)
-                    test_name = array.join('_')
-                    dirs[size][test_name] = {
-                        variants: []
-                    }
-                    with_diffs[size][test_name] = {
-                        variants: []
-                    }
-                end
-            }
-
-            # This determines where to display images from in the gallery
-            if Kontrast.configuration.run_parallel
-                # Build the remote path to S3
-                base_path = "https://#{Kontrast.configuration.aws_bucket}.s3.amazonaws.com/#{Kontrast.configuration.remote_path}"
-            else
-                base_path = ".."
-            end
 
             # Fill in the files as variants
             directories.each do |directory|
-                array = directory.split('_')
-                size = array.first
-                array.delete_at(0)
-                test_name = array.join('_')
+                group = directory.split('_')[0]
+                test_name = test_name_from_dir(directory)
 
-                if diffs["#{size}_#{test_name}"]
-                    # Add variations w/ diffs
-                    ['test', 'production', 'diff'].each_with_index do |type, i|
-                        with_diffs[size][test_name][:variants] << {
-                            image: "#{base_path}/#{size}_#{test_name}/" + type + ".png",
-                            thumb: "#{base_path}/#{size}_#{test_name}/" + type + "_thumb.png",
-                            domain: type
-                        }
-                        if type == 'diff'
-                            with_diffs[size][test_name][:variants][i][:diff_amt] = diffs["#{size}_#{test_name}"]["diff"]
-                        end
-                    end
+                # Determines the type of test by the presence of the diff.png
+                # file in the folder.
+                # Ideally the manifest file format would be different and
+                # include the test type with
+                if files.select { |file_name| file_name.start_with?(directory) }.any? { |file_name| file_name.include?('diff.png') }
+                    variants = variants_for_page(directory, diffs)
                 else
-                    with_diffs[size].delete(test_name)
+                    variants = variants_for_api_endpoint(directory, diffs, files)
+                end
+
+                if diffs[directory]
+                    with_diffs[group][test_name] = variants
+                else
+                    without_diffs[group][test_name] = variants
                 end
             end
 
-            directories.each do |directory|
-                array = directory.split('_')
-                size = array.first
-                array.delete_at(0)
-                test_name = array.join('_')
-
-                if diffs["#{size}_#{test_name}"]
-                    dirs[size].delete(test_name)
-                    next
-                end
-
-                # Add variations w/o diffs
-                ['test', 'production', 'diff'].each_with_index do |type, i|
-                    dirs[size][test_name][:variants] << {
-                        image: "#{base_path}/#{size}_#{test_name}/" + type + ".png",
-                        thumb: "#{base_path}/#{size}_#{test_name}/" + type + "_thumb.png",
-                        domain: type
-                    }
-                    if type == 'diff'
-                        dirs[size][test_name][:variants][i][:diff_amt] = 0
-                    end
-                end
-            end
-
-            return dirs, with_diffs
+            return groups, without_diffs, with_diffs
 
             # For reference
             # gallery_format = {
             #     "1080" => {
-            #         "name" => {
-            #             variants: [{
+            #         "name" => [
+            #             {
             #                 image: "full_img_src",
             #                 thumb: "thumb_src",
             #                 domain: "production"
@@ -189,7 +213,7 @@ module Kontrast
             #                 thumb: "diff_thumb_src",
             #                 domain: "diff",
             #                 diff_amt: 0.1
-            #             }]
+            #             }
             #         }
             #     }
             # }
