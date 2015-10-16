@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
     spec.add_dependency "workers", "~> 0.2"
     spec.add_dependency "rmagick", "2.13.2"
     spec.add_dependency "fog", "~> 1.0"
+    spec.add_dependency "faraday", "~> 0.9"
 end

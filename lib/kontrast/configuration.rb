@@ -1,18 +1,26 @@
 module Kontrast
     class << self
-        attr_accessor :configuration, :builder
+        attr_accessor :configuration, :page_builder, :api_endpoint_builder
 
         def configure
             self.configuration ||= Configuration.new
             yield(configuration)
         end
 
-        def test_builder
-            self.builder ||= TestBuilder.new
+        def page_test_builder
+            self.page_builder ||= TestBuilder.new
         end
 
-        def test_suite
-            self.builder ? self.builder.suite : nil
+        def api_endpoint_test_builder
+            self.api_endpoint_builder ||= TestBuilder.new
+        end
+
+        def page_test_suite
+            self.page_builder ? self.page_builder.suite : nil
+        end
+
+        def api_endpoint_test_suite
+            self.api_endpoint_builder ? self.api_endpoint_builder.suite : nil
         end
     end
 
@@ -24,6 +32,9 @@ module Kontrast
         attr_accessor :test_domain, :production_domain
         attr_accessor :browser_driver, :browser_profile
         attr_accessor :fail_build
+        attr_accessor :production_oauth_app_uid, :production_oauth_app_secret,
+          :test_oauth_app_uid, :test_oauth_app_secret, :oauth_token_url,
+          :oauth_token_from_response, :test_oauth_app_proc
 
         def initialize
             # Set defaults
@@ -44,7 +55,7 @@ module Kontrast
         def validate
             # Check that Kontrast has everything it needs to proceed
             check_nil_vars(["test_domain", "production_domain"])
-            if Kontrast.test_suite.nil?
+            if Kontrast.page_test_suite.nil? && Kontrast.api_endpoint_test_suite.nil?
                 raise ConfigurationException.new("Kontrast has no tests to run.")
             end
 
@@ -64,8 +75,16 @@ module Kontrast
             if !block_given?
                 raise ConfigurationException.new("You must pass a block to the pages config option.")
             end
-            Kontrast.test_builder.add_width(width)
-            yield(Kontrast.test_builder)
+            Kontrast.page_test_builder.prefix = width
+            yield(Kontrast.page_test_builder)
+        end
+
+        def api_endpoints(group_name)
+            if !block_given?
+                raise ConfigurationException.new("You must pass a block to the api_endpoints config option.")
+            end
+            Kontrast.api_endpoint_test_builder.prefix = group_name
+            yield(Kontrast.api_endpoint_test_builder)
         end
 
         def before_run(&block)

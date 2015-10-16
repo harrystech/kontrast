@@ -1,4 +1,4 @@
-describe Kontrast::ImageHandler do
+describe Kontrast::GlobalRunner do
     before :all do
         Kontrast.configure do |config|
             # Set up some tests
@@ -11,30 +11,37 @@ describe Kontrast::ImageHandler do
                 page.products "/"
             end
         end
+
+        Kontrast.configuration.test_oauth_app_proc = proc { double('app', uid: '123', secret: 'abc') }
     end
 
     before :each do
-        @image_handler = Kontrast::ImageHandler.new
+        @page_comparator = Kontrast::PageComparator.new
+
+        @page_runner = Kontrast::PageRunner.new
+        @page_runner.instance_variable_set("@page_comparator", @page_comparator)
+
+        @runner = Kontrast::GlobalRunner.new
+        @runner.instance_variable_set("@page_runner", @page_runner)
     end
 
     it "can create a manifest for the current node" do
         # Create some files
-        Kontrast.test_suite.tests.each do |test|
+        Kontrast.page_test_suite.tests.each do |test|
             test_name = "#{test.width}_#{test.name}"
-            path = FileUtils.mkdir_p(@image_handler.path + "/#{test_name}").join('')
-            Dir.chdir(path)
-            FileUtils.touch("diff_thumb.png")
+            path = FileUtils.mkdir_p(@page_comparator.path + "/#{test_name}").join('')
+            FileUtils.touch(File.join(path, 'diff_thumb.png'))
         end
 
         # Create a diff
-        @image_handler.diffs["1280_home"] = {
+        @page_runner.diffs["1280_home"] = {
             width: 1280,
             name: "home",
             diff: 0.1337
         }
 
         # Create the manifest
-        contents = @image_handler.create_manifest(0)
+        contents = @runner.create_manifest
 
         # Expectations
         expect(contents[:diffs]).to eql({

@@ -3,8 +3,8 @@ describe Kontrast::TestSuite do
         before :each do
             # Reset tests & specs
             Kontrast.get_spec_builder.clear!
-            if !Kontrast.test_suite.nil?
-                Kontrast.test_suite.clear!
+            if !Kontrast.page_test_suite.nil?
+                Kontrast.page_test_suite.clear!
             end
 
             Kontrast.describe("test") do |spec|
@@ -28,12 +28,12 @@ describe Kontrast::TestSuite do
         end
 
         it "can bind specs to tests" do
-            test_320 = Kontrast.test_suite.tests.find { |t| t.width == 320 }
-            test_1280 = Kontrast.test_suite.tests.find { |t| t.width == 1280 }
-            test_foo = Kontrast.test_suite.tests.find { |t| t.name == "something_else" }
+            test_320 = Kontrast.page_test_suite.tests.find { |t| t.width == 320 }
+            test_1280 = Kontrast.page_test_suite.tests.find { |t| t.width == 1280 }
+            test_foo = Kontrast.page_test_suite.tests.find { |t| t.name == "something_else" }
 
-            Kontrast.test_suite.bind_specs
-            
+            Kontrast.page_test_suite.bind_specs
+
             test_spec = Kontrast.get_spec_builder.specs.first
             expect(test_320.spec).to eql(test_spec)
             expect(test_1280.spec).to eql(test_spec)

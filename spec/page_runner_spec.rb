@@ -1,4 +1,4 @@
-describe Kontrast::Runner do
+describe Kontrast::PageRunner do
     before :all do
         Kontrast.configure do |config|
             # Set up some tests
@@ -14,24 +14,24 @@ describe Kontrast::Runner do
     end
 
     before :each do
-        @runner = Kontrast::Runner.new
+        @page_runner = Kontrast::PageRunner.new
     end
 
     describe "split_run" do
         it "return all tests when there is only one node" do
             suite = Kontrast::TestSuite.new
-            @runner.split_run(1, 0).each { |t| suite << t }
-            expect(suite.to_h).to eql(Kontrast.test_suite.to_h)
+            @page_runner.split_run(1, 0).each { |t| suite << t }
+            expect(suite.to_h).to eql(Kontrast.page_test_suite.to_h)
         end
 
         it "returns a subset of the tests when there are multiple nodes" do
             # Expect no split to be complete but all splits should combine into the total suite
             collector_hash = Hash.new
             (0..3).each do |i|
-                tests = @runner.split_run(4, i)
+                tests = @page_runner.split_run(4, i)
                 suite = Kontrast::TestSuite.new
                 tests.each { |t| suite << t }
-                expect(suite.to_h).to_not eql(Kontrast.test_suite.to_h)
+                expect(suite.to_h).to_not eql(Kontrast.page_test_suite.to_h)
 
                 suite.tests.each do |test|
                     collector_hash[test.width] ||= {}
@@ -39,7 +39,7 @@ describe Kontrast::Runner do
                 end
             end
 
-            expect(collector_hash).to eql(Kontrast.test_suite.to_h)
+            expect(collector_hash).to eql(Kontrast.page_test_suite.to_h)
         end
     end
 end

@@ -1,13 +1,15 @@
 module Kontrast
+
+    LazyTest = Struct.new(:prefix, :headers, :block)
+
     class TestBuilder
         attr_reader :suite
+        attr_accessor :prefix, :headers
 
         def initialize
             @suite = TestSuite.new
-        end
-
-        def add_width(width)
-            @current_width = width
+            @prefix = nil
+            @headers = {}
         end
 
         # Needed in case someone tries to name a test "tests"
@@ -18,9 +20,21 @@ module Kontrast
             return @suite.tests
         end
 
+        # API
+        # add more?
+        %i(get post).each do |http_method|
+            define_method http_method do |name, path|
+                @suite << ApiEndpointTest.new(@prefix, name, path, headers: headers.dup)
+            end
+        end
+
+        def lazy_api_endpoints(&block)
+            @suite.lazy_tests << LazyTest.new(@prefix, @headers.dup, block)
+        end
+
         # Adds a given test from config to the suite
         def method_missing(name, *args)
-            @suite << Test.new(@current_width, name.to_s, args.first)
+            @suite << PageTest.new(@prefix, name.to_s, args.first)
         end
     end
 end

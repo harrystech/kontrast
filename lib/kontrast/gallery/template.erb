@@ -2,6 +2,8 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <style type="text/css">
             .short-screenshot {
                 height: 200px;
@@ -24,10 +26,10 @@
                     <div class="panel">
                         <div class="panel-heading">Screenshots:</div>
                         <ul class="list-group list-group-flush">
-                            <% directories.keys.sort.each do |size| %>
-                                <li class="list-group-item"><strong><%=size%></strong></li>
-                                <% directories[size].keys.each do |name| %>
-                                    <li class="list-group-item"><a href="#<%= "#{size}_#{name}" %>-nondiff"><%=name%></a></li>
+                            <% groups.sort.each do |group| %>
+                                <li class="list-group-item"><strong><%=group%></strong></li>
+                                <% without_diffs[group].keys.each do |name| %>
+                                    <li class="list-group-item"><a href="#<%= "#{group}_#{name}" %>-nondiff"><%=name%></a></li>
                                 <% end %>
                             <% end %>
                         </ul>
@@ -50,25 +52,73 @@
                     <% end %>
 
                     <h1>Diffs</h1>
-                    <% with_diffs.keys.sort.each do |size| %>
+                    <% with_diffs.keys.sort.each do |group| %>
                         <div class="row">
-                            <a name="<%= size %>"></a>
-                            <h2><%= size %></h2>
+                            <a name="<%= group %>"></a>
+                            <h2><%= group %></h2>
                         </div>
 
-                        <% with_diffs[size].each do |comparison| %>
-                            <div id="<%= "#{size}_#{comparison.first}" %>-diff" class="row">
+                        <% with_diffs[group].each do |test_name, variants| %>
+                            <div id="<%= "#{group}_#{test_name}" %>-diff" class="row">
                                 <div class="row">
-                                    <h2><%= comparison.first %></h2>
+                                    <h2><%= test_name %></h2>
+
+                                    <% if variants.first[:type] == 'page' %>
+                                        <% variants.each do |variant| %>
+                                            <div class="col-lg-3">
+                                                <a href="<%=variant[:image]%>">
+                                                    <img class="short-screenshot img-thumbnail" src="<%=variant[:thumb]%>">
+                                                </a>
+                                                <p class="text-center"><%=variant[:domain]%></p>
+                                                <% if variant[:diff_amt] %>
+                                                    <p class="text-center text-muted"><%=variant[:diff_amt]%></p>
+                                                <% end %>
+                                            </div>
+                                        <% end %>
+                                    <% elsif variants.first[:type] == 'api_endpoint' %>
+                                        <% variants.each do |variant| %>
+                                            <div class="col-lg-3">
+                                                <% if variant[:domain] == 'diff' %>
+                                                    <a>
+                                                        <img class="short-screenshot img-thumbnail" src="http://dummyimage.com/200x200/?text=N/A">
+                                                    </a>
+                                                <% else %>
+                                                    <a href="<%=variant[:file]%>">
+                                                        <img class="short-screenshot img-thumbnail" src="http://dummyimage.com/200x200/?text=JSON">
+                                                    </a>
+                                                <% end %>
+                                                <p class="text-center"><%=variant[:domain]%></p>
+                                            </div>
+                                          <% end %>
+                                    <% end %>
                                 </div>
-                                <% comparison.last[:variants].each do |file| %>
-                                    <div class="col-lg-3">
-                                        <a href="<%=file[:image]%>">
-                                            <img class="short-screenshot img-thumbnail" src="<%=file[:thumb]%>">
-                                        </a>
-                                        <p class="text-center"><%=file[:domain]%></p>
-                                        <% if file[:diff_amt] %>
-                                            <p class="text-center text-muted"><%=file[:diff_amt]%></p>
+                                <% if variants.first[:type] == 'api_endpoint' && variants.first[:images].any? %>
+                                    <h3>Images</h3>
+                                    <% div_id = ["images", test_name, SecureRandom.hex(6)].join('-') %>
+                                    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#<%= div_id %>">
+                                        Expand / Collapse
+                                    </a>
+                                    <div class="collapse" id="<%= div_id %>">
+                                        <% variants.first[:images].each_with_index do |image, i| %>
+                                            <div class="row">
+                                                <% second_image = variants[1][:images][i] %>
+                                                <% diff_image = variants[-1][:images][i] %>
+                                                <div class="col-lg-3">
+                                                    <a href="<%= image[:image] %>">
+                                                        <img class="short-screenshot img-thumbnail" src="<%=image[:thumb]%>">
+                                                    </a>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <a href="<%=second_image[:image]%>">
+                                                        <img class="short-screenshot img-thumbnail" src="<%=second_image[:thumb]%>">
+                                                    </a>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <a href="<%=diff_image[:image]%>">
+                                                        <img class="short-screenshot img-thumbnail" src="<%=diff_image[:thumb]%>">
+                                                    </a>
+                                                </div>
+                                            </div>
                                         <% end %>
                                     </div>
                                 <% end %>
@@ -77,25 +127,73 @@
                     <% end %>
 
                     <h1>Non-diffs</h1>
-                    <% directories.keys.sort.each do |size| %>
+                    <% without_diffs.keys.sort.each do |group| %>
                         <div class="row">
-                            <a name="<%= size %>"></a>
-                            <h2><%= size %></h2>
+                            <a name="<%= group %>"></a>
+                            <h2><%= group %></h2>
                         </div>
 
-                        <% directories[size].each do |comparison| %>
-                            <div id="<%= "#{size}_#{comparison.first}" %>-nondiff" class="row">
+                        <% without_diffs[group].each do |test_name, variants| %>
+                            <div id="<%= "#{group}_#{test_name}" %>-nondiff" class="row">
                                 <div class="row">
-                                    <h2><%= comparison.first %></h2>
+                                    <h2><%= test_name %></h2>
+
+                                    <% if variants.first[:type] == 'page' %>
+                                        <% variants.each do |variant| %>
+                                            <div class="col-lg-3">
+                                                <a href="<%=variant[:image]%>">
+                                                    <img class="short-screenshot img-thumbnail" src="<%=variant[:thumb]%>">
+                                                </a>
+                                                <p class="text-center"><%=variant[:domain]%></p>
+                                                <% if variant[:diff_amt] %>
+                                                    <p class="text-center text-muted"><%=variant[:diff_amt]%></p>
+                                                <% end %>
+                                            </div>
+                                        <% end %>
+                                    <% elsif variants.first[:type] == 'api_endpoint' %>
+                                        <% variants.each do |variant| %>
+                                            <div class="col-lg-3">
+                                                <% if variant[:domain] == 'diff' %>
+                                                    <a href="<%=variant[:file]%>">
+                                                        <img class="short-screenshot img-thumbnail" src="http://dummyimage.com/200x200/?text=N/A">
+                                                    </a>
+                                                <% else %>
+                                                    <a href="<%=variant[:file]%>">
+                                                        <img class="short-screenshot img-thumbnail" src="http://dummyimage.com/200x200/?text=JSON">
+                                                    </a>
+                                                <% end %>
+                                                <p class="text-center"><%=variant[:domain]%></p>
+                                            </div>
+                                          <% end %>
+                                    <% end %>
                                 </div>
-                                <% comparison.last[:variants].each do |file| %>
-                                    <div class="col-lg-3">
-                                        <a href="<%=file[:image]%>">
-                                            <img class="short-screenshot img-thumbnail" src="<%=file[:thumb]%>">
-                                        </a>
-                                        <p class="text-center"><%=file[:domain]%></p>
-                                        <% if file[:diff_amt] %>
-                                            <p class="text-center text-muted"><%=file[:diff_amt]%></p>
+
+                                <% if variants.first[:type] == 'api_endpoint' && variants.first[:images].any? %>
+                                    <% div_id = ["images", test_name, SecureRandom.hex(6)].join('-') %>
+                                    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#<%= div_id %>">
+                                        Expand / Collapse
+                                    </a>
+                                    <div class="collapse" id="<%= div_id %>">
+                                        <% variants.first[:images].each_with_index do |image, i| %>
+                                            <div class="row">
+                                                <% second_image = variants[1][:images][i] %>
+                                                <% diff_image = variants[-1][:images][i] %>
+                                                <div class="col-lg-3">
+                                                    <a href="<%= image[:image] %>">
+                                                        <img class="short-screenshot img-thumbnail" src="<%=image[:thumb]%>">
+                                                    </a>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <a href="<%=second_image[:image]%>">
+                                                        <img class="short-screenshot img-thumbnail" src="<%=second_image[:thumb]%>">
+                                                    </a>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <a href="<%=diff_image[:image]%>">
+                                                        <img class="short-screenshot img-thumbnail" src="<%=diff_image[:thumb]%>">
+                                                    </a>
+                                                </div>
+                                            </div>
                                         <% end %>
                                     </div>
                                 <% end %>

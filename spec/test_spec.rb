@@ -2,8 +2,8 @@ describe Kontrast::Test do
     before :each do
         # Reset specs & tests
         Kontrast.get_spec_builder.clear!
-        if !Kontrast.test_suite.nil?
-            Kontrast.test_suite.clear!
+        if !Kontrast.page_test_suite.nil?
+            Kontrast.page_test_suite.clear!
         end
 
         # Add a spec and a test
@@ -17,16 +17,16 @@ describe Kontrast::Test do
                 page.test "/"
             end
         end
-        Kontrast.test_suite.bind_specs
+        Kontrast.page_test_suite.bind_specs
     end
 
     it "can run a spec's callback" do
-        test = Kontrast.test_suite.tests.first
+        test = Kontrast.page_test_suite.tests.first
         expect(test.run_callback(:before_screenshot, 1, 2, 3)).to eql("before! 1 2 3")
     end
 
     it "doesn't run a callback if it doesn't exist" do
-        test = Kontrast.test_suite.tests.first
+        test = Kontrast.page_test_suite.tests.first
         expect { test.run_callback(:foo, 1) }.to raise_error(NoMethodError)
     end
 end
