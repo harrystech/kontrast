@@ -71,11 +71,12 @@ module Kontrast
             end
         end
 
-        def pages(width)
+        def pages(width, url_params = {})
             if !block_given?
                 raise ConfigurationException.new("You must pass a block to the pages config option.")
             end
             Kontrast.page_test_builder.prefix = width
+            Kontrast.page_test_builder.url_params = url_params
             yield(Kontrast.page_test_builder)
         end
 
