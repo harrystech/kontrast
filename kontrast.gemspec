@@ -28,4 +28,5 @@ Gem::Specification.new do |spec|
     spec.add_dependency "rmagick", "2.13.2"
     spec.add_dependency "fog", "~> 1.0"
     spec.add_dependency "faraday", "~> 0.9"
+    spec.add_dependency "rack", ">= 0.4"
 end
