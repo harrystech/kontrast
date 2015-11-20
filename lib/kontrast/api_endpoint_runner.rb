@@ -20,6 +20,10 @@ module Kontrast
         # we determine which tests the current node will run
         def split_run(total_nodes, current_node)
             test_suite = Kontrast.api_endpoint_test_suite
+            if test_suite.nil?
+                return []
+            end
+
             # Load lazy tests
             # Some tests are lazy loaded from the initializer
             # In that case, we stored a block instead of adding a test to the
