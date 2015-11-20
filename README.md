@@ -88,22 +88,22 @@ Set how many nodes you have in total and the zero-based index of the current nod
 
     config.total_nodes = 6
     config.current_node = 2
-    
+
 ### 3. Configure Remote Options
 Set your S3 details:
 
     config.aws_bucket = "kontrast-test-results"
     config.aws_key = ENV['AWS_KEY']
     config.aws_secret = ENV['AWS_SECRET']
-    
+
 Set the **local** path where output images will be stored before they are uploaded to S3. This is also where the gallery will be saved on the node that runs the `make_gallery` command. This path will be created if it doesn't already exist.
 
     config.local_path = "tmp/kontrast"
-    
+
 Set the **remote** path relative to your S3 bucket's root where Kontrast's output files will be uploaded to. It should be unique to every test.
 
     config.remote_path = "artifacts.#{ENV['BUILD_NUMBER']}"
-    
+
 ### 4. Run the Tests
 This command should run in parallel on every node. Use `bundle exec` and omit the --config flag if your app is `bundle`'d along with Rails.
 
@@ -241,7 +241,7 @@ Testing our cart page required a bit more setup before we could take a screensho
         if test[:name] == "cart"
             # prepare our cookie value
             cookie_value = super_secret_magic_cart_cookie
-        
+
             # write cookies using Mootools
             # http://mootools.net/docs/core/Utilities/Cookie
             test_driver.execute_script("Cookie.write('cart', '#{cookie_value}');")
@@ -251,6 +251,21 @@ Testing our cart page required a bit more setup before we could take a screensho
             test_driver.navigate.refresh
             production_driver.navigate.refresh
         end
+    end
+
+### Adding URL Parameters To All Pages
+You may want to append a URL param to the end of every test path. To avoid doing something like this:
+
+    config.pages(1280) do |page|
+        page.home "/?mobile=1"
+        page.about "/about?mobile=1"
+    end
+
+you can do this instead:
+
+    config.pages(1280, { mobile: 1 }) do |page|
+        page.home "/"
+        page.about "/about"
     end
 
 ## Specs
