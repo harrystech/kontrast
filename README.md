@@ -6,11 +6,13 @@ Kontrast lets you build a test suite to run against your test and production web
 
 ## Prerequisites
 
-1. Install ImageMagick. You can do this on OS X via brew with:
+1. Ruby 2.0+
+
+2. Install ImageMagick. You can do this on OS X via brew with:
 
         $ brew install imagemagick
 
-2. Make sure you have Firefox or a different Selenium-compatible browser installed. By default, Firefox is used.
+3. Make sure you have Firefox or a different Selenium-compatible browser installed. By default, Firefox is used.
 
 ## Installation
 
