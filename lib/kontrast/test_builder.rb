@@ -4,12 +4,13 @@ module Kontrast
 
     class TestBuilder
         attr_reader :suite
-        attr_accessor :prefix, :headers
+        attr_accessor :prefix, :headers, :url_params
 
         def initialize
             @suite = TestSuite.new
             @prefix = nil
             @headers = {}
+            @url_params = {}
         end
 
         # Needed in case someone tries to name a test "tests"
@@ -34,7 +35,7 @@ module Kontrast
 
         # Adds a given test from config to the suite
         def method_missing(name, *args)
-            @suite << PageTest.new(@prefix, name.to_s, args.first)
+            @suite << PageTest.new(@prefix, name.to_s, args.first, url_params: @url_params)
         end
     end
 end
