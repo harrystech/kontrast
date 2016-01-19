@@ -29,4 +29,25 @@ describe Kontrast::Test do
         test = Kontrast.page_test_suite.tests.first
         expect { test.run_callback(:foo, 1) }.to raise_error(NoMethodError)
     end
+
+    context "with a URI query" do
+        before :each do
+            Kontrast.configure do |config|
+                config.pages(1280, global_key: "global_value") do |page|
+                    page.simple_path_test "/about"
+                    page.complex_path_test "/about?key=value"
+                end
+            end
+        end
+
+        it "can build a path with global URL params only" do
+            test = Kontrast.page_test_suite.tests.find { |t| t.name == "simple_path_test" }
+            expect(test.path).to eql "/about?global_key=global_value"
+        end
+
+        it "can build a path with global and local URL params" do
+            test = Kontrast.page_test_suite.tests.find { |t| t.name == "complex_path_test" }
+            expect(test.path).to eql "/about?global_key=global_value&key=value"
+        end
+    end
 end
