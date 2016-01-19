@@ -18,6 +18,12 @@ module Kontrast
             original_query = Rack::Utils.parse_query(uri.query)
             new_query = url_params.merge(original_query)
             uri.query = Rack::Utils.build_query(new_query)
+
+            # Ensure there's no trailing "?"
+            if uri.query == ""
+                uri.query = nil
+            end
+
             return uri.to_s
         end
     end
