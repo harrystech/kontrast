@@ -10,6 +10,8 @@ module Kontrast
             super(prefix, name, path, headers)
             @width = prefix
             @url_params = url_params
+
+            # Re-define path so it includes all URL params
             @path = get_path_with_params(url_params)
         end
 
