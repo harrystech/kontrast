@@ -32,6 +32,7 @@ module Kontrast
         attr_accessor :test_domain, :production_domain
         attr_accessor :browser_driver, :browser_profile
         attr_accessor :fail_build
+        attr_accessor :workers_pool_size
         attr_accessor :production_oauth_app_uid, :production_oauth_app_secret,
           :test_oauth_app_uid, :test_oauth_app_secret, :oauth_token_url,
           :oauth_token_from_response, :test_oauth_app_proc
@@ -134,6 +135,10 @@ module Kontrast
             else
                 @_after_screenshot.call(test_driver, production_driver, current_test) if @_after_screenshot
             end
+        end
+
+        def workers_pool_size
+            @workers_pool_size || 5
         end
 
         private
