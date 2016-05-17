@@ -108,4 +108,8 @@ describe Kontrast::GalleryCreator do
             },
         })
     end
+
+    context 'missing variants' do
+        it "doesn't blow up"
+    end
 end

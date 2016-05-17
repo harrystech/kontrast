@@ -122,4 +122,8 @@ describe Kontrast::ApiEndpointComparator do
             end
         end
     end
+
+    context 'load_image_file' do
+        it "retries if downloading image failed"
+    end
 end
