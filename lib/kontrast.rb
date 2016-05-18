@@ -1,5 +1,5 @@
 # Dependencies
-require "fog"
+require "fog/aws"
 require "bundler"
 
 # Load classes
