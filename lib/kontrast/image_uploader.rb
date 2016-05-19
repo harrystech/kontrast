@@ -1,7 +1,10 @@
 module Kontrast
     module ImageUploader
         def upload_images(test)
-            Workers.map(Dir.entries("#{Kontrast.path}/#{test}")) do |file|
+            worker_pool = Workers::Pool.new
+            worker_pool.resize(Kontrast.configuration.workers_pool_size)
+
+            Workers.map(Dir.entries("#{Kontrast.path}/#{test}"), pool: worker_pool) do |file|
                 next if ['.', '..'].include?(file)
                 Kontrast.fog.directories.get(Kontrast.configuration.aws_bucket).files.create(
                     key: "#{Kontrast.configuration.remote_path}/#{test}/#{file}",

@@ -50,4 +50,23 @@ describe Kontrast::Configuration do
             gallery: "arg2"
         })
     end
+
+    context "workers pool size" do
+        before do
+            Kontrast.configuration = nil
+            Kontrast.configure {}
+        end
+
+        it "defaults to 5" do
+            expect(Kontrast.configuration.workers_pool_size).to eq(5)
+        end
+
+        it "can be overriden" do
+            Kontrast.configure do |config|
+                config.workers_pool_size = 10
+            end
+
+            expect(Kontrast.configuration.workers_pool_size).to eq(10)
+        end
+    end
 end
