@@ -113,11 +113,13 @@
                                                         <img class="short-screenshot img-thumbnail" src="<%=second_image[:thumb]%>">
                                                     </a>
                                                 </div>
-                                                <div class="col-lg-3">
-                                                    <a href="<%=diff_image[:image]%>">
-                                                        <img class="short-screenshot img-thumbnail" src="<%=diff_image[:thumb]%>">
-                                                    </a>
-                                                </div>
+                                                <% if diff_image %>
+                                                    <div class="col-lg-3">
+                                                        <a href="<%=diff_image[:image]%>">
+                                                            <img class="short-screenshot img-thumbnail" src="<%=diff_image[:thumb]%>">
+                                                        </a>
+                                                    </div>
+                                                <% end %>
                                             </div>
                                         <% end %>
                                     </div>
@@ -188,11 +190,13 @@
                                                         <img class="short-screenshot img-thumbnail" src="<%=second_image[:thumb]%>">
                                                     </a>
                                                 </div>
-                                                <div class="col-lg-3">
-                                                    <a href="<%=diff_image[:image]%>">
-                                                        <img class="short-screenshot img-thumbnail" src="<%=diff_image[:thumb]%>">
-                                                    </a>
-                                                </div>
+                                                <% if diff_image %>
+                                                    <div class="col-lg-3">
+                                                        <a href="<%=diff_image[:image]%>">
+                                                            <img class="short-screenshot img-thumbnail" src="<%=diff_image[:thumb]%>">
+                                                        </a>
+                                                    </div>
+                                                <% end %>
                                             </div>
                                         <% end %>
                                     </div>
