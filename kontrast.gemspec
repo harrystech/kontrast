@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
     spec.add_dependency "thor", "~> 0.0"
     spec.add_dependency "selenium-webdriver", "~> 2.0"
     spec.add_dependency "workers", "~> 0.2"
-    spec.add_dependency "rmagick", "2.13.2"
+    spec.add_dependency "rmagick", "2.16.0"
     spec.add_dependency "fog-aws", "~> 0.9"
     spec.add_dependency "faraday", "~> 0.9"
     spec.add_dependency "rack", ">= 0.4"
