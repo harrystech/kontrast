@@ -97,13 +97,17 @@ module Kontrast
                 else
                     gallery_info = gallery_creator.create_gallery(result_path)
                 end
+            rescue StandardError => e
+                puts e.class
+                puts e.message
+                puts e.backtrace
             ensure
                 # Call "after" hook
-                Kontrast.configuration.after_gallery(gallery_info[:diffs], gallery_info[:path])
+                Kontrast.configuration.after_gallery(gallery_info.fetch(:diffs, {}), gallery_info[:path])
             end
 
             # Return based on if we have diffs or not
-            return gallery_info[:diffs].empty?
+            gallery_info.fetch(:diffs, {}).empty?
         end
     end
 end
