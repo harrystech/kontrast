@@ -1,7 +1,6 @@
 module Kontrast
     class PageRunner
         include ImageUploader
-        include ThumbnailCreator
 
         attr_reader :diffs
 
@@ -60,7 +59,7 @@ module Kontrast
 
                     # Create thumbnails for gallery
                     print "Creating thumbnails... "
-                    create_thumbnails(test, ['test.png', 'production.png', 'diff.png'])
+                    ThumbnailCreator.create_thumbnails(test, ['test.png', 'production.png', 'diff.png'])
 
                     # Upload to S3
                     if Kontrast.configuration.run_parallel
