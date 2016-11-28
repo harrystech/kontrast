@@ -1,7 +1,6 @@
 module Kontrast
     class ApiEndpointRunner
         include ImageUploader
-        include ThumbnailCreator
 
         attr_accessor :diffs
 
@@ -68,7 +67,7 @@ module Kontrast
                         ['.', '..'].include?(file_name) || file_name.include?('.json')
                     }
 
-                    create_thumbnails(test, images)
+                    ThumbnailCreator.create_thumbnails(test, images)
 
                     # Upload to S3
                     if Kontrast.configuration.run_parallel
