@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency "rspec", "~> 3.0"
     spec.add_dependency "bundler", "~> 1.6"
     spec.add_dependency "thor", "~> 0.0"
-    spec.add_dependency "selenium-webdriver", "~> 2.0"
+    spec.add_dependency "selenium-webdriver", ">= 2.0"
     spec.add_dependency "workers", "~> 0.2"
     spec.add_dependency "rmagick", "2.16.0"
     spec.add_dependency "fog-aws", "~> 0.9"
