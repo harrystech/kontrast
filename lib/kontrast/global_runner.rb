@@ -86,7 +86,7 @@ module Kontrast
                 uri = URI(Kontrast.configuration.test_domain)
                 begin
                     Net::HTTP.get(uri)
-                rescue Errno::ECONNREFUSED => e
+                rescue Errno::ECONNREFUSED, EOFError => e
                     tries -= 1
                     if tries > 0
                         puts "Waiting for test server..."
